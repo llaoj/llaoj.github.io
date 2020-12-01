@@ -10,3 +10,4 @@
 - 2 二叉树不适合自增索引, 如下图
    ![auto increment](/pic/mysql/binary-tree-auto-increment.png)
     会扫描全部的索引,效率低
+- 3 二叉树: 左边是小数, 右边是大数, 从根节点开始查找
