@@ -2,4 +2,4 @@
 
 二叉树作为索引的话:
 
-![binary tree](https://github.com/llaoj/llaoj.github.io/blob/main/pic/binay-tree.png)
+![binary tree](/pic/binay-tree.png)
