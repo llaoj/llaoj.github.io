@@ -8,5 +8,5 @@
 
 - 1 [Data Structure Visualizations](https://www.cs.usfca.edu/~galles/visualization/Algorithms.html) 这是美国人做的一个数据结构可视化网站
 - 2 二叉树不适合自增索引, 如下图
-   ![Data Structure Visualizations](binary-tree-auto-increment.png)
+   ![Data Structure Visualizations](/pic/binary-tree-auto-increment.png)
     会扫描全部的索引,效率低
