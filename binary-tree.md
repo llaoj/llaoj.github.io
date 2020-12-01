@@ -2,7 +2,7 @@
 
 二叉树作为索引的话:
 
-![binary tree](/pic/mysql/binay-tree.png)
+![binary tree](/pic/mysql/binary-tree.png)
 
 ### 说明
 
