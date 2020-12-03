@@ -51,14 +51,16 @@
 
 - 1 微博/微信共同关注的人
     
-    SINTER mySet otherSet -> {}
+    `SINTER mySet otherSet -> {}`
 
 - 2 我关注的人也关注他
 
+    ```
     SISMEMBER othersSet he/her
     ...
+    ```
 
 - 3 可能认识的人
 
-    SDIFF othersSet mySet -> {}
+    `SDIFF othersSet mySet -> {}`
     别人的关注列表减去我的关注列表得到的集合
