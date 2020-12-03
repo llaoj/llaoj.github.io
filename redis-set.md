@@ -14,6 +14,17 @@
 
 - 6 `SCARD key`集合中元素数量
 
+![redis-set](/pic/redis-set.png)
+
+- 7 `SDIFF set1 set2 set3`
+
+    计算set1 减去 set2 set3 的并集
+
+- 8 `SINTER set1 set2` 交集
+
+- 9 `SUNION set1 set2` 并集
+
+- 10 `SISMEMBER set value` value是否在set中
 
 **实现抽奖**
 
@@ -28,24 +39,11 @@
 - 3 开始抽
 
     `SRANDMEMBER key 1` -> 1等奖1个 
+
     这个方法不能排除抽中的人
+
     `SPOP key 1` -> 1等奖1个, 他后续不会再抽到
 
-还可以实现微信朋友圈点赞功能
-
-![redis-set](/pic/redis-set.png)
-
-**命令**
-
-- 1 `SDIFF set1 set2 set3`
-
-    计算set1 减去 set2 set3 的并集
-
-- 2 `SINTER set1 set2` 交集
-
-- 3 `SUNION set1 set2` 并集
-
-- 4 `SISMEMBER set value` value是否在set中
 
 **实现社交**
 
@@ -63,4 +61,9 @@
 - 3 可能认识的人
 
     `SDIFF othersSet mySet -> {}`
+    
     别人的关注列表减去我的关注列表得到的集合
+
+**其他**
+
+另外, 还可以实现微信朋友圈点赞功能, 比如 点赞SADD/取消点赞SREM/自己瞬间所有点赞的人SMEMBERS/外人看瞬间点赞的人SINTER/总点赞数SCARD/是否点赞SISMEMBER
