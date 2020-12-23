@@ -42,7 +42,6 @@ warning	envoy config	Unable to establish new stream
 warn	cache	resource:default request:68bf97bc-9e8d-41b1-8b17-6d9368b00aa9 CSR failed with error: rpc error: code = Unavailable desc = connection error: desc = "transport: Error while dialing dial tcp 10.96.5.249:15012: connect: connection refused", retry in 3200 millisec
 
 error	citadelclient	Failed to create certificate: rpc error: code = Unavailable desc = connection error: desc = "transport: Error while dialing dial tcp 10.96.5.249:15012: connect: connection refused"
-
 ```
 
 其中, `10.96.5.249` 是 `istiod` `service` 的 `CLUSTER-IP`, 通过日志能分析出来: 上游`istiod`挂了, 连接建立失败.
@@ -68,7 +67,6 @@ failed calling webhook "validation.istio.io": Post https://istiod.istio-system.s
 Failed calling webhook, failing closed sidecar-injector.istio.io: failed calling webhook "sidecar-injector.istio.io": Post https://istiod.istio-system.svc:443/inject?timeout=30s: dial tcp 10.96.5.249:443: connect: connection refused
 
 rejected by webhook "validation.istio.io": &errors.StatusError{ErrStatus:v1.Status{TypeMeta:v1.TypeMeta{Kind:"", APIVersion:""}, ListMeta:v1.ListMeta{SelfLink:"", ResourceVersion:"", Continue:"", RemainingItemCount:(*int64)(nil)}, Status:"Failure", Message:"admission webhook \"validation.istio.io\" denied the request: configuration is invalid: gateway must have at least one server", Reason:"", Details:(*v1.StatusDetails)(nil), Code:400}}
-
 ```
 很明显了. `istiod`挂了, `webhook`请求不通, 但是, 可惜的是`istiod`的状态依然是`running`.
 
