@@ -4,7 +4,7 @@ title: "为什么mysql不用二叉树"
 categories: diary
 ---
 
-## 图说mysql 与 二叉树 binary tree
+### 图说mysql 与 二叉树 binary tree
 
 二叉树作为索引的话:
 
