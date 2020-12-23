@@ -1,6 +1,6 @@
 ---
 layout: page
-title: About
+title: 叫我老J吧
 permalink: /about/
 ---
 
