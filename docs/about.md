@@ -8,4 +8,6 @@ permalink: /about/
 
 我的 [Github](https://github.com/llaoj)
 
+我在B站也发了一些视频 [bilibili](https://space.bilibili.com/67920653/)
+
 你可以通过我的邮箱联系到我: qustwwy@163.com
