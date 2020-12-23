@@ -1,7 +1,7 @@
 ---
-layout: page
-title: 故障复盘: 记录一次istio服务宕机故障
-permalink: /istiod-issues/
+layout: post
+title: "故障复盘: 记录一次istio服务宕机故障"
+categories: diary
 ---
 
 ## 故障复盘: 记录一次istio服务宕机故障
