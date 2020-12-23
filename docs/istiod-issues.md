@@ -84,8 +84,11 @@ rejected by webhook "validation.istio.io": &errors.StatusError{ErrStatus:v1.Stat
 
 查阅istio官方对于内置 `kubernetes`的`docker destop`  的要求是 `4 cpus, 8g memory`, 虽然这台机器刚好满足要求, 但是毕竟是线上环境而且又部署了很多其他的业务服务. 资源不够用是必然.
 
+刚去查日志, 发现是这台机器上的一个pod提供了一个下载文件的接口, 一个文件150M, 有人下载结果把服务器资源用爆了.
+
 ### 后面要做的事
 
 - 给所有服务都加上资源的限制
 - 增加istio相关组件的实例提高容错能力
+- istio相关组件和业务pod做node上的隔离
 - 优化所部署的服务的资源消耗, 提高机器资源利用率
