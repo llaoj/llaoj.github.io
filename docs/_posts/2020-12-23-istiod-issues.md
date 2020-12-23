@@ -84,6 +84,8 @@ rejected by webhook "validation.istio.io": &errors.StatusError{ErrStatus:v1.Stat
 
 ### 分析
 
+- 1 资源问题
+  
 老大给我说昨天晚上收到了阿里云的一条短信, 说集群中有一台机器的cpu负载报警了, 正好就是`istiod`和`istio-ingressgateway`所在的那台机器, 所以我分析是机器负载过高引起的.
 
 谷歌之后, 我找到了有人也这么说.
@@ -92,8 +94,15 @@ rejected by webhook "validation.istio.io": &errors.StatusError{ErrStatus:v1.Stat
 
 刚去查日志, 发现是这台机器上的一个pod提供了一个下载文件的接口, 一个文件150M, 有人下载结果把服务器资源用爆了.
 
+- 2 健康检查
+
+坦白讲, 我认为istio这一点做的不好, 我`describe`了`istiod`配置清单, 里面只定义了`readinessProbe`, 并没有定义`livenessProbe`, 也就是说, 如果服务挂了顶多不给它分配流量了, 但是不能重启这个实例. 
+
+**可悲的是, 我只启动了一个实例, 所以, 对外服务全部挂了.**  以后关键服务即便请求不高也要做高可用.
+
 ### 后面要做的事
 
+- 给`istiod` 和 `istio-ingressgateway` 增加 `livenessProbe` 配置
 - 给所有服务都加上资源的限制
 - 增加istio相关组件的实例提高容错能力
 - istio相关组件和业务pod做node上的隔离
