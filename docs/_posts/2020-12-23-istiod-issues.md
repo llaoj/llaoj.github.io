@@ -113,17 +113,16 @@ rejected by webhook "validation.istio.io": &errors.StatusError{ErrStatus:v1.Stat
   
 ```
 # 先设置istiod, 直接参考readinessProbe
-
-        livenessProbe:
-          failureThreshold: 3
-          httpGet:
-            path: /ready
-            port: 8080
-            scheme: HTTP
-          initialDelaySeconds: 1
-          periodSeconds: 3
-          successThreshold: 1
-          timeoutSeconds: 5
+livenessProbe:
+    failureThreshold: 3
+    httpGet:
+    path: /ready
+    port: 8080
+    scheme: HTTP
+    initialDelaySeconds: 1
+    periodSeconds: 3
+    successThreshold: 1
+    timeoutSeconds: 5
 ```
 
 - 服务加入集群前, 综合评估所用资源, 给所有服务都加上资源的限制
