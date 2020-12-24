@@ -110,6 +110,22 @@ rejected by webhook "validation.istio.io": &errors.StatusError{ErrStatus:v1.Stat
 ### 后面要做的事
 
 - 给`istiod` 和 `istio-ingressgateway` 增加 `livenessProbe` 配置
+  
+先设置`istiod`, 直接参考`readinessProbe`:
+
+```
+        livenessProbe:
+          failureThreshold: 3
+          httpGet:
+            path: /ready
+            port: 8080
+            scheme: HTTP
+          initialDelaySeconds: 1
+          periodSeconds: 3
+          successThreshold: 1
+          timeoutSeconds: 5
+```
+
 - 服务加入集群前, 综合评估所用资源, 给所有服务都加上资源的限制
 - 根据集群负载, 增加istio相关组件的实例数量提高容错能力(>=2)
 - istio相关组件和业务pod做node上的隔离
