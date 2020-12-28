@@ -29,9 +29,11 @@ kubenetes github repo 中 [kubernetes/cluster/addons/metrics-server/](https://gi
 10 x 5000 x 30 / 60 = 25000 metrics per second by average
 ```
 
-### 4 给`metrics-server`配置垂直伸缩
+从`metrics-server v0.5`开始, 默认配置资源请求:
+```
+```
 
-`metrics-server`默认配置支持的集群规模阈值如下:
+默认配置支持的集群规模阈值如下:
 
 |Quantity|Namespace threshold|Cluster threshold|
 |-|-|-|
@@ -39,9 +41,11 @@ kubenetes github repo 中 [kubernetes/cluster/addons/metrics-server/](https://gi
 |#Pods|7000|7000|
 |#Deployments + HPA|100|100|
 
-**注意** 
+### 4 给`metrics-server`配置垂直伸缩
 
-上面说的每个节点上的pod数量限定30个, 如果在一个存在大量pods的集群中, 在达到阈值时可能会出现OOM. 所以, kebernetes官方建议我们使用`addon-resizer`作为`metrics-server`的sidecar, 去watch `metrics-server` 并根据集群节点数量动态配置pod的资源配额. 这样就能让`kubernetes`有效的保证`metics-server`有合理的资源可以使用.
+细心的话, 会发现, 上面对集群规模的描述, 以及对`metrics-server`组件资源占用的分析都是基于node节点数量分析的, 但是单节点上pod数量同样也会影响`metrics-server`资源消耗.
+
+上面说的每个节点上的pod数量默认限定为30个, 如果在一个存在大量pods的集群中, 在达到阈值时可能会出现OOM. 所以, kebernetes官方建议我们使用`addon-resizer`作为`metrics-server`的sidecar, 去watch `metrics-server` 并根据集群节点数量动态配置pod的资源配额. 这样就能让`kubernetes`有效的保证`metics-server`有合理的资源可以使用.
 
 这个自动配额的计算方式是这样的:
 ```
