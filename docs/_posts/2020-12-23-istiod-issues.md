@@ -125,7 +125,8 @@ rejected by webhook "validation.istio.io": &errors.StatusError{ErrStatus:v1.Stat
           timeoutSeconds: 5
 ```
 
-- 服务加入集群前, 综合评估所用资源, 给所有服务都加上资源的限制
+- 提高`istiod`&`istio-ingressgateway`组件resource request中的`cpu`&`memory`配置
 - 根据集群负载, 增加istio相关组件的实例数量提高容错能力(>=2)
-- istio相关组件和业务pod做node上的隔离
+- 服务加入集群前, 综合评估所用资源, 给所有服务都加上资源的限制
+- [可选]istio相关组件和业务pod做node上的隔离
 - 优化所部署的服务的资源消耗, 提高机器资源利用率
