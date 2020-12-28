@@ -64,7 +64,7 @@ memory = base-memory + n * extra-memory
 接下来, 修改`metrics-server`和`addon-resizer`镜像仓库:
 
 
-```git
+```
 -        image: k8s.gcr.io/metrics-server-amd64:v0.3.6
 +        # image: k8s.gcr.io/metrics-server-amd64:v0.3.6
 +        image: registry.cn-hangzhou.aliyuncs.com/google_containers/metrics-server-amd64:v0.3.6
@@ -78,7 +78,10 @@ memory = base-memory + n * extra-memory
 
 修改`metrics-server`启动参数:
 
-```git
+```
+         command:
+         - /metrics-server
+         - --metric-resolution=30s
 +        - --kubelet-insecure-tls
          # These are needed for GKE, which doesn't support secure communication yet.
          # Remove these lines for non-GKE clusters, and when GKE supports token-based auth.
@@ -88,10 +91,11 @@ memory = base-memory + n * extra-memory
 +        # - --deprecated-kubelet-completely-insecure=true
          - --kubelet-preferred-address-types=InternalIP,Hostname,InternalDNS,ExternalDNS,ExternalIP
 ```
+
 修改`addon-resizer`启动参数:
 
-```git
-         command:
+```
+           command:
            - /pod_nanny
            - --config-dir=/etc/config
 -          - --cpu={{ base_metrics_server_cpu }}
