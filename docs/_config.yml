@@ -6,3 +6,7 @@ description: 专注云原生领域, 包括容器, 微服务, Service Mesh, Serve
 github_username:  llaoj
 
 theme: minima
+
+plugins:
+ - jekyll-feed
+ - jekyll-seo-tag
