@@ -1,6 +1,6 @@
 ---
 layout: post
-title: "手动部署metrics-server组件"
+title: "手动给kubernetes部署metrics-server组件"
 categories: diary
 ---
 
@@ -18,7 +18,7 @@ metrics-server是k8s的一个重要组件, 他能从`kubelet`获取`node`和`pod
 
 kubenetes github repo 中 [kubernetes/cluster/addons/metrics-server/](https://github.com/kubernetes/kubernetes/tree/master/cluster/addons/metrics-server)
 
-我安装之前阅读了很多这方面的官方文档和博客, 虽然不是什么特别难特别复杂的操作, 毕竟自己做的少, 还是害怕错过什么细节, 导致安装失败. 影响集群的运行. 建议大家也这样 : )
+我安装之前阅读了很多这方面的官方文档和博客, 虽然不是什么特别难特别复杂的操作, 毕竟自己做的少, 还是害怕错过什么细节, 导致安装失败. 影响集群的运行. 谋定而后动嘛 : )
 
 ### 3 `metrics-server`资源消耗分析
 
@@ -65,7 +65,7 @@ memory = base-memory + n * extra-memory
 
 最后, 计算出来的`cpu`&`memory`会与阈值(`threshold`)进行比较, 超过阈值就会更新`deployment`配置. 配置的阈值是一个整数,代表的是一个百分比, 比如, `threshold=5`, 表示超过现在`cup`&`memory`配置值的5%就会更新`deployment`配置.
 
->这部分的参数配置请查看下面关于**修改`addon-resizer`启动参数**部分
+>这部分的参数配置请查看下面: 修改addon-resizer启动参数
 
 ### 5 部署
 
@@ -138,7 +138,7 @@ memory = base-memory + n * extra-memory
    - namespaces
 ```
 
->我配置好的yaml文件都放在这里[llaoj/my-share/deploy-metrics-server](https://github.com/llaoj/my-share/tree/master/deploy-metrics-server), 大家需要可以去看.
+>我配置好的yaml文件都放在这里 [my-share/deploy-metrics-server](https://github.com/llaoj/my-share/tree/master/deploy-metrics-server), 大家需要可以去看.
 
 然后执行部署:
 
@@ -149,7 +149,7 @@ kubectl apply -f ./
 ### 6 验证
 
 ```
-kubectl top node
+kubectl top nodes
 
 kubectl top pods
 ```
