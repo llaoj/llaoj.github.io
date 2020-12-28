@@ -61,7 +61,11 @@ memory = base-memory + n * extra-memory
 
 `extra-cup`和`extra-memory`也是我们设定值, 它表示每增加一个节点`cpu`和`memory`所需要提高值. 同样, 如果不知道自己在干啥, 设置`extra-cpu=1m extra-memory=3M`就可以.
 
-`n`代表集群节规模, 如果是16节点以内的集群`n = 16 * 1.5`, 如果是16节点以上的集群`n = node-num * 1.5`, `node-num`(节点数量)会自动被发现.
+`n`代表集群节规模, 需要先定义一个最小集群规模(`minClusterSize`: 整数), 如果是这个规模以内的集群`n = minClusterSize`, 如果是最小规模以上的集群`n = node-num * 1.5`, `node-num`(节点数量)会自动被发现.
+
+最后, 计算出来的`cpu`&`memory`会与阈值(`threshold`)进行比较, 超过阈值就会更新`deployment`配置. 配置的阈值是一个整数,代表的是一个百分比, 比如, `threshold=5`, 表示超过现在`cup`&`memory`配置值的5%就会更新`deployment`配置.
+
+>这部分的参数配置请查看下面关于**修改`addon-resizer`启动参数**部分
 
 ### 5 部署
 
@@ -94,7 +98,7 @@ memory = base-memory + n * extra-memory
 -        - --deprecated-kubelet-completely-insecure=true
 +        # - --kubelet-port=10255
 +        # - --deprecated-kubelet-completely-insecure=true
-         - --kubelet-preferred-address-types=InternalIP,Hostname,InternalDNS,ExternalDNS,ExternalIP
+         - --kubelet-preferred-address-types=InternalIP
 ```
 
 修改`addon-resizer`启动参数:
@@ -123,6 +127,18 @@ memory = base-memory + n * extra-memory
            # Use kube-apiserver metrics to avoid periodically listing nodes.
            - --use-metrics=true
 ```
+
+官方配置`ClusterRole`时忘掉了一个权限, 找到权限配置部分, 增加配置:
+
+```
+   resources:
+   - pods
+   - nodes
++  - nodes/stats
+   - namespaces
+```
+
+>我配置好的yaml文件都放在这里[llaoj/my-share/deploy-metrics-server](https://github.com/llaoj/my-share/tree/master/deploy-metrics-server), 大家需要可以去看.
 
 然后执行部署:
 
