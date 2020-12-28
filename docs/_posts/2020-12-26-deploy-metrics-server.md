@@ -30,10 +30,12 @@ kubenetes github repo 中 [kubernetes/cluster/addons/metrics-server/](https://gi
 ```
 
 从`metrics-server v0.5`开始, 默认配置资源请求:
-```
-```
 
-默认配置支持的集群规模阈值如下:
+```
+100m core of CPU
+300MiB of memory
+```
+它说支持的集群规模如下:
 
 |Quantity|Namespace threshold|Cluster threshold|
 |-|-|-|
@@ -66,7 +68,6 @@ memory = base-memory + n * extra-memory
 先将[kubernetes/cluster/addons/metrics-server/](https://github.com/kubernetes/kubernetes/tree/master/cluster/addons/metrics-server)仓库中yaml文件下载到本地.
 
 接下来, 修改`metrics-server`和`addon-resizer`镜像仓库:
-
 
 ```
 -        image: k8s.gcr.io/metrics-server-amd64:v0.3.6
