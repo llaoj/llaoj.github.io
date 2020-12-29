@@ -116,7 +116,7 @@ DOCKER_COMPOSE_VERSION=1.27.4
 
 ```
 
-重点关注`data-root`, `log-driver`, `log-opts` 三个配置, 其中`data-root`位docker的存储目录, 会存一些镜像和容器相关的文件, 选择主机上比较大的一块盘, 其他的按照自己情况来配置. 改完别忘了重启docker.
+重点关注`data-root`, `log-driver`, `log-opts` 三个配置, 其中`data-root`是docker的存储目录, 会存一些镜像和容器相关的文件, 选择主机上比较大的一块盘, 其他的按照自己情况来配置. 改完别忘了重启docker.
 
 ### 第四步, 部署命令
 
