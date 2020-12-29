@@ -31,9 +31,6 @@ jumpserver很流行, 免费开源, 最近公司也要搭建堡垒机, 所以就�
 wget https://github.com/jumpserver/installer/releases/download/v2.6.1/jumpserver-installer-v2.6.1.tar.gz
 tar -xf jumpserver-installer-v2.6.1.tar.gz
 cd jumpserver-installer-v2.6.1
-
-# 这一步是设置 docker image 的大仓库
-export DOCKER_IMAGE_PREFIX=docker.mirrors.ustc.edu.cn
 ```
 
 ### 第二步, 预配置
