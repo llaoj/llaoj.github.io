@@ -35,6 +35,8 @@ cd jumpserver-installer-v2.6.1
 
 ### 第二步, 预配置
 
+**注意** 我们给jumpserver的配置文件目录为:`/opt/jumpserver`
+
 ```
 mkdir /opt/jumpserver
 cp -r config_init /opt/jumpserver/config
