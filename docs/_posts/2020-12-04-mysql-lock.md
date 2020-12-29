@@ -1,6 +1,13 @@
-## MySQL 锁相关的话题
+---
+layout: post
+title: "关于mysql锁几个重要的知识点"
+categories: diary
+---
 
-### 1 mysql 是多线程模型, 可以并发执行处理请求
+### 1 mysql 是多线程模型
+
+可以并发执行处理请求
+
 ### 2 innodb支持行锁
 
 ```
