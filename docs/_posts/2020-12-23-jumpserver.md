@@ -146,6 +146,4 @@ docker-compose -f ./compose/docker-compose-app.yml \
 
 ### 第五步, 验证
 
-浏览器访问
-```
-httpL//host:8080
+浏览器访问`http://host-ip:8080`
