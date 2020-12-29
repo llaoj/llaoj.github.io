@@ -120,7 +120,7 @@ DOCKER_COMPOSE_VERSION=1.27.4
 
 ### 第四步, 部署命令
 
-由于我们没有使用提供的ipv6,lb,xpack, 所以我们只需要部署以下三个yaml. 他们分别提供了应用,网络和任务的部署清单.
+由于我们没有选择配置ipv6,lb,xpack, 所以需要部署以下5个yaml. 他们分别提供了核心应用,网络,任务,mysql和redis的部署清单.
 
 jms-start.sh
 ```
