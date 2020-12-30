@@ -101,7 +101,7 @@ DOCKER_COMPOSE_VERSION=1.27.4
 
 修改`/etc/docker/daemon.json`文件, 如下:
 
-{% highlight json %}
+{% highlight json linenos %}
 {
   "exec-opts": ["native.cgroupdriver=systemd"],
   "data-root": "/data/docker",
@@ -122,7 +122,7 @@ DOCKER_COMPOSE_VERSION=1.27.4
 由于我们没有选择配置ipv6,lb,xpack, 所以需要部署以下5个yaml. 他们分别提供了核心应用,网络,任务,mysql和redis的部署清单.
 
 jms-start.sh
-{% highlight shell %}
+{% highlight shell linenos %}
 #!/bin/bash
 
 export VERSION="v2.6.1"
