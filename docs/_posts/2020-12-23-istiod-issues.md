@@ -110,8 +110,8 @@ rejected by webhook "validation.istio.io": &errors.StatusError{ErrStatus:v1.Stat
 ### 后面要做的事
 
 - 给`istiod` 和 `istio-ingressgateway` 增加 `livenessProbe` 配置
-  
-```
+
+{% highlight yaml %}
         # 先设置istiod, 直接参考readinessProbe
         livenessProbe:
           failureThreshold: 3
@@ -123,7 +123,7 @@ rejected by webhook "validation.istio.io": &errors.StatusError{ErrStatus:v1.Stat
           periodSeconds: 3
           successThreshold: 1
           timeoutSeconds: 5
-```
+{% endhighlight %}
 
 - 提高`istiod`&`istio-ingressgateway`组件resource request中的`cpu`&`memory`配置
 - 根据集群负载, 增加istio相关组件的实例数量提高容错能力(>=2)
