@@ -101,7 +101,7 @@ DOCKER_COMPOSE_VERSION=1.27.4
 
 修改`/etc/docker/daemon.json`文件, 如下:
 
-```
+{% highlight json %}
 {
   "exec-opts": ["native.cgroupdriver=systemd"],
   "data-root": "/data/docker",
@@ -113,8 +113,7 @@ DOCKER_COMPOSE_VERSION=1.27.4
   "storage-driver": "overlay2",
   "registry-mirrors" : ["https://thd69qis.mirror.aliyuncs.com"]
 }
-
-```
+{% endhighlight %}
 
 重点关注`data-root`, `log-driver`, `log-opts` 三个配置, 其中`data-root`是docker的存储目录, 会存一些镜像和容器相关的文件, 选择主机上比较大的一块盘, 其他的按照自己情况来配置. 改完别忘了重启docker.
 
