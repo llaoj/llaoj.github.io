@@ -27,7 +27,7 @@ jumpserver很流行, 免费开源, 最近公司也要搭建堡垒机, 所以就�
 
 ### 第一步, 下载安装包
 
-{% hightlight shell %}
+{% highlight shell %}
 wget https://github.com/jumpserver/installer/releases/download/v2.6.1/jumpserver-installer-v2.6.1.tar.gz
 tar -xf jumpserver-installer-v2.6.1.tar.gz
 cd jumpserver-installer-v2.6.1
@@ -37,7 +37,7 @@ cd jumpserver-installer-v2.6.1
 
 **注意** 我们给jumpserver的配置文件目录为:`/opt/jumpserver`
 
-{% hightlight shell %}
+{% highlight shell %}
 mkdir /opt/jumpserver
 cp -r config_init /opt/jumpserver/config
 cp config-example.txt /opt/jumpserver/config/config.txt
