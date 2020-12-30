@@ -4,9 +4,12 @@ email: qustwwy@163.com
 description: 专注云原生领域, 包括容器, 微服务, Service Mesh, Serverless等技术, 热衷于参与开源软件和开源社区.
 github_username:  llaoj
 
+url: "https://llaoj.cn"
 theme: minima
 plugins:
  - jekyll-feed
  - jekyll-seo-tag
+ - jekyll-sitemap
+
 
 google_analytics: G-K8M9VVHSEF
