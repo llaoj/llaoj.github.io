@@ -123,7 +123,7 @@ DOCKER_COMPOSE_VERSION=1.27.4
 由于我们没有选择配置ipv6,lb,xpack, 所以需要部署以下5个yaml. 他们分别提供了核心应用,网络,任务,mysql和redis的部署清单.
 
 jms-start.sh
-```
+{%highlight shell%}
 #!/bin/bash
 
 export VERSION="v2.6.1"
@@ -141,7 +141,8 @@ docker-compose -f ./compose/docker-compose-app.yml \
 -f ./compose/docker-compose-task.yml \
 -f ./compose/docker-compose-mysql.yml \
 -f ./compose/docker-compose-redis.yml up -d
-```
+{%endhighlight%}
+
 
 ### 第五步, 验证
 
