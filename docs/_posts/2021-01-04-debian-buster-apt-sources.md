@@ -32,7 +32,6 @@ deb https://mirrors.tuna.tsinghua.edu.cn/debian-security buster/updates main con
 # deb-src https://mirrors.tuna.tsinghua.edu.cn/debian-security buster/updates main contrib non-free
 {% endhighlight %}
 
-
 如果遇到无法拉取 https 源的情况，请先使用 http 源并安装：
 
 {% highlight shell %}
