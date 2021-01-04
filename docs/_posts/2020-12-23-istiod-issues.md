@@ -103,7 +103,7 @@ rejected by webhook "validation.istio.io": &errors.StatusError{ErrStatus:v1.Stat
 
 - 2 健康检查
 
-坦白讲, 我认为istio这一点做的不好, 我`describe`了`istiod`配置清单, 里面只定义了`readinessProbe`, 并没有定义`livenessProbe`, 也就是说, 如果服务挂了顶多不给它分配流量了, 但是不能重启这个实例. 
+我`describe`了`istiod`配置清单, 里面只定义了`readinessProbe`, 并没有定义`livenessProbe`, 也就是说, 如果服务挂了顶多不给它分配流量了, 但是不能重启这个实例. 
 
 **可悲的是, 我只启动了一个实例, 所以, 对外服务全部挂了.**  以后关键服务即便请求不高也要做高可用.
 
