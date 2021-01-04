@@ -20,7 +20,7 @@ sed -i 's#http://deb.debian.org#http://mirrors.tuna.tsinghua.edu.cn#g' /etc/apt/
 
 将该文件替换为下面内容, 即可使用 TUNA 的软件源镜像
 
-```
+{% highlight shell %}
 # 默认注释了源码镜像以提高 apt update 速度，如有需要可自行取消注释
 deb https://mirrors.tuna.tsinghua.edu.cn/debian/ buster main contrib non-free
 # deb-src https://mirrors.tuna.tsinghua.edu.cn/debian/ buster main contrib non-free
@@ -31,6 +31,8 @@ deb https://mirrors.tuna.tsinghua.edu.cn/debian/ buster-backports main contrib n
 deb https://mirrors.tuna.tsinghua.edu.cn/debian-security buster/updates main contrib non-free
 # deb-src https://mirrors.tuna.tsinghua.edu.cn/debian-security buster/updates main contrib non-free
 ```
+{% endhighlight %}
+
 
 如果遇到无法拉取 https 源的情况，请先使用 http 源并安装：
 ```
