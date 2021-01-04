@@ -1,6 +1,6 @@
 ---
 layout: post
-title: "故障复盘: 记录一次istio服务宕机故障"
+title: "复盘: 记录一次istiod和istio-ingressgateway服务宕机故障"
 categories: diary
 ---
 
@@ -19,9 +19,9 @@ categories: diary
 
 ### 第一步, 看看pod是不是都在运行
 
-```
+{% highlight shell %}
 kubectl get pods -n istio-system -o wide
-```
+{% endhighlight %}
 
 输出pod状态全都是`running`, 我傻眼了. 心想这问题应该不那么容易解决了. 背后发汗...
 
@@ -29,11 +29,10 @@ kubectl get pods -n istio-system -o wide
 
 为了精确定位问题, 我先进入一个pod中的容器, 去请求另一个pod提供个svc, 看看是不是通的. 
 
-```
+{% highlight shell %}
 kubectl exec -it pod-name -c container-name -- bash
-
-curl http://svc-name:port/
-```
+$ curl http://svc-name:port/
+{% endhighlight %}
 
 结果请求正常响应. 我傻眼了. 这下事情更不简单了. 应该不是`kubernetes`的问题. 问题定位到了`istio`
 
@@ -41,7 +40,9 @@ curl http://svc-name:port/
 
 第一步我说过, gateway运行状态是`status`, 我只能看日志了. 看看有没有问题.
 
-- `kubectl logs -f --since 5m istio-ingressgateway-59dffbcfcb-55lds -n istio-system`
+{% highlight shell %}
+kubectl logs -f --since 5m istio-ingressgateway-59dffbcfcb-55lds -n istio-system
+{% endhighlight %}
 
 `istio-ingressgateway`的主要报错日志摘要, 如下:
 
@@ -85,7 +86,9 @@ rejected by webhook "validation.istio.io": &errors.StatusError{ErrStatus:v1.Stat
 
 ### 第四步, 重启istiod
 
-`kubectl rollout deploy/istiod -n istio-system`
+{% highlight shell %}
+kubectl rollout deploy/istiod -n istio-system
+{% endhighlight %}
 
 这个命令执行之后, `istiod`被调度到**另外一台机器上**, 我的服务都恢复了.
 
@@ -93,36 +96,27 @@ rejected by webhook "validation.istio.io": &errors.StatusError{ErrStatus:v1.Stat
 
 - 1 资源问题
   
-老大给我说昨天晚上收到了阿里云的一条短信, 说集群中有一台机器的cpu负载报警了, 正好就是`istiod`和`istio-ingressgateway`所在的那台机器, 所以我分析是机器负载过高引起的.
-
-谷歌之后, 我找到了有人也这么说.
-
-查阅istio官方对于内置 `kubernetes`的`docker destop`  的要求是 `4 cpus, 8g memory`, 虽然这台机器刚好满足要求, 但是毕竟是线上环境而且又部署了很多其他的业务服务. 资源不够用是必然.
-
-刚去查日志, 发现是这台机器上的一个pod提供了一个下载文件的接口, 一个文件150M, 有人下载结果把服务器资源用爆了.
+老大给我说昨天晚上收到了阿里云的一条短信, 说集群中有一台机器的cpu负载报警了, 正好就是`istiod`和`istio-ingressgateway`所在的那台机器, 所以我分析是机器负载过高引起的. 谷歌之后, 我找到了有人也这么说. 查阅istio官方对于内置 `kubernetes`的`docker destop`的要求是`4 cpus, 8g memory`, 虽然这台机器刚好满足要求, 但是毕竟是线上环境而且又部署了很多其他的业务服务. 资源不够用是必然. 最后, 经过查日志, 发现是这台机器上的一个业务pod提供了一个下载文件的接口, 一个文件150M, 当时有人下载, 资源耗尽,结果istiod和istio-ingressgateway应该是oom了.
 
 - 2 健康检查
 
-我`describe`了`istiod`配置清单, 里面只定义了`readinessProbe`, 并没有定义`livenessProbe`, 也就是说, 如果服务挂了顶多不给它分配流量了, 但是不能重启这个实例. 
-
-**可悲的是, 我只启动了一个实例, 所以, 对外服务全部挂了.**  以后关键服务即便请求不高也要做高可用.
+我`describe`了`istiod`配置清单, 里面只定义了`readinessProbe`, 并没有定义`livenessProbe`, 也就是说, 如果服务挂了顶多不给它分配流量了, 但是不能重启这个实例. **可悲的是, 我只启动了一个实例, 所以, 对外服务全部挂了.**  以后关键服务即便请求不高也要做高可用.
 
 ### 后面要做的事
 
-- 给`istiod` 增加 `livenessProbe` 配置
+- 给`istiod` 增加 `livenessProbe` 配置, 如下
 
 {% highlight yaml %}
-        # 先设置istiod, 直接参考readinessProbe
-        livenessProbe:
-          failureThreshold: 3
-          httpGet:
-            path: /ready
-            port: 8080
-            scheme: HTTP
-          initialDelaySeconds: 1
-          periodSeconds: 3
-          successThreshold: 1
-          timeoutSeconds: 5
+  livenessProbe:
+    failureThreshold: 3
+    httpGet:
+      path: /ready
+      port: 8080
+      scheme: HTTP
+    initialDelaySeconds: 1
+    periodSeconds: 3
+    successThreshold: 1
+    timeoutSeconds: 5
 {% endhighlight %}
 
 - 提高`istiod`&`istio-ingressgateway`组件resource request中的`cpu`&`memory`配置
