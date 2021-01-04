@@ -109,7 +109,7 @@ rejected by webhook "validation.istio.io": &errors.StatusError{ErrStatus:v1.Stat
 
 ### 后面要做的事
 
-- 给`istiod` 和 `istio-ingressgateway` 增加 `livenessProbe` 配置
+- 给`istiod` 增加 `livenessProbe` 配置
 
 {% highlight yaml %}
         # 先设置istiod, 直接参考readinessProbe
