@@ -52,7 +52,7 @@ Reading state information... Done
 2 packages can be upgraded. Run 'apt list --upgradable' to see them.
 {% endhighlight %}
 
-可以看到速度已经切换为清华源了.
+可以看到已经切换为清华源了.
 
 ### 参考链接
 
