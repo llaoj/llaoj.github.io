@@ -1,6 +1,6 @@
 ---
 layout: post
-title: "debian 10 buster更换国内清华apt软件源 提高安装速度"
+title: "debian 10 buster更换国内清华apt软件源"
 categories: diary
 ---
 
