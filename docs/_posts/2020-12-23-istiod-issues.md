@@ -1,6 +1,6 @@
 ---
 layout: post
-title: "复盘: 记录一次istiod和istio-ingressgateway服务宕机故障"
+title: "复盘: 一次istiod和istio-ingressgateway服务宕机故障"
 categories: diary
 ---
 
