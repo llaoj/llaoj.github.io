@@ -1,6 +1,6 @@
 ---
 layout: post
-title: "手动搭建jumpserver-v2.6.1"
+title: "手动用docker搭建jumpserver 2.6.1"
 categories: diary
 ---
 
