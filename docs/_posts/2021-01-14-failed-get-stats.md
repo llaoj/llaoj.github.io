@@ -112,6 +112,12 @@ ExecStart=/usr/bin/kubelet $KUBELET_KUBECONFIG_ARGS $KUBELET_CONFIG_ARGS $KUBELE
 
 **2 重启kubelet**
 
+如果配置了第一步, 先执行:
+
+`systemctl daemon-reload`
+
+最后执行:
+
 `systemctl restart kubelet`
 
 重启之后, 报错消失.
