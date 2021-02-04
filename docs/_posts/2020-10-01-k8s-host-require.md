@@ -67,8 +67,8 @@ raid5 数据读快写慢, 错误恢复成本高, 节省磁盘容量.
 
 |面|数量|cpu mem|storage|网卡|
 |-|-|-|-|-|
-|master|3|16cpu 64g|ssd 2*400g 2*960g raid1|2*万兆双口网卡; 业务网络用2口做bond1; 存储网络用2口做bond4 lacp|
-|node|100-200|40cpu 256g|ssd 2*g 2*960g raid1|同上|
+|master|3|16cpu 64g|ssd `2*400g 2*960g` raid1|2*万兆双口网卡; 业务网络用2口做bond1; 存储网络用2口做bond4 lacp|
+|node|100-200|40cpu 256g|ssd `2*400g 2*960g` raid1|同上|
 
 ### 推荐阅读
 
