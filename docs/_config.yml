@@ -12,3 +12,5 @@ plugins:
  - jekyll-sitemap
 
 google_analytics: G-K8M9VVHSEF
+disqus:
+  shortname: llaoj
