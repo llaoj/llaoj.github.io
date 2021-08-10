@@ -14,7 +14,7 @@ plugins:
 google_analytics: G-K8M9VVHSEF
 # disqus:
 #   shortname: llaojcn
-comment_gitalk_clientId: "Iv1.6444cda2c0d7e66a"
-comment_gitalk_clientSecret: "294cad78f9788d31c8169493335e75b714897f91"
+comment_gitalk_clientId: Iv1.6444cda2c0d7e66a
+comment_gitalk_clientSecret: 332185ef212bc90893a4ec412e0a9156361d8b68
 comment_gitalk_repo: llaoj.github.io
 github_username: llaoj
