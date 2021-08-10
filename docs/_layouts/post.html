@@ -36,8 +36,7 @@ layout: default
           owner: '{{site.github_username }}',
           admin: ['{{ site.github_username }}'],
           id: hex_md5(location.pathname),
-          distractionFreeMode: false,
-          screateIssueManually: true
+          distractionFreeMode: false
       })
       gitalk.render('gitalk-container');
   </script>
