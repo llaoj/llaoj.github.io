@@ -34,10 +34,10 @@ layout: default
           repo: '{{ site.comment_gitalk_repo }}',
           owner: '{{site.github_username }}',
           admin: ['{{ site.github_username }}'],
-          id: location.pathname,
+          id: hex_md5(hex_md5(window.location.pathname + window.location.hash)),
           distractionFreeMode: false
       })
-      gitalk.render('gitalk-container')
+      gitalk.render('gitalk-container');
   </script>
   <!-- Gitalk end -->
 
