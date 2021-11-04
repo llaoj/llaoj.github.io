@@ -10,15 +10,16 @@ categories: diary
 - 2. velero 所在服务器有 kubectl 命令, 且能连上集群
 
 
+我们先从最简单的体验开始
+
 ### 安装 velero 客户端
 
-- 1 首先安装 velero 客户端
+- 首先安装 velero 客户端
 
 下载二进制安装包, 点击 ` latest release`, 下载 `velero-v1.7.0-linux-amd64.tag.gz` (以 release 页面为准), 解压
 
 ```shell
 tar -xvf <RELEASE-TARBALL-NAME>.tar.gz
-
 ```
 
 然后将二进制文件 velero 移动到 $PATH 中的一个目录, 如 `/usr/local/bin`
@@ -51,9 +52,28 @@ velero install \
     --backup-location-config region=$REGION,s3ForcePathStyle="true",s3Url=$S3URL
 ```
 
+### 进行一次备份
+
+```shell
+velero backup create first-all-ns
+```
+
+查看备份结果
+
+```shell
+velero backup get
+```
+
+![velero backup get](/assets/velero-backupNrestore.assets/IMG_3623.PNG)
+
+
+至此体验结束, 下面是一些自定义配置
+
+---
+
 ### 备份文件存在哪里?
 
-- 1. `BackupStorageLocations` : 用来存储 kubernetes 原数据, 包括各种资源的配置清单等
+- `BackupStorageLocations` : 用来存储 kubernetes 原数据, 包括各种资源的配置清单等
 
 这个命令可以看到上面安装 velero 时自动创建的 BackupStorageLocations 资源
 
@@ -61,7 +81,7 @@ velero install \
 kubectl -n velero get BackupStorageLocations
 ```
 
-- 2. `VolumeSnapshotLocation` : 用来存储存储卷的数据
+- `VolumeSnapshotLocation` : 用来存储存储卷的数据
 
 这个命令可以看到上面安装 velero 时自动创建的 VolumeSnapshotLocation 资源
 
@@ -97,7 +117,7 @@ velero backup-location create <bsl-name> \
 velero backup-location get
 ```
 
-![velero get backupstoragelocations](/assets/velero-backupNrestore.assets/IMG_3622.png)
+![velero get backupstoragelocations](/assets/velero-backupNrestore.assets/IMG_3622.PNG)
 
 当我们使用这个 BackupStorageLocations 进行备份的时候, 可以使用 `--storage-location` 标志, 如下
 
@@ -122,27 +142,26 @@ velero backup-location set <bsl-name> \
 
 ### 几个常用的命令
 
-- 1. 手动备份整个集群
+- 手动备份整个集群
 
 ```shell
+velero backup create first-all-ns
 ```
 
-- 2. 每日定时更新整个集群
+- 每日定时更新整个集群
 
 ```shell
 velero schedule create all-ns-daily --schedule="@daily"
 ```
 
-- 3. 恢复指定的 namespace
+- 恢复指定的 namespace
 
 ```shell
 velero restore create --from-backup all-ns-daily-202110110523 --include-namespaces your-namespace
 ```
 
-- 4. 查看所有的备份
+- 查看所有的备份
 
 ```shell
 velero backup get
 ```
-
-![velero backup get](/assets/velero-backupNrestore.assets/IMG_3623.png)
