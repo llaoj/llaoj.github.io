@@ -6,8 +6,8 @@ categories: diary
 
 ### 要求
 
-- 1. kubernetes 版本 1.7+
-- 2. velero 所在服务器有 kubectl 命令, 且能连上集群
+- kubernetes 版本 1.7+
+- velero 所在服务器有 kubectl 命令, 且能连上集群
 
 
 我们先从最简单的体验开始
@@ -66,6 +66,11 @@ velero backup get
 
 ![velero backup get](/assets/velero-backupNrestore.assets/IMG_3623.PNG)
 
+### 恢复指定的 namespace
+
+```shell
+velero restore create --from-backup <backup name> --include-namespaces <your namespace>
+```
 
 至此体验结束, 下面是一些自定义配置
 
@@ -140,7 +145,7 @@ velero backup-location set <bsl-name> \
 ```
 
 
-### 几个常用的命令
+### 几个常用的命令总结
 
 - 手动备份整个集群
 
