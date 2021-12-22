@@ -6,9 +6,7 @@ categories: diary
 
 #### 要求
 
-- kubernetes 版本 1.7+ 
-> velero 的每个主版本对 kuberetes 的版本要求不同，详情请参考官方文档说明。[官方文档通道](https://velero.io/docs/v1.7/)
-
+- kubernetes 版本 1.7+，velero 的每个主版本对 kuberetes 的版本要求不同，详情请参考官方文档说明。[官方文档通道](https://velero.io/docs/v1.7/)
 - velero 所在服务器有 kubectl 命令, 且能连上集群
 
 **我们先从最简单的体验开始**
@@ -33,9 +31,9 @@ aws_access_key_id = <your key_id>
 aws_secret_access_key = <your secret>
 ```
 
-#### 3. 安装 velero server
+#### 3. 安装 velero 服务端
 
-velero 提供了很多 stroage provider, 能将备份文件存储到比如 aws, aliyun-oss 中, 他们大都是支持 s3 接口的. 下面这个例子使用 s3 接口兼容的对象存储:
+通过 velero 客户端在 kubernetes 中安装 deployment/velero，velero 提供了很多 stroage provider, 能将备份文件存储到比如 aws, aliyun-oss 中, 他们大都是支持 s3 接口的. 下面这个例子使用 s3 接口兼容的对象存储:
 
 ```shell
 BUCKET=<your bucket>
@@ -122,25 +120,25 @@ velero backup-location set <bsl-name> \
 
 #### 几个常用的命令总结
 
-1. 手动备份整个集群
+- 手动备份整个集群
 
 ```shell
 velero backup create first-all-ns
 ```
 
-2. 每日定时更新整个集群
+- 每日定时更新整个集群
 
 ```shell
 velero schedule create all-ns-daily --schedule="@daily"
 ```
 
-3. 恢复指定的 namespace
+- 恢复指定的 namespace
 
 ```shell
 velero restore create --from-backup all-ns-daily-202110110523 --include-namespaces your-namespace
 ```
 
-4. 查看所有的备份
+- 查看所有的备份
 
 ```shell
 velero backup get
