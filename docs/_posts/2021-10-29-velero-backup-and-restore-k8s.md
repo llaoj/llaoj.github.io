@@ -16,7 +16,7 @@ categories: diary
 
 - 首先安装 velero 客户端
 
-下载二进制安装包, 点击 ` latest release`, 下载 `velero-v1.7.0-linux-amd64.tag.gz` (以 release 页面为准), 解压
+下载二进制安装包, 点击 `latest release`, 下载 `velero-v1.7.0-linux-amd64.tag.gz` (以 release 页面为准), 解压
 
 ```shell
 tar -xvf <RELEASE-TARBALL-NAME>.tar.gz
@@ -94,7 +94,7 @@ kubectl -n velero get BackupStorageLocations
 kubectl -n velero get VolumeSnapshotLocation
 ```
 
-### 创建 BackupStorageLocations
+### 创建/更换 BackupStorageLocations
 
 首先, 创建后端存储使用的密钥文件
 
@@ -104,7 +104,7 @@ kubectl -n velero get VolumeSnapshotLocation
 kubectl create secret generic -n velero credentials --from-file=bsl=</path/to/credentialsfile>
 ```
 
-这会创建一个叫 credentials 的 secret, 键: `bsl`, 值: `</path/to/credentialsfile>`, 后面 velero 和 BackupStorageLocations 通讯时候就用这个 credentials
+这里创建一个叫 credentials 的 secret, 键: `bsl`, 值: `</path/to/credentialsfile>`, 后面 velero 和 BackupStorageLocations 通讯时候就用这个 credentials
 
 下面使用这个 secret 创建 BackupStorageLocations
 
@@ -170,3 +170,21 @@ velero restore create --from-backup all-ns-daily-202110110523 --include-namespac
 ```shell
 velero backup get
 ```
+
+---
+
+### 2021.12.22日补充
+
+问题1:
+
+我在使用 `velero v1.1.0` 备份一个经过二开的 kubernetes 集群， 发现每次执行 schedule 都会报错。
+
+```
+level=error msg="backup failed" controller=backup error="rpc error: code = Unknown desc = EOF,..."
+
+logSource="pkg/controller/backup_controller.go:233"
+```
+
+google 发现有人遇到了这个问题，大概是内存不够导致通讯失败。 [参考 issue](https://github.com/vmware-tanzu/velero/issues/1986)
+
+按照 @skriss 所说， 提高了 `deployment/velero` 问题就解决了， 我的配置是 `1024Mi`
