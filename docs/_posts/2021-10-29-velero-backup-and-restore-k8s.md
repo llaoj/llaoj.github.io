@@ -135,8 +135,12 @@ velero schedule create all-ns-daily --schedule="@daily"
 - 恢复指定的 namespace
 
 ```shell
-velero restore create --from-backup all-ns-daily-202110110523 --include-namespaces your-namespace
+velero restore create --from-backup <backup name> \
+--include-namespaces <namespace name> \
+--restore-volumes=false \
+--include-cluster-resources=false
 ```
+忽略恢复存储卷，忽略恢复集群资源，默认都是true。根据自己实际情况配置。
 
 - 查看所有的备份
 
