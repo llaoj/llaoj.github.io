@@ -5,7 +5,7 @@ title: "关于"
 bookComments: false
 ---
 
-_水善利万物而不争, 处众人之所恶, 故几于道_
+_上善若水, 水善利万物而不争._
 
 专注云原生领域, 包括容器, 微服务, Service Mesh, Serverless, Devops, Gitops等技术, 热衷于参与开源软件和开源社区. 
 
