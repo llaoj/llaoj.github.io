@@ -11,7 +11,7 @@ categories:
 - "technology"
 ---
 
-[MetalLB概念安装配置和使用请查看](/posts/2205/metalb/)
+[MetalLB概念安装配置和使用请查看](/posts/2205/metalb)
 
 ## 测试组件的版本情况
 
