@@ -1,6 +1,6 @@
 title = "老J的博客"
 baseURL = "https://blog.llaoj.cn/"
-theme = "hugo-book"
+theme = "github.com/alex-shpak/hugo-book"
 defaultContentLanguage = 'zh'
 
 # (Optional) Set this to true if you use capital letters in file names
@@ -13,10 +13,6 @@ enableGitInfo = true
 # (Optional) Theme is intended for documentation use, therefore it doesn't render taxonomy.
 # You can remove related files with config below
 # disableKinds = ['taxonomy', 'taxonomyTerm']
-
-[module]
-[[module.imports]]
-path = 'github.com/alex-shpak/hugo-book'
 
 [menu]
 # [[menu.before]]
