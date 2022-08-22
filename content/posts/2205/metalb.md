@@ -6,7 +6,7 @@ date: "2022-05-30"
 menu: "main"
 draft: false
 tags:
-- kubernetes
+- metallb
 categories:
 - "technology"
 ---
