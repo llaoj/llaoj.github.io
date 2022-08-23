@@ -6,23 +6,34 @@ bookComments: false
 
 # 为云原生做一点贡献!
 
-## Tempora nisi nunc
+## 一直是一个学生
 
-Lorem **markdownum** emicat gestu. Cannis sol pressit ducta. **Est** Idaei,
-tremens ausim se tutaeque, illi ulnis hausit, sed, lumina cutem. Quae avis
-sequens!
+喜欢技术, 喜欢云原生. 我们的工作/人生需要不断总结和复盘, 归纳整理. 这里是我记录学习过程, 积累经验, 总结工作的地方. 如果恰好对你也有所帮助, 我真的会很高兴. 水平一般, 能力有限, 希望我们能共同进步, 多创造点价值, 多帮助到别人, 不枉此生!
 
-    var panel = ram_design;
-    if (backup + system) {
-        file.readPoint = network_native;
-        sidebar_engine_device(cell_tftp_raster,
-                dual_login_paper.adf_vci.application_reader_design(
-                graphicsNvramCdma, lpi_footer_snmp, integer_model));
+```
+package main
+
+import (
+    "fmt"
+    "math/rand"
+    "time"
+)
+
+func main() {
+    fmt.Println("Hello, world!")
+    rand.Seed(time.Now().UnixNano())
+    for year := 1; year <= rand.Intn(100); year++ {
+        fmt.Println("Learn, Work, Life...")
+        fmt.Println("Review")
     }
+    fmt.Println("Goodbye, world!")
+}
 
-## Locis suis novi cum suoque decidit eadem
+```
 
-Idmoniae ripis, at aves, ali missa adest, ut _et autem_, et ab?
+## 我平时还做了点小工具和小项目
+
+它们解决了工作中的一个痛点, 能给工作带来便捷, 弥补了行业内一点点的小空缺, 如果你正好需要, 那真太好了!
 
 {{< columns >}}
 ## OAuth2&SSO
