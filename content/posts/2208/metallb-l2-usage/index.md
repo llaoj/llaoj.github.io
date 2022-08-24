@@ -125,3 +125,30 @@ EOF
 经测试访问正常:
 
 ![pasted-image](images/index/20220822173731.png)
+
+## 手动指定IP
+
+现在我们看nginx-manual的external-ip是:
+
+![pasted-image](images/index/20220824132218.png)
+
+下面我手动将其ip指定为`10.206.65.225`, 使用如下命令:
+
+```shell
+kubectl -n without-istio patch service nginx-manual -p '
+{
+    "spec": {
+        "loadBalancerIP": "10.206.65.225"
+    }
+}'
+```
+
+请看发生的变化:
+
+![pasted-image](images/index/20220824132351.png)
+
+可见external-ip地址按照我们的要求发生了变化. 下面测试下请求连通性:
+
+![pasted-image](images/index/20220824132447.png)
+
+访问正常.
