@@ -16,4 +16,6 @@ _上善若水, 水善利万物而不争._
 
 你可以通过我的邮箱联系到我: [qustwwy@163.com](mailto:qustwwy@163.com)  
 
-或者, 你可以添加我的微信: qustwwy
+或者, 你可以添加我的微信
+
+![pasted-image](images/_index/20220829112243.png)
