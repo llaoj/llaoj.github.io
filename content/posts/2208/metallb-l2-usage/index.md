@@ -152,3 +152,41 @@ kubectl -n without-istio patch service nginx-manual -p '
 ![pasted-image](images/index/20220824132447.png)
 
 访问正常.
+
+## 当地址池IP不够用时
+
+当前`expensive`地址池只有两个IP地址:
+
+![pasted-image](images/index/20220830113703.png)
+
+这两个地址已经被service占用:
+
+![pasted-image](images/index/20220830114116.png)
+
+下面指定该地址池, 创建第三个service, 我们看看会发生什么
+
+```shell
+kubectl apply -f - <<EOF
+apiVersion: v1
+kind: Service
+metadata:
+  annotations:
+    metallb.universe.tf/address-pool: expensive
+  name: nginx-manual-2
+  namespace: without-istio
+spec:
+  ports:
+  - port: 80
+    protocol: TCP
+    targetPort: 80
+  selector:
+    app: nginx
+  type: LoadBalancer
+EOF
+```
+
+![pasted-image](images/index/20220830114342.png)
+
+我们发现, 该service的EXTERNAL-IP处于`pending`状态, 并且会看到一条Warning级别的事件, 提示地址池中没有可分配的IP了.
+
+因此, 当地址池中IP数量不够用的时候, Service的EXTERNAL-IP会处于挂起状态, 并发送事件提示地址池中无可分配IP地址.
