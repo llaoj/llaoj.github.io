@@ -3,7 +3,7 @@ title: "使用etcdctl查看kubernetes存储的内容"
 description: ""
 summary: ""
 date: "2022-08-29"
-bookToC: true
+bookToC: false
 draft: false
 tags:
 - etcd
