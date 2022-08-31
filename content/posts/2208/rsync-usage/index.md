@@ -18,7 +18,7 @@ categories:
 先检查有没有安装rsync:
 
 ```shell
-rsync -v
+rsync -h
 ```
 
 如果没有安装, 使用下面的命令安装:
@@ -140,7 +140,7 @@ tcp    LISTEN     0      5      [::]:873       [::]:*       users:(("rsync",pid=
 echo "6j_ioU1xA" > /etc/rsync.password
 chmod 600 /etc/rsync.password
 # 开始同步文件到10.206.38.30
-rsync -avzP /opt/test/ rsync@10.206.38.30::test --password-file=/etc/rsync.password
+rsync -avzPh /opt/test/ rsync@10.206.38.30::test --password-file=/etc/rsync.password
 ```
 
 参数说明:
@@ -161,6 +161,7 @@ rsync -avzP /opt/test/ rsync@10.206.38.30::test --password-file=/etc/rsync.passw
 -P                          等同于 --partial --progress
     --progress              显示传输进度
     --partial               保留部分传输(没传输完成)的文件
+-h, --human-readable        以易读的格式输出数字
 ```
 
 执行完成之后, 文件就会从当前机器拷贝到`10.206.38.30`上了.
@@ -170,6 +171,6 @@ rsync -avzP /opt/test/ rsync@10.206.38.30::test --password-file=/etc/rsync.passw
 ```shell
 cat >> /var/spool/cron/root <<EOF
 
-0 */2 * * * /bin/rsync -avzP /opt/test/ rsync@10.206.38.30::storage --password-file=/etc/rsync.password > /tmp/rsync-`date +"\%Y\%m\%d"`.log 2>&1
+0 */2 * * * /bin/rsync -avzPh /opt/test/ rsync@10.206.38.30::storage --password-file=/etc/rsync.password > /tmp/rsync.log 2>&1
 EOF
 ```
