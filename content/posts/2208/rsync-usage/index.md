@@ -170,7 +170,6 @@ rsync -avzP /opt/test/ rsync@10.206.38.30::test --password-file=/etc/rsync.passw
 ```shell
 cat >> /var/spool/cron/root <<EOF
 
-# export dce hostpath to vm
 0 */2 * * * /bin/rsync -avzP /opt/test/ rsync@10.206.38.30::storage --password-file=/etc/rsync.password > /tmp/rsync-`date +"\%Y\%m\%d"`.log 2>&1
 EOF
 ```
