@@ -3,7 +3,6 @@ title: "在istio service mesh中使用nginx反向代理"
 description: ""
 summary: ""
 date: "2022-08-08"
-menu: "main"
 bookToC: true
 draft: false
 tags:
