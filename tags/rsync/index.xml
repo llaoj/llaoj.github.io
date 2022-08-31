@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8" standalone="yes"?><rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom"><channel><title>rsync on 老J的博客</title><link>https://blog.llaoj.cn/tags/rsync/</link><description>Recent content in rsync on 老J的博客</description><generator>Hugo -- gohugo.io</generator><lastBuildDate>Tue, 30 Aug 2022 00:00:00 +0000</lastBuildDate><atom:link href="https://blog.llaoj.cn/tags/rsync/index.xml" rel="self" type="application/rss+xml"/><item><title>使用rsync在主机之间同步目录</title><link>https://blog.llaoj.cn/posts/2208/rsync-usage/</link><pubDate>Tue, 30 Aug 2022 00:00:00 +0000</pubDate><guid>https://blog.llaoj.cn/posts/2208/rsync-usage/</guid><description>rsync安装 # 在传输双方的服务器上都安装rsync软件. 如果服务器上有rsync可以跳过.
 先检查有没有安装rsync:
-rsync -v 如果没有安装, 使用下面的命令安装:
+rsync -h 如果没有安装, 使用下面的命令安装:
 # Debian sudo apt-get install rsync # Red Hat sudo yum install rsync # Arch Linux sudo pacman -S rsync 启动rsync守护进程 # rsync使用最多的是ssh模式. 在现代的公司中, 出于安全的原因, 很多ssh是被禁止使用的. 所以, 我们可以使用rsync的守护进程模式. 一起看看怎么用吧.
 rsync守护进程部署在传输双方(发送方或者接受方)的任何一端都可以的.
 下面的配置和命令中, 我以发送方(10.138.228.201)和接收方(10.206.38.30)为例.
