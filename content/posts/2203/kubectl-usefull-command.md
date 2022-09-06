@@ -68,3 +68,9 @@ name:.metadata.name,images: [{image: .spec.containers[]?.image}]}'
 {"name":"fz-wms-fz-wms-78657df596-s9zbr","images":[{"image": "registry
 .example.com/18678868396/wms:1.1.55"}]}
 ```
+
+## 删除集群中所有被驱逐到Pods记录
+
+```shell
+kubectl get pods --all-namespaces -owide | grep Evicted | awk '{print "kubectl -n "$1" delete pods "$2}' | xargs -I {} sh -c "{}"
+```
