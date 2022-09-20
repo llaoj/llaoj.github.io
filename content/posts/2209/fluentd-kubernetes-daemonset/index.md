@@ -18,6 +18,8 @@ categories:
 
 本文使用的kubernetes版本为: 1.22.8
 
+请注意下文配置中`<var>`标记, 需要根据需求自行替换.
+
 ## 创建命名空间
 
 本项目所有的资源创建在logging下, 先创建它:
@@ -31,7 +33,7 @@ kubectl create ns $NAMESPACE
 
 创建服务账号并赋予集群查看的权限, 使用下面的命令:
 
-```shell
+```sh
 kubectl -n $NAMESPACE create -f - <<EOF
 apiVersion: v1
 kind: ServiceAccount
@@ -42,7 +44,7 @@ EOF
 
 创建绑定关系:
 
-```shell
+```sh
 kubectl create -f - <<EOF
 kind: ClusterRoleBinding
 apiVersion: rbac.authorization.k8s.io/v1
@@ -88,7 +90,7 @@ vi /tmp/fluent.conf
   <rule>
     key $.kubernetes.labels.collect-logs
     pattern /^true$/
-    tag collect-logs.hdd
+    tag collect-logs.<cluster-name>
   </rule>
 </match>
 
@@ -180,22 +182,26 @@ spec:
         effect: NoSchedule
       - key: node-role.kubernetes.io/master
         effect: NoSchedule
+      - effect: NoSchedule
+        key: dedicated
+        operator: Equal
+        value: ingress-nginx
+      - effect: NoSchedule
+        key: area.network
+        operator: Equal
+        value: DMZ
       containers:
       - name: fluentd
         image: fluent/fluentd-kubernetes-daemonset:v1.15.2-debian-elasticsearch7-1.0
         env:
           - name:  FLUENT_ELASTICSEARCH_HOST
-            value: "10.206.99.51"
+            value: "<es-host>"
           - name:  FLUENT_ELASTICSEARCH_PORT
-            value: "9201"
-          # X-Pack Authentication
-          # =====================
+            value: "<es-port>"
           - name: FLUENT_ELASTICSEARCH_USER
-            value: "developer"
+            value: "<es-user>"
           - name: FLUENT_ELASTICSEARCH_PASSWORD
-            value: "Cosmo@2021"
-          - name: FLUENT_ELASTICSEARCH_LOGSTASH_PREFIX
-            value: "kubernetes-logs"
+            value: "<es-password>"
           - name: FLUENT_ELASTICSEARCH_LOG_ES_400_REASON
             value: "true"
           - name: FLUENT_CONTAINER_TAIL_PARSER_TYPE
