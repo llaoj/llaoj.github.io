@@ -155,8 +155,15 @@ kubectl -n $NAMESPACE create configmap fluentd-conf --from-file=fluent.conf=/tmp
 
 ## 创建daemonset部署
 
+先创建deployment部署文件:
+
 ```sh
-kubectl -n $NAMESPACE apply -f - <<EOF
+vi /tmp/deployment.yaml
+```
+
+将下面的内容拷贝进去,之后`:wq`:
+
+```yaml
 apiVersion: apps/v1
 kind: DaemonSet
 metadata:
@@ -236,5 +243,8 @@ spec:
       - name: config-volume
         configMap:
           name: fluentd-conf
-EOF
+```
+
+```sh
+kubectl -n $NAMESPACE apply -f /tmp/deployment.yaml
 ```
