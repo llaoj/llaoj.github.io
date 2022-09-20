@@ -74,7 +74,7 @@ EOF
 vi /tmp/fluent.conf
 ```
 
-写入下面的内容
+写入下面的内容, 这里的内容大部分是官方镜像中拷贝过来的, 我在其基础之上做了一些修改以满足我的需求:
 
 ```sh
 # AUTOMATICALLY GENERATED
