@@ -16,6 +16,8 @@ categories:
 - https://github.com/fluent/fluentd-kubernetes-daemonse
 
 
+本文使用的kubernetes版本为: 1.22.8
+
 ## 创建命名空间
 
 本项目所有的资源创建在logging下, 先创建它:
@@ -30,7 +32,7 @@ kubectl create ns $NAMESPACE
 创建服务账号并赋予集群查看的权限, 使用下面的命令:
 
 ```shell
-kubectl -n $NAMESPACE  create -f - <<EOF
+kubectl -n $NAMESPACE create -f - <<EOF
 apiVersion: v1
 kind: ServiceAccount
 metadata:
@@ -43,7 +45,7 @@ EOF
 ```shell
 kubectl create -f - <<EOF
 kind: ClusterRoleBinding
-apiVersion: rbac.authorization.k8s.io/v1beta1
+apiVersion: rbac.authorization.k8s.io/v1
 metadata:
   name: fluentd
 roleRef:
@@ -146,12 +148,13 @@ vi /tmp/fluent.conf
 生成configmap:
 
 ```sh
-kubectl create configmap fluentd-conf --from-file=fluent.conf=/tmp/fluent.conf
+kubectl -n $NAMESPACE create configmap fluentd-conf --from-file=fluent.conf=/tmp/fluent.conf
 ```
 
 ## 创建daemonset部署
 
-```yaml
+```sh
+kubectl -n $NAMESPACE apply -f - <<EOF
 apiVersion: apps/v1
 kind: DaemonSet
 metadata:
@@ -182,17 +185,23 @@ spec:
         image: fluent/fluentd-kubernetes-daemonset:v1.15.2-debian-elasticsearch7-1.0
         env:
           - name:  FLUENT_ELASTICSEARCH_HOST
-            value: "elasticsearch-logging"
+            value: "10.206.99.51"
           - name:  FLUENT_ELASTICSEARCH_PORT
-            value: "9200"
+            value: "9201"
           # X-Pack Authentication
           # =====================
           - name: FLUENT_ELASTICSEARCH_USER
-            value: "elastic"
+            value: "developer"
           - name: FLUENT_ELASTICSEARCH_PASSWORD
-            value: "changeme"
+            value: "Cosmo@2021"
           - name: FLUENT_ELASTICSEARCH_LOGSTASH_PREFIX
             value: "kubernetes-logs"
+          - name: FLUENT_ELASTICSEARCH_LOG_ES_400_REASON
+            value: "true"
+          - name: FLUENT_CONTAINER_TAIL_PARSER_TYPE
+            value: "/^(?<time>.+) (?<stream>stdout|stderr) [^ ]* (?<log>.*)$/"
+          - name: FLUENT_CONTAINER_TAIL_PARSER_TIME_FORMAT
+            value: "%Y-%m-%dT%H:%M:%S.%N%:z"
         resources:
           limits:
             memory: 200Mi
@@ -221,4 +230,5 @@ spec:
       - name: config-volume
         configMap:
           name: fluentd-conf
+EOF
 ```
