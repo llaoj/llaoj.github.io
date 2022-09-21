@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8" standalone="yes"?><rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom"><channel><title>文章 on 老J的博客</title><link>https://blog.llaoj.cn/posts/</link><description>Recent content in 文章 on 老J的博客</description><generator>Hugo -- gohugo.io</generator><lastBuildDate>Tue, 20 Sep 2022 00:00:00 +0000</lastBuildDate><atom:link href="https://blog.llaoj.cn/posts/index.xml" rel="self" type="application/rss+xml"/><item><title>使用fluentd收集kubernetes日志</title><link>https://blog.llaoj.cn/posts/2209/fluentd-kubernetes-daemonset/</link><pubDate>Tue, 20 Sep 2022 00:00:00 +0000</pubDate><guid>https://blog.llaoj.cn/posts/2209/fluentd-kubernetes-daemonset/</guid><description>这篇文章使用fluentd官方提供的kubernetes部署方案daemonset来部署日志收集, 参考项目地址:
-https://github.com/fluent/fluentd-kubernetes-daemonse 本文使用的kubernetes版本为: 1.22.8
+https://github.com/fluent/fluentd-kubernetes-daemonset 本文使用的kubernetes版本为: 1.22.8
 请注意下文配置中&amp;lt;var&amp;gt;标记, 需要根据需求自行替换.
 创建命名空间 # 本项目所有的资源创建在logging下, 先创建它:
 NAMESPACE=logging kubectl create ns $NAMESPACE 先创建服务账号 # 创建服务账号并赋予集群查看的权限, 使用下面的命令:

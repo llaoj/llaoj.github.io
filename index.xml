@@ -19,7 +19,7 @@ Body参数说明
 再次点击另外一个应用, 无需登录, 直接回掉返回code. 同样, 使用code该应用可以调用 接口1-2 获取access_token.
 退出 # 在测试应用1或测试应用2中都可以调用退出逻辑
 退出 点击退出按钮, 会重新回到登录页面, 该服务退出后, 再次点击测试应用1/测试应用2会要求登录.</description></item><item><title>接入指引</title><link>https://blog.llaoj.cn/docs/oauth2nsso/for-client/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>https://blog.llaoj.cn/docs/oauth2nsso/for-client/</guid><description>客户端接入 # 下面是用户第一次登录客户端(待接入应用)过程的时序图, 图中标明了 API 调用时机, 可以参考该流程接入SSO</description></item><item><title>使用fluentd收集kubernetes日志</title><link>https://blog.llaoj.cn/posts/2209/fluentd-kubernetes-daemonset/</link><pubDate>Tue, 20 Sep 2022 00:00:00 +0000</pubDate><guid>https://blog.llaoj.cn/posts/2209/fluentd-kubernetes-daemonset/</guid><description>这篇文章使用fluentd官方提供的kubernetes部署方案daemonset来部署日志收集, 参考项目地址:
-https://github.com/fluent/fluentd-kubernetes-daemonse 本文使用的kubernetes版本为: 1.22.8
+https://github.com/fluent/fluentd-kubernetes-daemonset 本文使用的kubernetes版本为: 1.22.8
 请注意下文配置中&amp;lt;var&amp;gt;标记, 需要根据需求自行替换.
 创建命名空间 # 本项目所有的资源创建在logging下, 先创建它:
 NAMESPACE=logging kubectl create ns $NAMESPACE 先创建服务账号 # 创建服务账号并赋予集群查看的权限, 使用下面的命令:
