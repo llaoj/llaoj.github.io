@@ -3,7 +3,7 @@ title: "使用fluentd收集kubernetes日志"
 description: ""
 summary: ""
 date: "2022-09-20"
-bookToC: true
+bookToC: false
 draft: false
 tags:
 - fluentd
