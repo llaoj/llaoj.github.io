@@ -13,7 +13,7 @@ categories:
 
 这篇文章使用fluentd官方提供的kubernetes部署方案daemonset来部署日志收集, 参考项目地址:
 
-- https://github.com/fluent/fluentd-kubernetes-daemonse
+- https://github.com/fluent/fluentd-kubernetes-daemonset
 
 
 本文使用的kubernetes版本为: 1.22.8
