@@ -189,14 +189,6 @@ spec:
         effect: NoSchedule
       - key: node-role.kubernetes.io/master
         effect: NoSchedule
-      - effect: NoSchedule
-        key: dedicated
-        operator: Equal
-        value: ingress-nginx
-      - effect: NoSchedule
-        key: area.network
-        operator: Equal
-        value: DMZ
       containers:
       - name: fluentd
         image: fluent/fluentd-kubernetes-daemonset:v1.15.2-debian-elasticsearch7-1.0
