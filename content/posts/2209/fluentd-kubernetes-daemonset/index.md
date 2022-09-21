@@ -16,7 +16,9 @@ categories:
 - https://github.com/fluent/fluentd-kubernetes-daemonset
 
 
-本文使用的kubernetes版本为: 1.22.8
+本文使用的kubernetes版本为: `1.22.8`
+
+使用fluentd镜像为: `fluent/fluentd-kubernetes-daemonset:v1.15.2-debian-elasticsearch7-1.0`
 
 请注意下文配置中`<var>`标记, 需要根据需求自行替换.
 
