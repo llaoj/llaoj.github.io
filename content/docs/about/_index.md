@@ -7,7 +7,7 @@ bookComments: false
 
 _上善若水, 水善利万物而不争._
 
-专注云原生领域, 包括容器, 微服务, Service Mesh, Serverless, Devops, Gitops等技术, 热衷于参与开源软件和开源社区. 
+专注云原生领域, 包括容器, 微服务, Service Mesh, Serverless, Devops, Gitops等技术, 热衷于参与开源软件和开源社区. 主导微服务化体系建设，推动传统运维方式向云原生方向转型.
 
 
 我的Github地址: https://github.com/llaoj

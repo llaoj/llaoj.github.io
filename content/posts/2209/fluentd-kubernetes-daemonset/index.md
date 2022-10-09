@@ -205,10 +205,11 @@ spec:
             value: "<es-password>"
           - name: FLUENT_ELASTICSEARCH_LOG_ES_400_REASON
             value: "true"
-          - name: FLUENT_CONTAINER_TAIL_PARSER_TYPE
-            value: "/^(?<time>.+) (?<stream>stdout|stderr) [^ ]* (?<log>.*)$/"
-          - name: FLUENT_CONTAINER_TAIL_PARSER_TIME_FORMAT
-            value: "%Y-%m-%dT%H:%M:%S.%N%:z"
+          # when log formt is not json, unconmment
+          # - name: FLUENT_CONTAINER_TAIL_PARSER_TYPE
+          #   value: "/^(?<time>.+) (?<stream>stdout|stderr) [^ ]* (?<log>.*)$/"
+          # - name: FLUENT_CONTAINER_TAIL_PARSER_TIME_FORMAT
+          #   value: "%Y-%m-%dT%H:%M:%S.%N%:z"
         resources:
           limits:
             memory: 200Mi
