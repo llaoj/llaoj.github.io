@@ -195,6 +195,10 @@ spec:
       - name: fluentd
         image: fluent/fluentd-kubernetes-daemonset:v1.15.2-debian-elasticsearch7-1.0
         env:
+          - name: K8S_NODE_NAME
+            valueFrom:
+              fieldRef:
+                fieldPath: spec.nodeName
           - name:  FLUENT_ELASTICSEARCH_HOST
             value: "<es-host>"
           - name:  FLUENT_ELASTICSEARCH_PORT
