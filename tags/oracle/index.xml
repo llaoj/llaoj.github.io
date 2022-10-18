@@ -1,8 +1,7 @@
 <?xml version="1.0" encoding="utf-8" standalone="yes"?><rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom"><channel><title>oracle on 老J的博客</title><link>https://blog.llaoj.cn/tags/oracle/</link><description>Recent content in oracle on 老J的博客</description><generator>Hugo -- gohugo.io</generator><lastBuildDate>Tue, 18 Oct 2022 00:00:00 +0000</lastBuildDate><atom:link href="https://blog.llaoj.cn/tags/oracle/index.xml" rel="self" type="application/rss+xml"/><item><title>使用docker运行orcale xe 11g</title><link>https://blog.llaoj.cn/posts/2210/docker-oracle-xe-11g/</link><pubDate>Tue, 18 Oct 2022 00:00:00 +0000</pubDate><guid>https://blog.llaoj.cn/posts/2210/docker-oracle-xe-11g/</guid><description>注意: 根据自己实际情况, 替换下面名利中的&amp;lt;var&amp;gt;变量.
-启动orcale xe 11g容器 # 镜像项目地址(这里面也有详细使用文档): https://hub.docker.com/r/oracleinanutshell/oracle-xe-11g
+启动orcale xe 11g容器 # Oracle Database XE是人人都可免费使用的 Oracle 数据库. Oracle Database XE 支持最高:
+最多 12 GB 的用户磁盘数据 最大 2 GB 的数据库 RAM 最多 2 个 CPU 线程 产品介绍地址: https://www.oracle.com/cn/database/technologies/appdev/xe.html
+Oracle Database XE支持容器化部署, 镜像项目地址(这里面也有详细使用文档): https://hub.docker.com/r/oracleinanutshell/oracle-xe-11g
 docker run -d \ --name=oracle-xe-11g \ --restart=always \ -p 31521:1521 \ -p 38080:8080 \ -v /data/oracle_data:/opt/oracle/oracle_data:rw \ oracleinanutshell/oracle-xe-11g 该镜像的默认登录信息是:
 hostname: localhost port: 31521 sid: xe username: system 或者 sys password: oracle 使用了主机的/data/oracle_data目录作为数据持久化目录.
-创建表空间和用户 # 进入容器 docker exec -it oracle-xe-11g bash 创建表空间 切换到oracle用户
-su oracle 以管理员身份登录数据库, 两个系统账号 system/sys 密码默认都是 oracle
-sqlplus system/oracle as sysdba 创建表空间
-create tablespace &amp;lt;tablespace-name&amp;gt; logging datafile &amp;#39;/opt/oracle/oracle_data/&amp;lt;tablespace-name&amp;gt;.dbf&amp;#39; size 200m autoextend on next 100m maxsize unlimited; 创建用户并分配权限 创建和业务相关的用户, 并赋予相关权限.</description></item></channel></rss>
+创建表空间和用户 # 进入容器 docker exec -it oracle-xe-11g bash 创建表空间 切换到oracle用户</description></item></channel></rss>
