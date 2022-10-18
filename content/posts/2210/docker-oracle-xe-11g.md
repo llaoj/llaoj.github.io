@@ -3,7 +3,7 @@ title: "使用docker运行orcale xe 11g"
 description: ""
 summary: ""
 date: "2022-10-18"
-bookToC: false
+bookToC: true
 draft: false
 tags:
 - docker
@@ -110,11 +110,35 @@ startup;
 
 ## 导入dmp文件
 
-很多使用, 我们需要从dmp文件导入oracle数据库, 参考上面步骤, 进入oracle-xe-11g容器, 切换到 `oracle` 用户执行下面命令, 把数据和结构一起导入. 先将dmp文件放到主机目录`/data/oracle_data/imp/drg.dmp`中, 这样映射到容器中需要导入的数据目录为: `/opt/oracle/oracle_data/imp/drg.dmp`, 执行导入:
+很多使用, 我们需要从dmp文件导入oracle数据库, 参考上面步骤, 进入oracle-xe-11g容器, 切换到 `oracle` 用户执行下面命令, 把数据和结构一起导入. 先将dmp文件放到主机目录`/data/oracle_data/imp/example.dmp`中, 这样映射到容器中需要导入的数据目录为: `/opt/oracle/oracle_data/imp/example.dmp`, 执行导入:
 
 ```
-imp <user-name>/<user-password> file=/opt/oracle/oracle_data/dmp/<user-name>.dmp full=y;
+imp <user-name>/<user-password> file=/opt/oracle/oracle_data/dmp/example.dmp full=y;
 ```
+
+## 修改管理员账号密码
+
+为了安全, 我们可能需要修改管理员账号的密码, 可以使用管理员免密登录:
+
+```
+sqlplus /nolog;
+conn /as sysdba;
+```
+
+查看用户列表:
+
+```
+select username from dba_users;
+```
+
+修改密码:
+
+```
+alter user sys identified by <new-password>;
+alter user system identified by <new-password>;
+```
+
+`system`是数据库内置的一个普通管理员, 手工创建的任何用户在被授予dba角色后都跟这个用户差不多. `sys`是数据库的超级用户, 数据库内很多重要的东西(数据字典表、内置包、静态数据字典视图等)都属于这个用户, `sys`用户必须以sysdba身份登录.
 
 ## 登录信息
 
