@@ -42,9 +42,6 @@ func main() {
 
 <--->
 
-## Suis quot vota
+## KubeFinder
 
-Ea _furtique_ risere fratres edidit terrae magis. Colla tam mihi tenebat:
-miseram excita suadent es pecudes iam. Concilio _quam_ velatus posset ait quod
-nunc! Fragosis suae dextra geruntur functus vulgata.
-{{< /columns >}}
+[llaoj/kube-finder](https://github.com/llaoj/kube-finder)是一个独立的容器文件服务器, 可以通过该项目查看集群容器内的文件目录结构, 在指定的目录中上传或者下载文件. 使用golang开发, 直接操作主机 `/proc/<pid>/root` 目录, 速度很快. 这是一个后端项目, 仅提供API.
