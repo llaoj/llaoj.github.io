@@ -16,7 +16,15 @@ categories:
 
 ## 启动orcale xe 11g容器
 
-镜像项目地址(这里面也有详细使用文档): https://hub.docker.com/r/oracleinanutshell/oracle-xe-11g
+Oracle Database XE是人人都可免费使用的 Oracle 数据库. Oracle Database XE 支持最高:
+
+- 最多 12 GB 的用户磁盘数据
+- 最大 2 GB 的数据库 RAM
+- 最多 2 个 CPU 线程 
+
+产品介绍地址: https://www.oracle.com/cn/database/technologies/appdev/xe.html
+
+Oracle Database XE支持容器化部署, 镜像项目地址(这里面也有详细使用文档): https://hub.docker.com/r/oracleinanutshell/oracle-xe-11g
 
 ```shell
 docker run -d \
