@@ -215,7 +215,7 @@ spec:
           # - name: FLUENT_CONTAINER_TAIL_PARSER_TIME_FORMAT
           #   value: "%Y-%m-%dT%H:%M:%S.%N%:z"
           - name: FLUENT_ELASTICSEARCH_BUFFER_QUEUE_LIMIT_LENGTH
-            value: 256
+            value: "256"
         resources:
           limits:
             memory: 200Mi
