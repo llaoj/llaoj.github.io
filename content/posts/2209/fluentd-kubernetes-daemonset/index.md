@@ -106,6 +106,7 @@ vi /tmp/fluent.conf
    @id out_es
    @log_level info
    include_tag_key true
+   hosts "#{ENV['FLUENT_ELASTICSEARCH_HOSTS']}"
    host "#{ENV['FLUENT_ELASTICSEARCH_HOST']}"
    port "#{ENV['FLUENT_ELASTICSEARCH_PORT']}"
    path "#{ENV['FLUENT_ELASTICSEARCH_PATH']}"
@@ -199,10 +200,13 @@ spec:
             valueFrom:
               fieldRef:
                 fieldPath: spec.nodeName
-          - name:  FLUENT_ELASTICSEARCH_HOST
-            value: "<es-host>"
-          - name:  FLUENT_ELASTICSEARCH_PORT
-            value: "<es-port>"
+          - name:  FLUENT_ELASTICSEARCH_HOSTS
+            value: "<es1-host>:<es1-port>,<es2-host>:<es2-port>,<es3-host>:<es3-port>"
+          # or use
+          # - name:  FLUENT_ELASTICSEARCH_HOST
+          #   value: "<es-host>"
+          # - name:  FLUENT_ELASTICSEARCH_PORT
+          #   value: "<es-port>"
           - name: FLUENT_ELASTICSEARCH_USER
             value: "<es-user>"
           - name: FLUENT_ELASTICSEARCH_PASSWORD
