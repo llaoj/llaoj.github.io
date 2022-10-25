@@ -140,12 +140,14 @@ vi /tmp/fluent.conf
    id_key _hash
    remove_keys _hash
    <buffer>
+     @type file
+     path /var/log/fluent/buf
      flush_thread_count "#{ENV['FLUENT_ELASTICSEARCH_BUFFER_FLUSH_THREAD_COUNT'] || '8'}"
      flush_interval "#{ENV['FLUENT_ELASTICSEARCH_BUFFER_FLUSH_INTERVAL'] || '5s'}"
      chunk_limit_size "#{ENV['FLUENT_ELASTICSEARCH_BUFFER_CHUNK_LIMIT_SIZE'] || '2M'}"
-     queue_limit_length "#{ENV['FLUENT_ELASTICSEARCH_BUFFER_QUEUE_LIMIT_LENGTH'] || '32'}"
      retry_max_interval "#{ENV['FLUENT_ELASTICSEARCH_BUFFER_RETRY_MAX_INTERVAL'] || '30'}"
      retry_forever true
+     overflow_action "#{ENV['FLUENT_ELASTICSEARCH_BUFFER_OVERFLOW_ACTION'] || 'throw_exception'}"
    </buffer>
 </match>
 ```
@@ -218,8 +220,8 @@ spec:
           #   value: "/^(?<time>.+) (?<stream>stdout|stderr) [^ ]* (?<log>.*)$/"
           # - name: FLUENT_CONTAINER_TAIL_PARSER_TIME_FORMAT
           #   value: "%Y-%m-%dT%H:%M:%S.%N%:z"
-          - name: FLUENT_ELASTICSEARCH_BUFFER_QUEUE_LIMIT_LENGTH
-            value: "256"
+          - name: FLUENT_ELASTICSEARCH_BUFFER_OVERFLOW_ACTION
+            value: "block"
         resources:
           limits:
             memory: 600Mi
