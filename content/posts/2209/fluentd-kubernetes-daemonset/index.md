@@ -141,7 +141,7 @@ vi /tmp/fluent.conf
    remove_keys _hash
    <buffer>
      @type file
-     path /var/log/fluent/buf
+     path /var/log/fluentd/buffers
      flush_thread_count "#{ENV['FLUENT_ELASTICSEARCH_BUFFER_FLUSH_THREAD_COUNT'] || '8'}"
      flush_interval "#{ENV['FLUENT_ELASTICSEARCH_BUFFER_FLUSH_INTERVAL'] || '5s'}"
      chunk_limit_size "#{ENV['FLUENT_ELASTICSEARCH_BUFFER_CHUNK_LIMIT_SIZE'] || '2M'}"
