@@ -86,10 +86,14 @@ vi /tmp/fluentd.conf
   @type kafka2
   @id out_kafka2
 
+  @log_level trace
+  get_kafka_client_log true
+  
   brokers "#{ENV['FLUENT_KAFKA2_BROKERS']}"
-  sasl_scram_username "#{ENV['FLUENT_KAFKA2_USERNAME']}"
-  sasl_scram_password "#{ENV['FLUENT_KAFKA2_PASSWORD']}"
-  sasl_scram_mechanism 'sha256'
+  username "#{ENV['FLUENT_KAFKA2_USERNAME']}"
+  password "#{ENV['FLUENT_KAFKA2_PASSWORD']}"
+  scram_mechanism 'sha256'
+  sasl_over_ssl false
 
   use_event_time true
 

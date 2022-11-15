@@ -92,16 +92,16 @@ vi /tmp/fluent.conf
   <rule>
     key $.kubernetes.labels.collect-logs
     pattern /^true$/
-    tag collect-logs.<cluster-name>
+    tag collect-logs.true
   </rule>
 </match>
 
-<filter collect-logs.**>
+<filter collect-logs.true>
   @type elasticsearch_genid
   hash_id_key _hash
 </filter>
 
-<match collect-logs.**>
+<match collect-logs.true>
    @type elasticsearch
    @id out_es
    @log_level info
