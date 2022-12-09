@@ -98,7 +98,6 @@ vi /tmp/fluentd.conf
   use_event_time true
 
   default_topic "#{ENV['FLUENT_KAFKA2_DEFAULT_TOPIC'] || nil}"
-  default_partition_key "#{ENV['FLUENT_KAFKA2_DEFAULT_PARTITION_KEY'] || nil}"
   default_message_key "#{ENV['FLUENT_KAFKA2_DEFAULT_MESSAGE_KEY'] || nil}"
   exclude_topic_key "#{ENV['FLUENT_KAFKA2_EXCLUDE_TOPIC_KEY'] || false}"
   exclude_partition_key "#{ENV['FLUENT_KAFKA2_EXCLUDE_PARTITION_KEY'] || false}"
