@@ -5,20 +5,20 @@ https://github.com/fluent/fluentd-kubernetes-daemonset 本文使用的kubernetes
 创建命名空间 # 本项目所有的资源创建在logging下, 先创建它:
 NAMESPACE=logging kubectl create ns $NAMESPACE 先创建服务账号 # 创建服务账号并赋予集群查看的权限, 使用下面的命令:
 kubectl -n $NAMESPACE create -f - <<EOF apiVersion: v1 kind: ServiceAccount metadata: name: fluentd EOF 创建绑定关系:
-kubectl create -f - <<EOF kind: ClusterRoleBinding apiVersion: rbac.authorization.k8s.io/v1 metadata: name: fluentd roleRef: kind: ClusterRole name: view apiGroup: rbac.authorization.k8s.io subjects: - kind: ServiceAccount name: fluentd namespace: ${NAMESPACE} EOF 创建配置文件 # 配置文件使用configmap挂在在容器内, 覆盖容器内现有的配置文件. 根据实际需要创建配置文件."><meta name=theme-color content="#FFFFFF"><meta name=color-scheme content="light dark"><meta property="og:title" content="使用fluentd收集kubernetes日志"><meta property="og:description" content="这篇文章使用fluentd官方提供的kubernetes部署方案daemonset来部署日志收集, 参考项目地址:
+kubectl create -f - <<EOF kind: ClusterRoleBinding apiVersion: rbac.authorization.k8s.io/v1 metadata: name: fluentd roleRef: kind: ClusterRole name: view apiGroup: rbac.authorization.k8s.io subjects: - kind: ServiceAccount name: fluentd namespace: ${NAMESPACE} EOF 创建配置文件 # 配置文件使用configmap挂在在容器内, 覆盖容器内现有的配置文件. 根据实际需要创建配置文件."><meta name=theme-color content="#FFFFFF"><meta name=color-scheme content="light dark"><meta property="og:title" content="使用fluentd收集kubernetes日志并推送到ES"><meta property="og:description" content="这篇文章使用fluentd官方提供的kubernetes部署方案daemonset来部署日志收集, 参考项目地址:
 https://github.com/fluent/fluentd-kubernetes-daemonset 本文使用的kubernetes版本为: 1.22.8
 使用fluentd镜像为: fluent/fluentd-kubernetes-daemonset:v1.15.2-debian-elasticsearch7-1.0
 请注意下文配置中<var>标记, 需要根据需求自行替换.
 创建命名空间 # 本项目所有的资源创建在logging下, 先创建它:
 NAMESPACE=logging kubectl create ns $NAMESPACE 先创建服务账号 # 创建服务账号并赋予集群查看的权限, 使用下面的命令:
 kubectl -n $NAMESPACE create -f - <<EOF apiVersion: v1 kind: ServiceAccount metadata: name: fluentd EOF 创建绑定关系:
-kubectl create -f - <<EOF kind: ClusterRoleBinding apiVersion: rbac.authorization.k8s.io/v1 metadata: name: fluentd roleRef: kind: ClusterRole name: view apiGroup: rbac.authorization.k8s.io subjects: - kind: ServiceAccount name: fluentd namespace: ${NAMESPACE} EOF 创建配置文件 # 配置文件使用configmap挂在在容器内, 覆盖容器内现有的配置文件. 根据实际需要创建配置文件."><meta property="og:type" content="article"><meta property="og:url" content="https://blog.llaoj.cn/posts/2209/fluentd-kubernetes-daemonset/"><meta property="article:section" content="posts"><meta property="article:published_time" content="2022-09-20T00:00:00+00:00"><meta property="article:modified_time" content="2022-09-20T00:00:00+00:00"><title>使用fluentd收集kubernetes日志 | 老J的博客</title><link rel=manifest href=/manifest.json><link rel=icon href=/favicon.png type=image/x-icon><link rel=stylesheet href=/book.min.18b5d651e266e5e9cfc7455e2e50eb1b74a62aee16cf204b69de1d9e695276f7.css integrity="sha256-GLXWUeJm5enPx0VeLlDrG3SmKu4WzyBLad4dnmlSdvc=" crossorigin=anonymous><script defer src=/flexsearch.min.js></script>
-<script defer src=/zh.search.min.f924b7a7522d6473b5440a0957a4905b3b7e3412244ef60040bb21a51eb13cea.js integrity="sha256-+SS3p1ItZHO1RAoJV6SQWzt+NBIkTvYAQLshpR6xPOo=" crossorigin=anonymous></script>
+kubectl create -f - <<EOF kind: ClusterRoleBinding apiVersion: rbac.authorization.k8s.io/v1 metadata: name: fluentd roleRef: kind: ClusterRole name: view apiGroup: rbac.authorization.k8s.io subjects: - kind: ServiceAccount name: fluentd namespace: ${NAMESPACE} EOF 创建配置文件 # 配置文件使用configmap挂在在容器内, 覆盖容器内现有的配置文件. 根据实际需要创建配置文件."><meta property="og:type" content="article"><meta property="og:url" content="https://blog.llaoj.cn/posts/2209/fluentd-kubernetes-daemonset/"><meta property="article:section" content="posts"><meta property="article:published_time" content="2022-09-20T00:00:00+00:00"><meta property="article:modified_time" content="2022-09-20T00:00:00+00:00"><title>使用fluentd收集kubernetes日志并推送到ES | 老J的博客</title><link rel=manifest href=/manifest.json><link rel=icon href=/favicon.png type=image/x-icon><link rel=stylesheet href=/book.min.18b5d651e266e5e9cfc7455e2e50eb1b74a62aee16cf204b69de1d9e695276f7.css integrity="sha256-GLXWUeJm5enPx0VeLlDrG3SmKu4WzyBLad4dnmlSdvc=" crossorigin=anonymous><script defer src=/flexsearch.min.js></script>
+<script defer src=/zh.search.min.02becbbc2ba62115c50fcb4c3c7dc8a6d9685d9f9b173b24eb3219843f470f52.js integrity="sha256-Ar7LvCumIRXFD8tMPH3IptloXZ+bFzsk6zIZhD9HD1I=" crossorigin=anonymous></script>
 <script defer src=/sw.min.6f6f90fcb8eb1c49ec389838e6b801d0de19430b8e516902f8d75c3c8bd98739.js integrity="sha256-b2+Q/LjrHEnsOJg45rgB0N4ZQwuOUWkC+NdcPIvZhzk=" crossorigin=anonymous></script>
 <script>var _hmt=_hmt||[];(function(){var e,t=document.createElement("script");t.src="https://hm.baidu.com/hm.js?7f5ad4632a1c2df3cd8e1199a7aaf48a",e=document.getElementsByTagName("script")[0],e.parentNode.insertBefore(t,e)})()</script></head><body dir=ltr><input type=checkbox class="hidden toggle" id=menu-control>
 <input type=checkbox class="hidden toggle" id=toc-control><main class="container flex"><aside class=book-menu><div class=book-menu-content><nav><h2 class=book-brand><a class="flex align-center" href=/><img src=/j.png alt=Logo><span>老J的博客</span></a></h2><div class=book-search><input type=text id=book-search-input placeholder=搜索 aria-label=搜索 maxlength=64 data-hotkeys=s/><div class="book-search-spinner hidden"></div><ul id=book-search-results></ul></div><ul><li><a href=/posts/>文章</a></li></ul><ul><li><a href=/docs/oauth2nsso/>OAuth2&SSO</a><ul><li><a href=/docs/oauth2nsso/configuration/>配置</a></li><li><a href=/docs/oauth2nsso/apis/>API列表</a></li><li><a href=/docs/oauth2nsso/deploy/>部署</a></li><li><a href=/docs/oauth2nsso/note/>说明</a></li><li><a href=/docs/oauth2nsso/demo/>示例</a></li><li><a href=/docs/oauth2nsso/for-client/>接入指引</a></li></ul></li><li><a href=/docs/about/>关于</a><ul></ul></li></ul><ul><li><a href=https://www.cncf.io/ target=_blank rel=noopener>CNCF</a></li><li><a href=https://ebpf.io/ target=_blank rel=noopener>eBPF</a></li></ul><div class=book-menu-after><a href=https://www.rutron.net/ target=_blank>@如创科技</a><br>提供云计算支持</div></nav><script>(function(){var e=document.querySelector("aside .book-menu-content");addEventListener("beforeunload",function(){localStorage.setItem("menu.scrollTop",e.scrollTop)}),e.scrollTop=localStorage.getItem("menu.scrollTop")})()</script></div></aside><div class=book-page><header class=book-header><div class="flex align-center justify-between"><label for=menu-control><img src=/svg/menu.svg class=book-icon alt=Menu></label>
-<strong>使用fluentd收集kubernetes日志</strong>
-<label for=toc-control></label></div></header><article class=markdown><h1><a href=/posts/2209/fluentd-kubernetes-daemonset/>使用fluentd收集kubernetes日志</a></h1><h5>2022-9-20</h5><div><a href=/categories/technology/>technology</a></div><div><a href=/tags/fluentd/>fluentd</a></div><p>这篇文章使用fluentd官方提供的kubernetes部署方案daemonset来部署日志收集, 参考项目地址:</p><ul><li><a href=https://github.com/fluent/fluentd-kubernetes-daemonset>https://github.com/fluent/fluentd-kubernetes-daemonset</a></li></ul><p>本文使用的kubernetes版本为: <code>1.22.8</code></p><p>使用fluentd镜像为: <code>fluent/fluentd-kubernetes-daemonset:v1.15.2-debian-elasticsearch7-1.0</code></p><p>请注意下文配置中<code>&lt;var></code>标记, 需要根据需求自行替换.</p><h2 id=创建命名空间>创建命名空间
+<strong>使用fluentd收集kubernetes日志并推送到ES</strong>
+<label for=toc-control></label></div></header><article class=markdown><h1><a href=/posts/2209/fluentd-kubernetes-daemonset/>使用fluentd收集kubernetes日志并推送到ES</a></h1><h5>2022-9-20</h5><div><a href=/categories/technology/>technology</a></div><div><a href=/tags/fluentd/>fluentd</a></div><p>这篇文章使用fluentd官方提供的kubernetes部署方案daemonset来部署日志收集, 参考项目地址:</p><ul><li><a href=https://github.com/fluent/fluentd-kubernetes-daemonset>https://github.com/fluent/fluentd-kubernetes-daemonset</a></li></ul><p>本文使用的kubernetes版本为: <code>1.22.8</code></p><p>使用fluentd镜像为: <code>fluent/fluentd-kubernetes-daemonset:v1.15.2-debian-elasticsearch7-1.0</code></p><p>请注意下文配置中<code>&lt;var></code>标记, 需要根据需求自行替换.</p><h2 id=创建命名空间>创建命名空间
 <a class=anchor href=#%e5%88%9b%e5%bb%ba%e5%91%bd%e5%90%8d%e7%a9%ba%e9%97%b4>#</a></h2><p>本项目所有的资源创建在logging下, 先创建它:</p><div class=highlight><pre tabindex=0 style=background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-sh data-lang=sh><span style=display:flex><span><span style=color:teal>NAMESPACE</span><span style=color:#000;font-weight:700>=</span>logging
 </span></span><span style=display:flex><span>kubectl create ns <span style=color:teal>$NAMESPACE</span>
 </span></span></code></pre></div><h2 id=先创建服务账号>先创建服务账号
@@ -57,16 +57,16 @@ kubectl create -f - <<EOF kind: ClusterRoleBinding apiVersion: rbac.authorizatio
 </span></span><span style=display:flex><span>  &lt;rule&gt;
 </span></span><span style=display:flex><span>    key $.kubernetes.labels.collect-logs
 </span></span><span style=display:flex><span>    pattern /^true$/
-</span></span><span style=display:flex><span>    tag collect-logs.&lt;cluster-name&gt;
+</span></span><span style=display:flex><span>    tag collect-logs.true
 </span></span><span style=display:flex><span>  &lt;/rule&gt;
 </span></span><span style=display:flex><span>&lt;/match&gt;
 </span></span><span style=display:flex><span>
-</span></span><span style=display:flex><span>&lt;filter collect-logs.**&gt;
+</span></span><span style=display:flex><span>&lt;filter collect-logs.true&gt;
 </span></span><span style=display:flex><span>  @type elasticsearch_genid
 </span></span><span style=display:flex><span>  hash_id_key _hash
 </span></span><span style=display:flex><span>&lt;/filter&gt;
 </span></span><span style=display:flex><span>
-</span></span><span style=display:flex><span>&lt;match collect-logs.**&gt;
+</span></span><span style=display:flex><span>&lt;match collect-logs.true&gt;
 </span></span><span style=display:flex><span>   @type elasticsearch
 </span></span><span style=display:flex><span>   @id out_es
 </span></span><span style=display:flex><span>   @log_level info
@@ -106,13 +106,13 @@ kubectl create -f - <<EOF kind: ClusterRoleBinding apiVersion: rbac.authorizatio
 </span></span><span style=display:flex><span>   remove_keys _hash
 </span></span><span style=display:flex><span>   &lt;buffer&gt;
 </span></span><span style=display:flex><span>     @type file
-</span></span><span style=display:flex><span>     path /var/log/fluentd/buffers
+</span></span><span style=display:flex><span>     path /var/log/fluentd/buffers-es
 </span></span><span style=display:flex><span>     flush_thread_count <span style=color:#d14>&#34;#{ENV[&#39;FLUENT_ELASTICSEARCH_BUFFER_FLUSH_THREAD_COUNT&#39;] || &#39;8&#39;}&#34;</span>
 </span></span><span style=display:flex><span>     flush_interval <span style=color:#d14>&#34;#{ENV[&#39;FLUENT_ELASTICSEARCH_BUFFER_FLUSH_INTERVAL&#39;] || &#39;5s&#39;}&#34;</span>
 </span></span><span style=display:flex><span>     chunk_limit_size <span style=color:#d14>&#34;#{ENV[&#39;FLUENT_ELASTICSEARCH_BUFFER_CHUNK_LIMIT_SIZE&#39;] || &#39;2M&#39;}&#34;</span>
 </span></span><span style=display:flex><span>     retry_max_interval <span style=color:#d14>&#34;#{ENV[&#39;FLUENT_ELASTICSEARCH_BUFFER_RETRY_MAX_INTERVAL&#39;] || &#39;30&#39;}&#34;</span>
 </span></span><span style=display:flex><span>     retry_forever <span style=color:#0086b3>true</span>
-</span></span><span style=display:flex><span>     overflow_action <span style=color:#d14>&#34;#{ENV[&#39;FLUENT_ELASTICSEARCH_BUFFER_OVERFLOW_ACTION&#39;] || &#39;throw_exception&#39;}&#34;</span>
+</span></span><span style=display:flex><span>     overflow_action <span style=color:#d14>&#34;#{ENV[&#39;FLUENT_ELASTICSEARCH_BUFFER_OVERFLOW_ACTION&#39;] || &#39;block&#39;}&#34;</span>
 </span></span><span style=display:flex><span>   &lt;/buffer&gt;
 </span></span><span style=display:flex><span>&lt;/match&gt;
 </span></span></code></pre></div><p>生成configmap:</p><div class=highlight><pre tabindex=0 style=background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-sh data-lang=sh><span style=display:flex><span>kubectl -n <span style=color:teal>$NAMESPACE</span> create configmap fluentd-conf --from-file<span style=color:#000;font-weight:700>=</span>fluent.conf<span style=color:#000;font-weight:700>=</span>/tmp/fluent.conf
@@ -169,8 +169,6 @@ kubectl create -f - <<EOF kind: ClusterRoleBinding apiVersion: rbac.authorizatio
 </span></span></span><span style=display:flex><span><span style=color:#bbb>          </span><span style=color:#998;font-style:italic>#   value: &#34;/^(?&lt;time&gt;.+) (?&lt;stream&gt;stdout|stderr) [^ ]* (?&lt;log&gt;.*)$/&#34;</span><span style=color:#bbb>
 </span></span></span><span style=display:flex><span><span style=color:#bbb>          </span><span style=color:#998;font-style:italic># - name: FLUENT_CONTAINER_TAIL_PARSER_TIME_FORMAT</span><span style=color:#bbb>
 </span></span></span><span style=display:flex><span><span style=color:#bbb>          </span><span style=color:#998;font-style:italic>#   value: &#34;%Y-%m-%dT%H:%M:%S.%N%:z&#34;</span><span style=color:#bbb>
-</span></span></span><span style=display:flex><span><span style=color:#bbb>          </span>- <span style=color:navy>name</span>:<span style=color:#bbb> </span>FLUENT_ELASTICSEARCH_BUFFER_OVERFLOW_ACTION<span style=color:#bbb>
-</span></span></span><span style=display:flex><span><span style=color:#bbb>            </span><span style=color:navy>value</span>:<span style=color:#bbb> </span><span style=color:#d14>&#34;block&#34;</span><span style=color:#bbb>
 </span></span></span><span style=display:flex><span><span style=color:#bbb>        </span><span style=color:navy>resources</span>:<span style=color:#bbb>
 </span></span></span><span style=display:flex><span><span style=color:#bbb>          </span><span style=color:navy>limits</span>:<span style=color:#bbb>
 </span></span></span><span style=display:flex><span><span style=color:#bbb>            </span><span style=color:navy>memory</span>:<span style=color:#bbb> </span>600Mi<span style=color:#bbb>
