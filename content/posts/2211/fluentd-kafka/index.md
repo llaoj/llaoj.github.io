@@ -3,7 +3,7 @@ title: "使用fluentd收集kubernetes日志并推送给kafka"
 description: ""
 summary: ""
 date: "2022-10-03"
-bookToC: true
+bookToC: false
 draft: false
 tags:
 - fluentd
