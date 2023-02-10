@@ -85,27 +85,24 @@ vi /tmp/fluentd.conf
 <match **>
   @type kafka2
   @id out_kafka2
-
-  @log_level trace
-  get_kafka_client_log true
   
   brokers "#{ENV['FLUENT_KAFKA2_BROKERS']}"
-  username "#{ENV['FLUENT_KAFKA2_USERNAME']}"
-  password "#{ENV['FLUENT_KAFKA2_PASSWORD']}"
-  scram_mechanism 'sha256'
-  sasl_over_ssl false
+  # username "#{ENV['FLUENT_KAFKA2_USERNAME']}"
+  # password "#{ENV['FLUENT_KAFKA2_PASSWORD']}"
+  # scram_mechanism 'sha256'
+  # sasl_over_ssl false
 
   use_event_time true
+  get_kafka_client_log "#{ENV['FLUENT_KAFKA2_GET_KAFKA_CLIENT_LOG'] || false}"
 
   default_topic "#{ENV['FLUENT_KAFKA2_DEFAULT_TOPIC'] || nil}"
-  default_message_key "#{ENV['FLUENT_KAFKA2_DEFAULT_MESSAGE_KEY'] || nil}"
-  exclude_topic_key "#{ENV['FLUENT_KAFKA2_EXCLUDE_TOPIC_KEY'] || false}"
+  message_key_key "#{ENV['FLUENT_KAFKA2_MESSAGE_KEY_KEY'] || nil}"
+  default_partition_key "#{ENV['FLUENT_KAFKA2_DEFAULT_PARTITION_KEY'] || nil}"
   exclude_partition_key "#{ENV['FLUENT_KAFKA2_EXCLUDE_PARTITION_KEY'] || false}"
-  get_kafka_client_log "#{ENV['FLUENT_KAFKA2_GET_KAFKA_CLIENT_LOG'] || false}"
 
   <buffer>
     @type file
-    path /var/log/fluentd/buffers-kafka
+    path /var/log/fluentd/kafka-buffers
     flush_thread_count "#{ENV['FLUENT_BUFFER_FLUSH_THREAD_COUNT'] || '8'}"
     flush_interval "#{ENV['FLUENT_BUFFER_FLUSH_INTERVAL'] || '5s'}"
     chunk_limit_size "#{ENV['FLUENT_BUFFER_CHUNK_LIMIT_SIZE'] || '2M'}"
@@ -183,11 +180,7 @@ spec:
               fieldRef:
                 fieldPath: spec.nodeName
           - name: FLUENT_KAFKA2_BROKERS
-            value: "10.206.97.57:9092,10.206.97.58:9092,10.206.97.59:9092"
-          - name: FLUENT_KAFKA2_USERNAME
-            value: "container"
-          - name: FLUENT_KAFKA2_PASSWORD
-            value: "pX0yKix@8p3&ktu4PI"
+            value: "10.206.1.1:9092,10.206.1.2:9092,10.206.1.3:9092"
           - name: FLUENT_KAFKA2_DEFAULT_TOPIC
             value: "container-log"
           # when log formt is not json, unconmment
