@@ -137,7 +137,9 @@ kubectl -n $NAMESPACE create configmap fluentd-kafka-conf --from-file=fluent.con
 
 ## 创建daemonset部署
 
-该镜像配置都是通过环境变量先创建deployment部署文件:
+该镜像配置都是通过环境变量, 请根据自己实际情况修改环境变量配置.
+
+先创建deployment部署文件:
 
 ```sh
 vi /tmp/deployment.yaml
