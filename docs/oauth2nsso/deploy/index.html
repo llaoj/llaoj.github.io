@@ -1,45 +1,190 @@
-<!doctype html><html lang=zh dir=ltr><head><meta charset=utf-8><meta name=viewport content="width=device-width,initial-scale=1"><meta name=description content="部署 # 修改配置和完善代码 # 克隆到代码之后，首先需要进行配置文件的修改和部分代码逻辑的编写：
-# 克隆源码 git clone git@github.com:llaoj/oauth2nsso.git cd oauth2nsso # 根据实际情况修改配置 cp config.example.yaml /etc/oauth2nsso/config.yaml vi /etc/oauth2nsso/config.yaml ... # 如果使用 LDAP方式 验证用户, 直接修改配置文件即可 # OR # 如果使用 数据库方式 验证用户, 需要修改源码 # 主要修改登录部分逻辑: # 文件: model/user.go:21 # 方法: Authentication() ... 使用docker部署 # [推荐] 容器化部署比较方便进行大规模部署，是当下的趋势。需要本地有 docker 环境。
-# 构建镜像 docker build -t <image:tag> . # 运行 docker run --rm --name=oauth2nsso --restart=always -d \ -p 9096:9096 \ -v <path to config."><meta name=theme-color content="#FFFFFF"><meta name=color-scheme content="light dark"><meta property="og:title" content="部署"><meta property="og:description" content="部署 # 修改配置和完善代码 # 克隆到代码之后，首先需要进行配置文件的修改和部分代码逻辑的编写：
-# 克隆源码 git clone git@github.com:llaoj/oauth2nsso.git cd oauth2nsso # 根据实际情况修改配置 cp config.example.yaml /etc/oauth2nsso/config.yaml vi /etc/oauth2nsso/config.yaml ... # 如果使用 LDAP方式 验证用户, 直接修改配置文件即可 # OR # 如果使用 数据库方式 验证用户, 需要修改源码 # 主要修改登录部分逻辑: # 文件: model/user.go:21 # 方法: Authentication() ... 使用docker部署 # [推荐] 容器化部署比较方便进行大规模部署，是当下的趋势。需要本地有 docker 环境。
-# 构建镜像 docker build -t <image:tag> . # 运行 docker run --rm --name=oauth2nsso --restart=always -d \ -p 9096:9096 \ -v <path to config."><meta property="og:type" content="article"><meta property="og:url" content="https://blog.llaoj.cn/docs/oauth2nsso/deploy/"><meta property="article:section" content="docs"><title>部署 | 老J的博客</title><link rel=manifest href=/manifest.json><link rel=icon href=/favicon.png type=image/x-icon><link rel=stylesheet href=/book.min.18b5d651e266e5e9cfc7455e2e50eb1b74a62aee16cf204b69de1d9e695276f7.css integrity="sha256-GLXWUeJm5enPx0VeLlDrG3SmKu4WzyBLad4dnmlSdvc=" crossorigin=anonymous><script defer src=/flexsearch.min.js></script>
-<script defer src=/zh.search.min.02becbbc2ba62115c50fcb4c3c7dc8a6d9685d9f9b173b24eb3219843f470f52.js integrity="sha256-Ar7LvCumIRXFD8tMPH3IptloXZ+bFzsk6zIZhD9HD1I=" crossorigin=anonymous></script>
+<!doctype html><html lang=zh dir=ltr>
+<head>
+<meta charset=utf-8>
+<meta name=viewport content="width=device-width,initial-scale=1">
+<meta name=description content="部署 #  修改配置和完善代码 #  克隆到代码之后，首先需要进行配置文件的修改和部分代码逻辑的编写：
+# 克隆源码 git clone git@github.com:llaoj/oauth2nsso.git cd oauth2nsso # 根据实际情况修改配置 cp config.example.yaml /etc/oauth2nsso/config.yaml vi /etc/oauth2nsso/config.yaml ... # 如果使用 LDAP方式 验证用户, 直接修改配置文件即可 # OR # 如果使用 数据库方式 验证用户, 需要修改源码 # 主要修改登录部分逻辑: # 文件: model/user.go:21 # 方法: Authentication() ... 使用docker部署 #  [推荐] 容器化部署比较方便进行大规模部署，是当下的趋势。需要本地有 docker 环境。
+# 构建镜像 docker build -t <image:tag> . # 运行 docker run --rm --name=oauth2nsso --restart=always -d \ -p 9096:9096 \ -v <path to config.">
+<meta name=theme-color content="#FFFFFF">
+<meta name=color-scheme content="light dark"><meta property="og:title" content="部署">
+<meta property="og:description" content="部署 #  修改配置和完善代码 #  克隆到代码之后，首先需要进行配置文件的修改和部分代码逻辑的编写：
+# 克隆源码 git clone git@github.com:llaoj/oauth2nsso.git cd oauth2nsso # 根据实际情况修改配置 cp config.example.yaml /etc/oauth2nsso/config.yaml vi /etc/oauth2nsso/config.yaml ... # 如果使用 LDAP方式 验证用户, 直接修改配置文件即可 # OR # 如果使用 数据库方式 验证用户, 需要修改源码 # 主要修改登录部分逻辑: # 文件: model/user.go:21 # 方法: Authentication() ... 使用docker部署 #  [推荐] 容器化部署比较方便进行大规模部署，是当下的趋势。需要本地有 docker 环境。
+# 构建镜像 docker build -t <image:tag> . # 运行 docker run --rm --name=oauth2nsso --restart=always -d \ -p 9096:9096 \ -v <path to config.">
+<meta property="og:type" content="article">
+<meta property="og:url" content="https://blog.llaoj.cn/docs/oauth2nsso/deploy/"><meta property="article:section" content="docs">
+<title>部署 | 老J的博客</title>
+<link rel=manifest href=/manifest.json>
+<link rel=icon href=/favicon.png type=image/x-icon>
+<link rel=stylesheet href=/book.min.18b5d651e266e5e9cfc7455e2e50eb1b74a62aee16cf204b69de1d9e695276f7.css integrity="sha256-GLXWUeJm5enPx0VeLlDrG3SmKu4WzyBLad4dnmlSdvc=" crossorigin=anonymous>
+<script defer src=/flexsearch.min.js></script>
+<script defer src=/zh.search.min.abbe5ab420c396d7e24c093dc83c6eaf070ba6629ccd1475a3bc5c001c790f13.js integrity="sha256-q75atCDDltfiTAk9yDxurwcLpmKczRR1o7xcABx5DxM=" crossorigin=anonymous></script>
 <script defer src=/sw.min.6f6f90fcb8eb1c49ec389838e6b801d0de19430b8e516902f8d75c3c8bd98739.js integrity="sha256-b2+Q/LjrHEnsOJg45rgB0N4ZQwuOUWkC+NdcPIvZhzk=" crossorigin=anonymous></script>
-<script>var _hmt=_hmt||[];(function(){var e,t=document.createElement("script");t.src="https://hm.baidu.com/hm.js?7f5ad4632a1c2df3cd8e1199a7aaf48a",e=document.getElementsByTagName("script")[0],e.parentNode.insertBefore(t,e)})()</script></head><body dir=ltr><input type=checkbox class="hidden toggle" id=menu-control>
-<input type=checkbox class="hidden toggle" id=toc-control><main class="container flex"><aside class=book-menu><div class=book-menu-content><nav><h2 class=book-brand><a class="flex align-center" href=/><img src=/j.png alt=Logo><span>老J的博客</span></a></h2><div class=book-search><input type=text id=book-search-input placeholder=搜索 aria-label=搜索 maxlength=64 data-hotkeys=s/><div class="book-search-spinner hidden"></div><ul id=book-search-results></ul></div><ul><li><a href=/posts/>文章</a></li></ul><ul><li><a href=/docs/oauth2nsso/>OAuth2&SSO</a><ul><li><a href=/docs/oauth2nsso/configuration/>配置</a></li><li><a href=/docs/oauth2nsso/apis/>API列表</a></li><li><a href=/docs/oauth2nsso/deploy/ class=active>部署</a></li><li><a href=/docs/oauth2nsso/note/>说明</a></li><li><a href=/docs/oauth2nsso/demo/>示例</a></li><li><a href=/docs/oauth2nsso/for-client/>接入指引</a></li></ul></li><li><a href=/docs/about/>关于</a><ul></ul></li></ul><ul><li><a href=https://www.cncf.io/ target=_blank rel=noopener>CNCF</a></li><li><a href=https://ebpf.io/ target=_blank rel=noopener>eBPF</a></li></ul><div class=book-menu-after><a href=https://www.rutron.net/ target=_blank>@如创科技</a><br>提供云计算支持</div></nav><script>(function(){var e=document.querySelector("aside .book-menu-content");addEventListener("beforeunload",function(){localStorage.setItem("menu.scrollTop",e.scrollTop)}),e.scrollTop=localStorage.getItem("menu.scrollTop")})()</script></div></aside><div class=book-page><header class=book-header><div class="flex align-center justify-between"><label for=menu-control><img src=/svg/menu.svg class=book-icon alt=Menu></label>
+<script>var _hmt=_hmt||[];(function(){var a=document.createElement("script"),b;a.src="https://hm.baidu.com/hm.js?7f5ad4632a1c2df3cd8e1199a7aaf48a",b=document.getElementsByTagName("script")[0],b.parentNode.insertBefore(a,b)})()</script>
+</head>
+<body dir=ltr>
+<input type=checkbox class="hidden toggle" id=menu-control>
+<input type=checkbox class="hidden toggle" id=toc-control>
+<main class="container flex">
+<aside class=book-menu>
+<div class=book-menu-content>
+<nav>
+<h2 class=book-brand>
+<a class="flex align-center" href=/><img src=/j.png alt=Logo><span>老J的博客</span>
+</a>
+</h2>
+<div class=book-search>
+<input type=text id=book-search-input placeholder=搜索 aria-label=搜索 maxlength=64 data-hotkeys=s/>
+<div class="book-search-spinner hidden"></div>
+<ul id=book-search-results></ul>
+</div>
+<ul>
+<li>
+<a href=/posts/>
+文章
+</a>
+</li>
+</ul>
+<ul>
+<li>
+<a href=/docs/oauth2nsso/>OAuth2&SSO</a>
+<ul>
+<li>
+<a href=/docs/oauth2nsso/configuration/>配置</a>
+</li>
+<li>
+<a href=/docs/oauth2nsso/apis/>API列表</a>
+</li>
+<li>
+<a href=/docs/oauth2nsso/deploy/ class=active>部署</a>
+</li>
+<li>
+<a href=/docs/oauth2nsso/note/>说明</a>
+</li>
+<li>
+<a href=/docs/oauth2nsso/demo/>示例</a>
+</li>
+<li>
+<a href=/docs/oauth2nsso/for-client/>接入指引</a>
+</li>
+</ul>
+</li>
+<li>
+<a href=/docs/about/>关于</a>
+<ul>
+</ul>
+</li>
+</ul>
+<ul>
+<li>
+<a href=https://www.cncf.io/ target=_blank rel=noopener>
+CNCF
+</a>
+</li>
+<li>
+<a href=https://ebpf.io/ target=_blank rel=noopener>
+eBPF
+</a>
+</li>
+</ul>
+<div class=book-menu-after>
+<a href=https://www.rutron.net/ target=_blank>@如创科技</a><br>提供云计算支持
+</div>
+</nav>
+<script>(function(){var a=document.querySelector("aside .book-menu-content");addEventListener("beforeunload",function(b){localStorage.setItem("menu.scrollTop",a.scrollTop)}),a.scrollTop=localStorage.getItem("menu.scrollTop")})()</script>
+</div>
+</aside>
+<div class=book-page>
+<header class=book-header>
+<div class="flex align-center justify-between">
+<label for=menu-control>
+<img src=/svg/menu.svg class=book-icon alt=Menu>
+</label>
 <strong>部署</strong>
-<label for=toc-control><img src=/svg/toc.svg class=book-icon alt="Table of Contents"></label></div><aside class="hidden clearfix"><nav id=TableOfContents><ul><li><a href=#修改配置和完善代码>修改配置和完善代码</a></li><li><a href=#使用docker部署>使用docker部署</a></li><li><a href=#基于源码部署>基于源码部署</a></li></ul></nav></aside></header><article class=markdown><h1 id=部署>部署
-<a class=anchor href=#%e9%83%a8%e7%bd%b2>#</a></h1><h2 id=修改配置和完善代码>修改配置和完善代码
-<a class=anchor href=#%e4%bf%ae%e6%94%b9%e9%85%8d%e7%bd%ae%e5%92%8c%e5%ae%8c%e5%96%84%e4%bb%a3%e7%a0%81>#</a></h2><p>克隆到代码之后，首先需要进行配置文件的修改和部分代码逻辑的编写：</p><div class=highlight><pre tabindex=0 style=background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-sh data-lang=sh><span style=display:flex><span><span style=color:#998;font-style:italic># 克隆源码</span>
-</span></span><span style=display:flex><span>git clone git@github.com:llaoj/oauth2nsso.git
-</span></span><span style=display:flex><span><span style=color:#0086b3>cd</span> oauth2nsso
-</span></span><span style=display:flex><span>
-</span></span><span style=display:flex><span><span style=color:#998;font-style:italic># 根据实际情况修改配置</span>
-</span></span><span style=display:flex><span>cp config.example.yaml /etc/oauth2nsso/config.yaml
-</span></span><span style=display:flex><span>vi /etc/oauth2nsso/config.yaml
-</span></span><span style=display:flex><span>...
-</span></span><span style=display:flex><span>
-</span></span><span style=display:flex><span><span style=color:#998;font-style:italic># 如果使用 LDAP方式 验证用户, 直接修改配置文件即可</span>
-</span></span><span style=display:flex><span><span style=color:#998;font-style:italic># OR</span>
-</span></span><span style=display:flex><span><span style=color:#998;font-style:italic># 如果使用 数据库方式 验证用户, 需要修改源码</span>
-</span></span><span style=display:flex><span><span style=color:#998;font-style:italic># 主要修改登录部分逻辑:</span>
-</span></span><span style=display:flex><span><span style=color:#998;font-style:italic># 文件: model/user.go:21</span>
-</span></span><span style=display:flex><span><span style=color:#998;font-style:italic># 方法: Authentication()</span>
-</span></span><span style=display:flex><span>...
-</span></span></code></pre></div><h2 id=使用docker部署>使用docker部署
-<a class=anchor href=#%e4%bd%bf%e7%94%a8docker%e9%83%a8%e7%bd%b2>#</a></h2><p><strong>[推荐]</strong> 容器化部署比较方便进行大规模部署，是当下的趋势。需要本地有 docker 环境。</p><div class=highlight><pre tabindex=0 style=background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-sh data-lang=sh><span style=display:flex><span><span style=color:#998;font-style:italic># 构建镜像</span>
-</span></span><span style=display:flex><span>docker build -t &lt;image:tag&gt; .
-</span></span><span style=display:flex><span>
-</span></span><span style=display:flex><span><span style=color:#998;font-style:italic># 运行</span>
-</span></span><span style=display:flex><span>docker run --rm --name<span style=color:#000;font-weight:700>=</span>oauth2nsso --restart<span style=color:#000;font-weight:700>=</span>always -d <span style=color:#d14>\
-</span></span></span><span style=display:flex><span><span style=color:#d14></span>-p 9096:9096 <span style=color:#d14>\
-</span></span></span><span style=display:flex><span><span style=color:#d14></span>-v &lt;path to config.yaml&gt;:/etc/oauth2nsso/config.yaml <span style=color:#d14>\
-</span></span></span><span style=display:flex><span><span style=color:#d14></span>&lt;image:tag&gt;
-</span></span></code></pre></div><h2 id=基于源码部署>基于源码部署
-<a class=anchor href=#%e5%9f%ba%e4%ba%8e%e6%ba%90%e7%a0%81%e9%83%a8%e7%bd%b2>#</a></h2><div class=highlight><pre tabindex=0 style=background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-sh data-lang=sh><span style=display:flex><span><span style=color:#998;font-style:italic># 在仓库根目录</span>
-</span></span><span style=display:flex><span><span style=color:#998;font-style:italic># 编译</span>
-</span></span><span style=display:flex><span>go build -mod<span style=color:#000;font-weight:700>=</span>vendor
-</span></span><span style=display:flex><span>
-</span></span><span style=display:flex><span><span style=color:#998;font-style:italic># 运行</span>
-</span></span><span style=display:flex><span>./oauth2nsso -config<span style=color:#000;font-weight:700>=</span>/etc/oauth2nsso/config.yaml
-</span></span></code></pre></div></article><footer class=book-footer><div class="flex flex-wrap justify-between"></div><script>(function(){function e(e){const t=window.getSelection(),n=document.createRange();n.selectNodeContents(e),t.removeAllRanges(),t.addRange(n)}document.querySelectorAll("pre code").forEach(t=>{t.addEventListener("click",function(){if(window.getSelection().toString())return;e(t.parentElement),navigator.clipboard&&navigator.clipboard.writeText(t.parentElement.textContent)})})})()</script></footer><div class=book-comments><link rel=stylesheet href=https://unpkg.com/gitalk/dist/gitalk.css><script src=https://unpkg.com/gitalk/dist/gitalk.min.js></script><div id=gitalk-container></div><script type=text/javascript>const gitalk=new Gitalk({clientID:"53c7373e7b1554a4abc3",clientSecret:"7c9dcef80ea6bde5d8695d1ab94bcef87063fb3b",repo:"llaoj.github.io",owner:"llaoj",admin:["llaoj"],id:location.pathname,distractionFreeMode:!1});gitalk.render("gitalk-container")</script></div><label for=menu-control class="hidden book-menu-overlay"></label></div><aside class=book-toc><div class=book-toc-content><nav id=TableOfContents><ul><li><a href=#修改配置和完善代码>修改配置和完善代码</a></li><li><a href=#使用docker部署>使用docker部署</a></li><li><a href=#基于源码部署>基于源码部署</a></li></ul></nav></div></aside></main></body></html>
+<label for=toc-control>
+<img src=/svg/toc.svg class=book-icon alt="Table of Contents">
+</label>
+</div>
+<aside class="hidden clearfix">
+<nav id=TableOfContents>
+<ul>
+<li><a href=#修改配置和完善代码>修改配置和完善代码</a></li>
+<li><a href=#使用docker部署>使用docker部署</a></li>
+<li><a href=#基于源码部署>基于源码部署</a></li>
+</ul>
+</nav>
+</aside>
+</header>
+<article class=markdown><h1 id=部署>
+部署
+<a class=anchor href=#%e9%83%a8%e7%bd%b2>#</a>
+</h1>
+<h2 id=修改配置和完善代码>
+修改配置和完善代码
+<a class=anchor href=#%e4%bf%ae%e6%94%b9%e9%85%8d%e7%bd%ae%e5%92%8c%e5%ae%8c%e5%96%84%e4%bb%a3%e7%a0%81>#</a>
+</h2>
+<p>克隆到代码之后，首先需要进行配置文件的修改和部分代码逻辑的编写：</p>
+<div class=highlight><pre tabindex=0 style=background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-sh data-lang=sh><span style=color:#998;font-style:italic># 克隆源码</span>
+git clone git@github.com:llaoj/oauth2nsso.git
+<span style=color:#0086b3>cd</span> oauth2nsso
+
+<span style=color:#998;font-style:italic># 根据实际情况修改配置</span>
+cp config.example.yaml /etc/oauth2nsso/config.yaml
+vi /etc/oauth2nsso/config.yaml
+...
+
+<span style=color:#998;font-style:italic># 如果使用 LDAP方式 验证用户, 直接修改配置文件即可</span>
+<span style=color:#998;font-style:italic># OR</span>
+<span style=color:#998;font-style:italic># 如果使用 数据库方式 验证用户, 需要修改源码</span>
+<span style=color:#998;font-style:italic># 主要修改登录部分逻辑:</span>
+<span style=color:#998;font-style:italic># 文件: model/user.go:21</span>
+<span style=color:#998;font-style:italic># 方法: Authentication()</span>
+...
+</code></pre></div><h2 id=使用docker部署>
+使用docker部署
+<a class=anchor href=#%e4%bd%bf%e7%94%a8docker%e9%83%a8%e7%bd%b2>#</a>
+</h2>
+<p><strong>[推荐]</strong> 容器化部署比较方便进行大规模部署，是当下的趋势。需要本地有 docker 环境。</p>
+<div class=highlight><pre tabindex=0 style=background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-sh data-lang=sh><span style=color:#998;font-style:italic># 构建镜像</span>
+docker build -t &lt;image:tag&gt; .
+
+<span style=color:#998;font-style:italic># 运行</span>
+docker run --rm --name<span style=color:#000;font-weight:700>=</span>oauth2nsso --restart<span style=color:#000;font-weight:700>=</span>always -d <span style=color:#d14>\
+</span><span style=color:#d14></span>-p 9096:9096 <span style=color:#d14>\
+</span><span style=color:#d14></span>-v &lt;path to config.yaml&gt;:/etc/oauth2nsso/config.yaml <span style=color:#d14>\
+</span><span style=color:#d14></span>&lt;image:tag&gt;
+</code></pre></div><h2 id=基于源码部署>
+基于源码部署
+<a class=anchor href=#%e5%9f%ba%e4%ba%8e%e6%ba%90%e7%a0%81%e9%83%a8%e7%bd%b2>#</a>
+</h2>
+<div class=highlight><pre tabindex=0 style=background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-sh data-lang=sh><span style=color:#998;font-style:italic># 在仓库根目录</span>
+<span style=color:#998;font-style:italic># 编译</span>
+go build -mod<span style=color:#000;font-weight:700>=</span>vendor
+
+<span style=color:#998;font-style:italic># 运行</span>
+./oauth2nsso -config<span style=color:#000;font-weight:700>=</span>/etc/oauth2nsso/config.yaml
+</code></pre></div></article>
+<footer class=book-footer>
+<div class="flex flex-wrap justify-between">
+</div>
+<script>(function(){function a(c){const a=window.getSelection(),b=document.createRange();b.selectNodeContents(c),a.removeAllRanges(),a.addRange(b)}document.querySelectorAll("pre code").forEach(b=>{b.addEventListener("click",function(c){if(window.getSelection().toString())return;a(b.parentElement),navigator.clipboard&&navigator.clipboard.writeText(b.parentElement.textContent)})})})()</script>
+</footer>
+<div class=book-comments><link rel=stylesheet href=https://unpkg.com/gitalk/dist/gitalk.css>
+<script src=https://unpkg.com/gitalk/dist/gitalk.min.js></script>
+<div id=gitalk-container></div>
+<script type=text/javascript>const gitalk=new Gitalk({clientID:'53c7373e7b1554a4abc3',clientSecret:'7c9dcef80ea6bde5d8695d1ab94bcef87063fb3b',repo:'llaoj.github.io',owner:'llaoj',admin:['llaoj'],id:location.pathname,distractionFreeMode:!1});gitalk.render('gitalk-container')</script></div>
+<label for=menu-control class="hidden book-menu-overlay"></label>
+</div>
+<aside class=book-toc>
+<div class=book-toc-content>
+<nav id=TableOfContents>
+<ul>
+<li><a href=#修改配置和完善代码>修改配置和完善代码</a></li>
+<li><a href=#使用docker部署>使用docker部署</a></li>
+<li><a href=#基于源码部署>基于源码部署</a></li>
+</ul>
+</nav>
+</div>
+</aside>
+</main>
+</body>
+</html>

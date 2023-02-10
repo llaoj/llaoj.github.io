@@ -1,26 +1,246 @@
-<!doctype html><html lang=zh dir=ltr><head><meta charset=utf-8><meta name=viewport content="width=device-width,initial-scale=1"><meta name=description content="这篇文章主要介绍了 Prometheus Operator 定义的几种自定义资源"><meta name=theme-color content="#FFFFFF"><meta name=color-scheme content="light dark"><meta property="og:title" content="Prometheus Operator 设计思路"><meta property="og:description" content="这篇文章主要介绍了 Prometheus Operator 定义的几种自定义资源"><meta property="og:type" content="article"><meta property="og:url" content="https://blog.llaoj.cn/posts/2202/prometheus-operator-design/"><meta property="article:section" content="posts"><meta property="article:published_time" content="2022-02-07T00:00:00+00:00"><meta property="article:modified_time" content="2022-02-07T00:00:00+00:00"><title>Prometheus Operator 设计思路 | 老J的博客</title><link rel=manifest href=/manifest.json><link rel=icon href=/favicon.png type=image/x-icon><link rel=stylesheet href=/book.min.18b5d651e266e5e9cfc7455e2e50eb1b74a62aee16cf204b69de1d9e695276f7.css integrity="sha256-GLXWUeJm5enPx0VeLlDrG3SmKu4WzyBLad4dnmlSdvc=" crossorigin=anonymous><script defer src=/flexsearch.min.js></script>
-<script defer src=/zh.search.min.02becbbc2ba62115c50fcb4c3c7dc8a6d9685d9f9b173b24eb3219843f470f52.js integrity="sha256-Ar7LvCumIRXFD8tMPH3IptloXZ+bFzsk6zIZhD9HD1I=" crossorigin=anonymous></script>
+<!doctype html><html lang=zh dir=ltr>
+<head>
+<meta charset=utf-8>
+<meta name=viewport content="width=device-width,initial-scale=1">
+<meta name=description content="这篇文章主要介绍了 Prometheus Operator 定义的几种自定义资源">
+<meta name=theme-color content="#FFFFFF">
+<meta name=color-scheme content="light dark"><meta property="og:title" content="Prometheus Operator 设计思路">
+<meta property="og:description" content="这篇文章主要介绍了 Prometheus Operator 定义的几种自定义资源">
+<meta property="og:type" content="article">
+<meta property="og:url" content="https://blog.llaoj.cn/posts/2202/prometheus-operator-design/"><meta property="article:section" content="posts">
+<meta property="article:published_time" content="2022-02-07T00:00:00+00:00">
+<meta property="article:modified_time" content="2022-02-07T00:00:00+00:00">
+<title>Prometheus Operator 设计思路 | 老J的博客</title>
+<link rel=manifest href=/manifest.json>
+<link rel=icon href=/favicon.png type=image/x-icon>
+<link rel=stylesheet href=/book.min.18b5d651e266e5e9cfc7455e2e50eb1b74a62aee16cf204b69de1d9e695276f7.css integrity="sha256-GLXWUeJm5enPx0VeLlDrG3SmKu4WzyBLad4dnmlSdvc=" crossorigin=anonymous>
+<script defer src=/flexsearch.min.js></script>
+<script defer src=/zh.search.min.abbe5ab420c396d7e24c093dc83c6eaf070ba6629ccd1475a3bc5c001c790f13.js integrity="sha256-q75atCDDltfiTAk9yDxurwcLpmKczRR1o7xcABx5DxM=" crossorigin=anonymous></script>
 <script defer src=/sw.min.6f6f90fcb8eb1c49ec389838e6b801d0de19430b8e516902f8d75c3c8bd98739.js integrity="sha256-b2+Q/LjrHEnsOJg45rgB0N4ZQwuOUWkC+NdcPIvZhzk=" crossorigin=anonymous></script>
-<script>var _hmt=_hmt||[];(function(){var e,t=document.createElement("script");t.src="https://hm.baidu.com/hm.js?7f5ad4632a1c2df3cd8e1199a7aaf48a",e=document.getElementsByTagName("script")[0],e.parentNode.insertBefore(t,e)})()</script></head><body dir=ltr><input type=checkbox class="hidden toggle" id=menu-control>
-<input type=checkbox class="hidden toggle" id=toc-control><main class="container flex"><aside class=book-menu><div class=book-menu-content><nav><h2 class=book-brand><a class="flex align-center" href=/><img src=/j.png alt=Logo><span>老J的博客</span></a></h2><div class=book-search><input type=text id=book-search-input placeholder=搜索 aria-label=搜索 maxlength=64 data-hotkeys=s/><div class="book-search-spinner hidden"></div><ul id=book-search-results></ul></div><ul><li><a href=/posts/>文章</a></li></ul><ul><li><a href=/docs/oauth2nsso/>OAuth2&SSO</a><ul><li><a href=/docs/oauth2nsso/configuration/>配置</a></li><li><a href=/docs/oauth2nsso/apis/>API列表</a></li><li><a href=/docs/oauth2nsso/deploy/>部署</a></li><li><a href=/docs/oauth2nsso/note/>说明</a></li><li><a href=/docs/oauth2nsso/demo/>示例</a></li><li><a href=/docs/oauth2nsso/for-client/>接入指引</a></li></ul></li><li><a href=/docs/about/>关于</a><ul></ul></li></ul><ul><li><a href=https://www.cncf.io/ target=_blank rel=noopener>CNCF</a></li><li><a href=https://ebpf.io/ target=_blank rel=noopener>eBPF</a></li></ul><div class=book-menu-after><a href=https://www.rutron.net/ target=_blank>@如创科技</a><br>提供云计算支持</div></nav><script>(function(){var e=document.querySelector("aside .book-menu-content");addEventListener("beforeunload",function(){localStorage.setItem("menu.scrollTop",e.scrollTop)}),e.scrollTop=localStorage.getItem("menu.scrollTop")})()</script></div></aside><div class=book-page><header class=book-header><div class="flex align-center justify-between"><label for=menu-control><img src=/svg/menu.svg class=book-icon alt=Menu></label>
+<script>var _hmt=_hmt||[];(function(){var a=document.createElement("script"),b;a.src="https://hm.baidu.com/hm.js?7f5ad4632a1c2df3cd8e1199a7aaf48a",b=document.getElementsByTagName("script")[0],b.parentNode.insertBefore(a,b)})()</script>
+</head>
+<body dir=ltr>
+<input type=checkbox class="hidden toggle" id=menu-control>
+<input type=checkbox class="hidden toggle" id=toc-control>
+<main class="container flex">
+<aside class=book-menu>
+<div class=book-menu-content>
+<nav>
+<h2 class=book-brand>
+<a class="flex align-center" href=/><img src=/j.png alt=Logo><span>老J的博客</span>
+</a>
+</h2>
+<div class=book-search>
+<input type=text id=book-search-input placeholder=搜索 aria-label=搜索 maxlength=64 data-hotkeys=s/>
+<div class="book-search-spinner hidden"></div>
+<ul id=book-search-results></ul>
+</div>
+<ul>
+<li>
+<a href=/posts/>
+文章
+</a>
+</li>
+</ul>
+<ul>
+<li>
+<a href=/docs/oauth2nsso/>OAuth2&SSO</a>
+<ul>
+<li>
+<a href=/docs/oauth2nsso/configuration/>配置</a>
+</li>
+<li>
+<a href=/docs/oauth2nsso/apis/>API列表</a>
+</li>
+<li>
+<a href=/docs/oauth2nsso/deploy/>部署</a>
+</li>
+<li>
+<a href=/docs/oauth2nsso/note/>说明</a>
+</li>
+<li>
+<a href=/docs/oauth2nsso/demo/>示例</a>
+</li>
+<li>
+<a href=/docs/oauth2nsso/for-client/>接入指引</a>
+</li>
+</ul>
+</li>
+<li>
+<a href=/docs/about/>关于</a>
+<ul>
+</ul>
+</li>
+</ul>
+<ul>
+<li>
+<a href=https://www.cncf.io/ target=_blank rel=noopener>
+CNCF
+</a>
+</li>
+<li>
+<a href=https://ebpf.io/ target=_blank rel=noopener>
+eBPF
+</a>
+</li>
+</ul>
+<div class=book-menu-after>
+<a href=https://www.rutron.net/ target=_blank>@如创科技</a><br>提供云计算支持
+</div>
+</nav>
+<script>(function(){var a=document.querySelector("aside .book-menu-content");addEventListener("beforeunload",function(b){localStorage.setItem("menu.scrollTop",a.scrollTop)}),a.scrollTop=localStorage.getItem("menu.scrollTop")})()</script>
+</div>
+</aside>
+<div class=book-page>
+<header class=book-header>
+<div class="flex align-center justify-between">
+<label for=menu-control>
+<img src=/svg/menu.svg class=book-icon alt=Menu>
+</label>
 <strong>Prometheus Operator 设计思路</strong>
-<label for=toc-control><img src=/svg/toc.svg class=book-icon alt="Table of Contents"></label></div><aside class="hidden clearfix"><nav id=TableOfContents><ul><li><a href=#设计>设计</a></li><li><a href=#prometheus>Prometheus</a></li><li><a href=#alertmanager>Alertmanager</a></li><li><a href=#thanosruler>ThanosRuler</a></li><li><a href=#servicemonitor>ServiceMonitor</a></li><li><a href=#podmonitor>PodMonitor</a></li><li><a href=#probe>Probe</a></li><li><a href=#prometheusrule>PrometheusRule</a></li><li><a href=#alertmanagerconfig>AlertmanagerConfig</a></li></ul></nav></aside></header><article class=markdown><h1><a href=/posts/2202/prometheus-operator-design/>Prometheus Operator 设计思路</a></h1><h5>2022-2-7</h5><div><a href=/categories/technology/>technology</a></div><div><a href=/tags/prometheus/>prometheus</a>,
-<a href=/tags/kubernetes/>kubernetes</a></div><h2 id=设计>设计
-<a class=anchor href=#%e8%ae%be%e8%ae%a1>#</a></h2><p>这篇文章介绍了 Prometheus Operator 的几种自定义资源 (CRD):</p><ul><li>Prometheus</li><li>Alertmanager</li><li>ThanosRuler</li><li>ServiceMonitor</li><li>PodMonitor</li><li>Probe</li><li>PrometheusRule</li><li>AlertmanagerConfig</li></ul><h2 id=prometheus>Prometheus
-<a class=anchor href=#prometheus>#</a></h2><p>它定义了在 Kubernetes 集群中安装 Prometheus 的方式. 它提供了一些配置项, 比如副本数、持久卷还有接收告警的 Alertmanagers.</p><p>对于每一个 Prometheus 资源, Operator 会在同一 namespace 中部署一个经过正确配置的 StatefulSet. 其配置文件 <code>secret/prometheus-name</code> 会被挂载到它的 pod 上.</p><p>它明确了 Prometheus 实例选择 ServiceMonitors 所用的标签. 任何时候, 一旦 ServiceMonitors 和 Prometheus 资源有更改, Operator 会根据他们生成重新配置文件, 然后更新到上述 Secret 配置文件中.</p><p>如果没有提供选择 ServiceMonitors 所用标签, 用户也可以自己管理 Secret, 同时该 Secret 也享受 Operator 配置安装 Prometheus 的能力.</p><h2 id=alertmanager>Alertmanager
-<a class=anchor href=#alertmanager>#</a></h2><p>该资源定义了在 Kubernetes 中配置安装 Alertmanager 的方式. 它提供了配置副本数和持久卷的选项.</p><p>对于每一个 Alertmanager 资源, Operator 会在同一个 namespace 中启动一个正确配置的 StatefulSet. Alertmanager pods 会挂载一个 <code>secret/alertmanager-name</code>, 它包含一个键为 <code>alertmanager.yaml</code> 的配置文件.</p><p>当配置了两个以上的副本, Operator 会启动 Alertmanager 高可用模式.</p><h2 id=thanosruler>ThanosRuler
-<a class=anchor href=#thanosruler>#</a></h2><p>该资源定义了 Kubernetes 中如何配置安装 Thanos Ruler. 借助 Thanos Ruler, 记录和告警规则可以被多个 Prometheus 实例处理.</p><p>一个 ThanosRuler 实例要求至少一个 queryEndpoint, 它指向 Thanos 查询器 或者 Prometheus 实例的位置. queryEndpoints 会配置 Thanos 运行时的 <code>--query</code> 参数. 了解
-<a href=https://github.com/thanos-io/thanos>Thanos</a>.</p><h2 id=servicemonitor>ServiceMonitor
-<a class=anchor href=#servicemonitor>#</a></h2><p>该资源允许以声明方式定义应如何监视一组动态 Service, 使用标签来选择哪些 Service 需要监控. 这是一种约定, 来定义服务如何公开指标, 按照该约定 Prometheus 会自动发现新服务, 而不需要重新配置.</p><p>对于 Prometheus 监控的任何程序在 Kubernetes 中都要求有对应的 Endpoints 对象. Endpoints 对象本质上是 IP 地址列表. 通常，Endpoints 对象由 Service 对象填充。 Service 对象通过标签选择器发现 Pod 并将其添加到 Endpoints 对象中。</p><p>一个 Service 可能会暴露一个或者多个端口, 通常，它会生成一个 endpoints 列表, 指向一个具体的 Pod, 这和 kubernetes 中的 Endpoints 一样. ServiceMonitor 会自动发现 <code>Endpoints</code> 对象并配置 Prometheus 来监控这些 Pods.</p><p><code>ServiceMonitorSpec</code> 中的 <code>endpoints</code> 部分, 是用来配置 Endpoints 被刮取指标数据时所需要的端口和参数. 对于一些高级用例, 要监控的后端 Pods 端口, 可能不是 service 中定义的. 因此在 endpoints 中定义 <code>endpoint</code> 时, 它必填.</p><blockquote><p>注意: endpoints (小写) 是 ServiceMonitor 中的一个字段, 但 Endpoints (大写) 是 Kubernetes 中的对象.</p></blockquote><p>ServiceMonitors 和发现的 targets 一样都可以来自任何 namespace. 这对于跨 namespace 的监控是很重要的, 比如 meta-monitoring (元监控). 使用 <code>PrometheusSpec/ServiceMonitorNamespaceSelector</code> 字段, 可以限制选择 ServiceMonitors 的命名空间. 使用 <code>ServiceMonitorSpec/namespaceSelector</code> 字段, 可以限制发现 Endpoints 对象的命名空间. 要发现所有 namespaces 的 targets 需要把 namespaceSelector 设置为空:</p><div class=highlight><pre tabindex=0 style=background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-yaml data-lang=yaml><span style=display:flex><span><span style=color:navy>spec</span>:<span style=color:#bbb>
-</span></span></span><span style=display:flex><span><span style=color:#bbb>  </span><span style=color:navy>namespaceSelector</span>:<span style=color:#bbb>
-</span></span></span><span style=display:flex><span><span style=color:#bbb>    </span><span style=color:navy>any</span>:<span style=color:#bbb> </span><span style=color:#000;font-weight:700>true</span><span style=color:#bbb>
-</span></span></span></code></pre></div><h2 id=podmonitor>PodMonitor
-<a class=anchor href=#podmonitor>#</a></h2><p>该资源定义了需要监控的一组动态的 pods. 它使用配置的标签选择要被监控的 pod. 它定义了一种指标暴露的方式, 使用这种方式, 新产生的 pod 就可以被自动发现, 不需要重新配置 prometheus.</p><p>Pod 是一个或多个容器的集合, 它可以在一个或多个端口上暴露 Prometheus 指标. <code>PodMonitor</code> 对象可以用来发现这些 pods, 并且为了监控他们, 会生成相应的 Prometheus 配置. <code>PodMonitorSpec/PodMetricsEndpoints</code> 定义了获取指标所用的端口和参数.</p><p><code>PodMonitors</code> 和发现的 targets 可以来自任何 namespaces. 这对于跨 namespace 的监控是很重要的, 比如 meta-monitoring (元监控). 使用 <code>PodMonitorSpec/namespaceSelector</code>, 可以限制发现 Pods 对象的命名空间. 要发现所有 namespaces 的 targets 需要把 namespaceSelector 设置为空:</p><div class=highlight><pre tabindex=0 style=background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-yaml data-lang=yaml><span style=display:flex><span><span style=color:navy>spec</span>:<span style=color:#bbb>
-</span></span></span><span style=display:flex><span><span style=color:#bbb>  </span><span style=color:navy>namespaceSelector</span>:<span style=color:#bbb>
-</span></span></span><span style=display:flex><span><span style=color:#bbb>    </span><span style=color:navy>any</span>:<span style=color:#bbb> </span><span style=color:#000;font-weight:700>true</span><span style=color:#bbb>
-</span></span></span></code></pre></div><h2 id=probe>Probe
-<a class=anchor href=#probe>#</a></h2><p>该资源允许以声明的方式定义如何监控的 ingresses 和静态 targets. 除了 target, 它还要求一个探针, 这个探针是一个监控服务, 能监控 target 而且还能给 Prometheus 提供指标. 例如, 可以通过
-<a href=https://github.com/prometheus/blackbox_exporter/>Blackbox Exporter</a> 来实现.</p><h2 id=prometheusrule>PrometheusRule
-<a class=anchor href=#prometheusrule>#</a></h2><p>该资源以声明方式定义一个或多个 Prometheus 实例使用的所需的 Prometheus 规则. 告警和记录规则可以以 YAML 的形式被保存和应用, 而且是热加载的, 不需要重启.</p><h2 id=alertmanagerconfig>AlertmanagerConfig
-<a class=anchor href=#alertmanagerconfig>#</a></h2><p>该资源定义了 Alertmanager 配置文件的子配置, 可以配置告警的接受者以及抑制策略, 它是 namespace 级别的.
-<a href=https://github.com/prometheus-operator/prometheus-operator/blob/main/example/prometheus-operator-crd/monitoring.coreos.com_alertmanagerconfigs.yaml>这里</a>是个例子.</p><blockquote><p>注意: 该资源目前还不是 <code>stable</code></p></blockquote></article><footer class=book-footer><div class="flex flex-wrap justify-between"></div><script>(function(){function e(e){const t=window.getSelection(),n=document.createRange();n.selectNodeContents(e),t.removeAllRanges(),t.addRange(n)}document.querySelectorAll("pre code").forEach(t=>{t.addEventListener("click",function(){if(window.getSelection().toString())return;e(t.parentElement),navigator.clipboard&&navigator.clipboard.writeText(t.parentElement.textContent)})})})()</script></footer><div class=book-comments><link rel=stylesheet href=https://unpkg.com/gitalk/dist/gitalk.css><script src=https://unpkg.com/gitalk/dist/gitalk.min.js></script><div id=gitalk-container></div><script type=text/javascript>const gitalk=new Gitalk({clientID:"53c7373e7b1554a4abc3",clientSecret:"7c9dcef80ea6bde5d8695d1ab94bcef87063fb3b",repo:"llaoj.github.io",owner:"llaoj",admin:["llaoj"],id:location.pathname,distractionFreeMode:!1});gitalk.render("gitalk-container")</script></div><label for=menu-control class="hidden book-menu-overlay"></label></div><aside class=book-toc><div class=book-toc-content><nav id=TableOfContents><ul><li><a href=#设计>设计</a></li><li><a href=#prometheus>Prometheus</a></li><li><a href=#alertmanager>Alertmanager</a></li><li><a href=#thanosruler>ThanosRuler</a></li><li><a href=#servicemonitor>ServiceMonitor</a></li><li><a href=#podmonitor>PodMonitor</a></li><li><a href=#probe>Probe</a></li><li><a href=#prometheusrule>PrometheusRule</a></li><li><a href=#alertmanagerconfig>AlertmanagerConfig</a></li></ul></nav></div></aside></main></body></html>
+<label for=toc-control>
+<img src=/svg/toc.svg class=book-icon alt="Table of Contents">
+</label>
+</div>
+<aside class="hidden clearfix">
+<nav id=TableOfContents>
+<ul>
+<li><a href=#设计>设计</a></li>
+<li><a href=#prometheus>Prometheus</a></li>
+<li><a href=#alertmanager>Alertmanager</a></li>
+<li><a href=#thanosruler>ThanosRuler</a></li>
+<li><a href=#servicemonitor>ServiceMonitor</a></li>
+<li><a href=#podmonitor>PodMonitor</a></li>
+<li><a href=#probe>Probe</a></li>
+<li><a href=#prometheusrule>PrometheusRule</a></li>
+<li><a href=#alertmanagerconfig>AlertmanagerConfig</a></li>
+</ul>
+</nav>
+</aside>
+</header>
+<article class=markdown>
+<h1>
+<a href=/posts/2202/prometheus-operator-design/>Prometheus Operator 设计思路</a>
+</h1>
+<h5>2022-2-7</h5>
+<div>
+<a href=/categories/technology/>technology</a>
+</div>
+<div>
+<a href=/tags/prometheus/>prometheus</a>,
+<a href=/tags/kubernetes/>kubernetes</a>
+</div>
+<h2 id=设计>
+设计
+<a class=anchor href=#%e8%ae%be%e8%ae%a1>#</a>
+</h2>
+<p>这篇文章介绍了 Prometheus Operator 的几种自定义资源 (CRD):</p>
+<ul>
+<li>Prometheus</li>
+<li>Alertmanager</li>
+<li>ThanosRuler</li>
+<li>ServiceMonitor</li>
+<li>PodMonitor</li>
+<li>Probe</li>
+<li>PrometheusRule</li>
+<li>AlertmanagerConfig</li>
+</ul>
+<h2 id=prometheus>
+Prometheus
+<a class=anchor href=#prometheus>#</a>
+</h2>
+<p>它定义了在 Kubernetes 集群中安装 Prometheus 的方式. 它提供了一些配置项, 比如副本数、持久卷还有接收告警的 Alertmanagers.</p>
+<p>对于每一个 Prometheus 资源, Operator 会在同一 namespace 中部署一个经过正确配置的 StatefulSet. 其配置文件 <code>secret/prometheus-name</code> 会被挂载到它的 pod 上.</p>
+<p>它明确了 Prometheus 实例选择 ServiceMonitors 所用的标签. 任何时候, 一旦 ServiceMonitors 和 Prometheus 资源有更改, Operator 会根据他们生成重新配置文件, 然后更新到上述 Secret 配置文件中.</p>
+<p>如果没有提供选择 ServiceMonitors 所用标签, 用户也可以自己管理 Secret, 同时该 Secret 也享受 Operator 配置安装 Prometheus 的能力.</p>
+<h2 id=alertmanager>
+Alertmanager
+<a class=anchor href=#alertmanager>#</a>
+</h2>
+<p>该资源定义了在 Kubernetes 中配置安装 Alertmanager 的方式. 它提供了配置副本数和持久卷的选项.</p>
+<p>对于每一个 Alertmanager 资源, Operator 会在同一个 namespace 中启动一个正确配置的 StatefulSet. Alertmanager pods 会挂载一个 <code>secret/alertmanager-name</code>, 它包含一个键为 <code>alertmanager.yaml</code> 的配置文件.</p>
+<p>当配置了两个以上的副本, Operator 会启动 Alertmanager 高可用模式.</p>
+<h2 id=thanosruler>
+ThanosRuler
+<a class=anchor href=#thanosruler>#</a>
+</h2>
+<p>该资源定义了 Kubernetes 中如何配置安装 Thanos Ruler. 借助 Thanos Ruler, 记录和告警规则可以被多个 Prometheus 实例处理.</p>
+<p>一个 ThanosRuler 实例要求至少一个 queryEndpoint, 它指向 Thanos 查询器 或者 Prometheus 实例的位置. queryEndpoints 会配置 Thanos 运行时的 <code>--query</code> 参数. 了解
+<a href=https://github.com/thanos-io/thanos>Thanos</a>.</p>
+<h2 id=servicemonitor>
+ServiceMonitor
+<a class=anchor href=#servicemonitor>#</a>
+</h2>
+<p>该资源允许以声明方式定义应如何监视一组动态 Service, 使用标签来选择哪些 Service 需要监控. 这是一种约定, 来定义服务如何公开指标, 按照该约定 Prometheus 会自动发现新服务, 而不需要重新配置.</p>
+<p>对于 Prometheus 监控的任何程序在 Kubernetes 中都要求有对应的 Endpoints 对象. Endpoints 对象本质上是 IP 地址列表. 通常，Endpoints 对象由 Service 对象填充。 Service 对象通过标签选择器发现 Pod 并将其添加到 Endpoints 对象中。</p>
+<p>一个 Service 可能会暴露一个或者多个端口, 通常，它会生成一个 endpoints 列表, 指向一个具体的 Pod, 这和 kubernetes 中的 Endpoints 一样. ServiceMonitor 会自动发现 <code>Endpoints</code> 对象并配置 Prometheus 来监控这些 Pods.</p>
+<p><code>ServiceMonitorSpec</code> 中的 <code>endpoints</code> 部分, 是用来配置 Endpoints 被刮取指标数据时所需要的端口和参数. 对于一些高级用例, 要监控的后端 Pods 端口, 可能不是 service 中定义的. 因此在 endpoints 中定义 <code>endpoint</code> 时, 它必填.</p>
+<blockquote>
+<p>注意: endpoints (小写) 是 ServiceMonitor 中的一个字段, 但 Endpoints (大写) 是 Kubernetes 中的对象.</p>
+</blockquote>
+<p>ServiceMonitors 和发现的 targets 一样都可以来自任何 namespace. 这对于跨 namespace 的监控是很重要的, 比如 meta-monitoring (元监控). 使用 <code>PrometheusSpec/ServiceMonitorNamespaceSelector</code> 字段, 可以限制选择 ServiceMonitors 的命名空间. 使用 <code>ServiceMonitorSpec/namespaceSelector</code> 字段, 可以限制发现 Endpoints 对象的命名空间. 要发现所有 namespaces 的 targets 需要把 namespaceSelector 设置为空:</p>
+<div class=highlight><pre tabindex=0 style=background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-yaml data-lang=yaml><span style=color:navy>spec</span>:<span style=color:#bbb>
+</span><span style=color:#bbb>  </span><span style=color:navy>namespaceSelector</span>:<span style=color:#bbb>
+</span><span style=color:#bbb>    </span><span style=color:navy>any</span>:<span style=color:#bbb> </span><span style=color:#000;font-weight:700>true</span><span style=color:#bbb>
+</span></code></pre></div><h2 id=podmonitor>
+PodMonitor
+<a class=anchor href=#podmonitor>#</a>
+</h2>
+<p>该资源定义了需要监控的一组动态的 pods. 它使用配置的标签选择要被监控的 pod. 它定义了一种指标暴露的方式, 使用这种方式, 新产生的 pod 就可以被自动发现, 不需要重新配置 prometheus.</p>
+<p>Pod 是一个或多个容器的集合, 它可以在一个或多个端口上暴露 Prometheus 指标. <code>PodMonitor</code> 对象可以用来发现这些 pods, 并且为了监控他们, 会生成相应的 Prometheus 配置. <code>PodMonitorSpec/PodMetricsEndpoints</code> 定义了获取指标所用的端口和参数.</p>
+<p><code>PodMonitors</code> 和发现的 targets 可以来自任何 namespaces. 这对于跨 namespace 的监控是很重要的, 比如 meta-monitoring (元监控). 使用 <code>PodMonitorSpec/namespaceSelector</code>, 可以限制发现 Pods 对象的命名空间. 要发现所有 namespaces 的 targets 需要把 namespaceSelector 设置为空:</p>
+<div class=highlight><pre tabindex=0 style=background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-yaml data-lang=yaml><span style=color:navy>spec</span>:<span style=color:#bbb>
+</span><span style=color:#bbb>  </span><span style=color:navy>namespaceSelector</span>:<span style=color:#bbb>
+</span><span style=color:#bbb>    </span><span style=color:navy>any</span>:<span style=color:#bbb> </span><span style=color:#000;font-weight:700>true</span><span style=color:#bbb>
+</span></code></pre></div><h2 id=probe>
+Probe
+<a class=anchor href=#probe>#</a>
+</h2>
+<p>该资源允许以声明的方式定义如何监控的 ingresses 和静态 targets. 除了 target, 它还要求一个探针, 这个探针是一个监控服务, 能监控 target 而且还能给 Prometheus 提供指标. 例如, 可以通过
+<a href=https://github.com/prometheus/blackbox_exporter/>Blackbox Exporter</a> 来实现.</p>
+<h2 id=prometheusrule>
+PrometheusRule
+<a class=anchor href=#prometheusrule>#</a>
+</h2>
+<p>该资源以声明方式定义一个或多个 Prometheus 实例使用的所需的 Prometheus 规则. 告警和记录规则可以以 YAML 的形式被保存和应用, 而且是热加载的, 不需要重启.</p>
+<h2 id=alertmanagerconfig>
+AlertmanagerConfig
+<a class=anchor href=#alertmanagerconfig>#</a>
+</h2>
+<p>该资源定义了 Alertmanager 配置文件的子配置, 可以配置告警的接受者以及抑制策略, 它是 namespace 级别的.
+<a href=https://github.com/prometheus-operator/prometheus-operator/blob/main/example/prometheus-operator-crd/monitoring.coreos.com_alertmanagerconfigs.yaml>这里</a>是个例子.</p>
+<blockquote>
+<p>注意: 该资源目前还不是 <code>stable</code></p>
+</blockquote>
+</article>
+<footer class=book-footer>
+<div class="flex flex-wrap justify-between">
+</div>
+<script>(function(){function a(c){const a=window.getSelection(),b=document.createRange();b.selectNodeContents(c),a.removeAllRanges(),a.addRange(b)}document.querySelectorAll("pre code").forEach(b=>{b.addEventListener("click",function(c){if(window.getSelection().toString())return;a(b.parentElement),navigator.clipboard&&navigator.clipboard.writeText(b.parentElement.textContent)})})})()</script>
+</footer>
+<div class=book-comments><link rel=stylesheet href=https://unpkg.com/gitalk/dist/gitalk.css>
+<script src=https://unpkg.com/gitalk/dist/gitalk.min.js></script>
+<div id=gitalk-container></div>
+<script type=text/javascript>const gitalk=new Gitalk({clientID:'53c7373e7b1554a4abc3',clientSecret:'7c9dcef80ea6bde5d8695d1ab94bcef87063fb3b',repo:'llaoj.github.io',owner:'llaoj',admin:['llaoj'],id:location.pathname,distractionFreeMode:!1});gitalk.render('gitalk-container')</script></div>
+<label for=menu-control class="hidden book-menu-overlay"></label>
+</div>
+<aside class=book-toc>
+<div class=book-toc-content>
+<nav id=TableOfContents>
+<ul>
+<li><a href=#设计>设计</a></li>
+<li><a href=#prometheus>Prometheus</a></li>
+<li><a href=#alertmanager>Alertmanager</a></li>
+<li><a href=#thanosruler>ThanosRuler</a></li>
+<li><a href=#servicemonitor>ServiceMonitor</a></li>
+<li><a href=#podmonitor>PodMonitor</a></li>
+<li><a href=#probe>Probe</a></li>
+<li><a href=#prometheusrule>PrometheusRule</a></li>
+<li><a href=#alertmanagerconfig>AlertmanagerConfig</a></li>
+</ul>
+</nav>
+</div>
+</aside>
+</main>
+</body>
+</html>

@@ -1,126 +1,295 @@
-<!doctype html><html lang=zh dir=ltr><head><meta charset=utf-8><meta name=viewport content="width=device-width,initial-scale=1"><meta name=description content="rsync安装 # 在传输双方的服务器上都安装rsync软件. 如果服务器上有rsync可以跳过.
+<!doctype html><html lang=zh dir=ltr>
+<head>
+<meta charset=utf-8>
+<meta name=viewport content="width=device-width,initial-scale=1">
+<meta name=description content="rsync安装 #  在传输双方的服务器上都安装rsync软件. 如果服务器上有rsync可以跳过.
 先检查有没有安装rsync:
 rsync -h 如果没有安装, 使用下面的命令安装:
-# Debian sudo apt-get install rsync # Red Hat sudo yum install rsync # Arch Linux sudo pacman -S rsync 启动rsync守护进程 # rsync使用最多的是ssh模式. 在现代的公司中, 出于安全的原因, 很多ssh是被禁止使用的. 所以, 我们可以使用rsync的守护进程模式. 一起看看怎么用吧.
+# Debian sudo apt-get install rsync # Red Hat sudo yum install rsync # Arch Linux sudo pacman -S rsync 启动rsync守护进程 #  rsync使用最多的是ssh模式. 在现代的公司中, 出于安全的原因, 很多ssh是被禁止使用的. 所以, 我们可以使用rsync的守护进程模式. 一起看看怎么用吧.
 rsync守护进程部署在传输双方(发送方或者接受方)的任何一端都可以的.
 下面的配置和命令中, 我以发送方(10.138.228.201)和接收方(10.206.38.30)为例.
 我选择接收方, 先部署配置文件. 配置文件地址: /etc/rsyncd.conf. 配置文件 官方参考手册
 以下是一个参考的配置, 每一项配置我都增加了备注说明:
-# 指定rsync以什么用户/组传输文件 # 默认nobody,如果使用了系统不存在的用户和组 # 需要先手动创建用户和组 # 它会是生成的文件所属的用户和组 # 也可以把它们配置到模块中 uid = root gid = root # 选择yes可以在操作模块时chroot到同步目录中 # 优势是面对安全威胁能提供额外保护 # 缺点是使用chroot需要root权限, # 以及在传输符号连接或保存用户名/组时会有些问题 use chroot = no # 指定监听端口 # 默认873 port = 873 # 最大连接数 max connections = 200 # 超时时间 timeout = 600 # 进程pid所在的文件 pid file = /var/run/rsyncd."><meta name=theme-color content="#FFFFFF"><meta name=color-scheme content="light dark"><meta property="og:title" content="使用rsync在主机之间同步目录"><meta property="og:description" content="rsync安装 # 在传输双方的服务器上都安装rsync软件. 如果服务器上有rsync可以跳过.
+# 指定rsync以什么用户/组传输文件 # 默认nobody,如果使用了系统不存在的用户和组 # 需要先手动创建用户和组 # 它会是生成的文件所属的用户和组 # 也可以把它们配置到模块中 uid = root gid = root # 选择yes可以在操作模块时chroot到同步目录中 # 优势是面对安全威胁能提供额外保护 # 缺点是使用chroot需要root权限, # 以及在传输符号连接或保存用户名/组时会有些问题 use chroot = no # 指定监听端口 # 默认873 port = 873 # 最大连接数 max connections = 200 # 超时时间 timeout = 600 # 进程pid所在的文件 pid file = /var/run/rsyncd.">
+<meta name=theme-color content="#FFFFFF">
+<meta name=color-scheme content="light dark"><meta property="og:title" content="使用rsync在主机之间同步目录">
+<meta property="og:description" content="rsync安装 #  在传输双方的服务器上都安装rsync软件. 如果服务器上有rsync可以跳过.
 先检查有没有安装rsync:
 rsync -h 如果没有安装, 使用下面的命令安装:
-# Debian sudo apt-get install rsync # Red Hat sudo yum install rsync # Arch Linux sudo pacman -S rsync 启动rsync守护进程 # rsync使用最多的是ssh模式. 在现代的公司中, 出于安全的原因, 很多ssh是被禁止使用的. 所以, 我们可以使用rsync的守护进程模式. 一起看看怎么用吧.
+# Debian sudo apt-get install rsync # Red Hat sudo yum install rsync # Arch Linux sudo pacman -S rsync 启动rsync守护进程 #  rsync使用最多的是ssh模式. 在现代的公司中, 出于安全的原因, 很多ssh是被禁止使用的. 所以, 我们可以使用rsync的守护进程模式. 一起看看怎么用吧.
 rsync守护进程部署在传输双方(发送方或者接受方)的任何一端都可以的.
 下面的配置和命令中, 我以发送方(10.138.228.201)和接收方(10.206.38.30)为例.
 我选择接收方, 先部署配置文件. 配置文件地址: /etc/rsyncd.conf. 配置文件 官方参考手册
 以下是一个参考的配置, 每一项配置我都增加了备注说明:
-# 指定rsync以什么用户/组传输文件 # 默认nobody,如果使用了系统不存在的用户和组 # 需要先手动创建用户和组 # 它会是生成的文件所属的用户和组 # 也可以把它们配置到模块中 uid = root gid = root # 选择yes可以在操作模块时chroot到同步目录中 # 优势是面对安全威胁能提供额外保护 # 缺点是使用chroot需要root权限, # 以及在传输符号连接或保存用户名/组时会有些问题 use chroot = no # 指定监听端口 # 默认873 port = 873 # 最大连接数 max connections = 200 # 超时时间 timeout = 600 # 进程pid所在的文件 pid file = /var/run/rsyncd."><meta property="og:type" content="article"><meta property="og:url" content="https://blog.llaoj.cn/posts/2208/rsync-usage/"><meta property="article:section" content="posts"><meta property="article:published_time" content="2022-08-30T00:00:00+00:00"><meta property="article:modified_time" content="2022-08-30T00:00:00+00:00"><title>使用rsync在主机之间同步目录 | 老J的博客</title><link rel=manifest href=/manifest.json><link rel=icon href=/favicon.png type=image/x-icon><link rel=stylesheet href=/book.min.18b5d651e266e5e9cfc7455e2e50eb1b74a62aee16cf204b69de1d9e695276f7.css integrity="sha256-GLXWUeJm5enPx0VeLlDrG3SmKu4WzyBLad4dnmlSdvc=" crossorigin=anonymous><script defer src=/flexsearch.min.js></script>
-<script defer src=/zh.search.min.02becbbc2ba62115c50fcb4c3c7dc8a6d9685d9f9b173b24eb3219843f470f52.js integrity="sha256-Ar7LvCumIRXFD8tMPH3IptloXZ+bFzsk6zIZhD9HD1I=" crossorigin=anonymous></script>
+# 指定rsync以什么用户/组传输文件 # 默认nobody,如果使用了系统不存在的用户和组 # 需要先手动创建用户和组 # 它会是生成的文件所属的用户和组 # 也可以把它们配置到模块中 uid = root gid = root # 选择yes可以在操作模块时chroot到同步目录中 # 优势是面对安全威胁能提供额外保护 # 缺点是使用chroot需要root权限, # 以及在传输符号连接或保存用户名/组时会有些问题 use chroot = no # 指定监听端口 # 默认873 port = 873 # 最大连接数 max connections = 200 # 超时时间 timeout = 600 # 进程pid所在的文件 pid file = /var/run/rsyncd.">
+<meta property="og:type" content="article">
+<meta property="og:url" content="https://blog.llaoj.cn/posts/2208/rsync-usage/"><meta property="article:section" content="posts">
+<meta property="article:published_time" content="2022-08-30T00:00:00+00:00">
+<meta property="article:modified_time" content="2022-08-30T00:00:00+00:00">
+<title>使用rsync在主机之间同步目录 | 老J的博客</title>
+<link rel=manifest href=/manifest.json>
+<link rel=icon href=/favicon.png type=image/x-icon>
+<link rel=stylesheet href=/book.min.18b5d651e266e5e9cfc7455e2e50eb1b74a62aee16cf204b69de1d9e695276f7.css integrity="sha256-GLXWUeJm5enPx0VeLlDrG3SmKu4WzyBLad4dnmlSdvc=" crossorigin=anonymous>
+<script defer src=/flexsearch.min.js></script>
+<script defer src=/zh.search.min.abbe5ab420c396d7e24c093dc83c6eaf070ba6629ccd1475a3bc5c001c790f13.js integrity="sha256-q75atCDDltfiTAk9yDxurwcLpmKczRR1o7xcABx5DxM=" crossorigin=anonymous></script>
 <script defer src=/sw.min.6f6f90fcb8eb1c49ec389838e6b801d0de19430b8e516902f8d75c3c8bd98739.js integrity="sha256-b2+Q/LjrHEnsOJg45rgB0N4ZQwuOUWkC+NdcPIvZhzk=" crossorigin=anonymous></script>
-<script>var _hmt=_hmt||[];(function(){var e,t=document.createElement("script");t.src="https://hm.baidu.com/hm.js?7f5ad4632a1c2df3cd8e1199a7aaf48a",e=document.getElementsByTagName("script")[0],e.parentNode.insertBefore(t,e)})()</script></head><body dir=ltr><input type=checkbox class="hidden toggle" id=menu-control>
-<input type=checkbox class="hidden toggle" id=toc-control><main class="container flex"><aside class=book-menu><div class=book-menu-content><nav><h2 class=book-brand><a class="flex align-center" href=/><img src=/j.png alt=Logo><span>老J的博客</span></a></h2><div class=book-search><input type=text id=book-search-input placeholder=搜索 aria-label=搜索 maxlength=64 data-hotkeys=s/><div class="book-search-spinner hidden"></div><ul id=book-search-results></ul></div><ul><li><a href=/posts/>文章</a></li></ul><ul><li><a href=/docs/oauth2nsso/>OAuth2&SSO</a><ul><li><a href=/docs/oauth2nsso/configuration/>配置</a></li><li><a href=/docs/oauth2nsso/apis/>API列表</a></li><li><a href=/docs/oauth2nsso/deploy/>部署</a></li><li><a href=/docs/oauth2nsso/note/>说明</a></li><li><a href=/docs/oauth2nsso/demo/>示例</a></li><li><a href=/docs/oauth2nsso/for-client/>接入指引</a></li></ul></li><li><a href=/docs/about/>关于</a><ul></ul></li></ul><ul><li><a href=https://www.cncf.io/ target=_blank rel=noopener>CNCF</a></li><li><a href=https://ebpf.io/ target=_blank rel=noopener>eBPF</a></li></ul><div class=book-menu-after><a href=https://www.rutron.net/ target=_blank>@如创科技</a><br>提供云计算支持</div></nav><script>(function(){var e=document.querySelector("aside .book-menu-content");addEventListener("beforeunload",function(){localStorage.setItem("menu.scrollTop",e.scrollTop)}),e.scrollTop=localStorage.getItem("menu.scrollTop")})()</script></div></aside><div class=book-page><header class=book-header><div class="flex align-center justify-between"><label for=menu-control><img src=/svg/menu.svg class=book-icon alt=Menu></label>
+<script>var _hmt=_hmt||[];(function(){var a=document.createElement("script"),b;a.src="https://hm.baidu.com/hm.js?7f5ad4632a1c2df3cd8e1199a7aaf48a",b=document.getElementsByTagName("script")[0],b.parentNode.insertBefore(a,b)})()</script>
+</head>
+<body dir=ltr>
+<input type=checkbox class="hidden toggle" id=menu-control>
+<input type=checkbox class="hidden toggle" id=toc-control>
+<main class="container flex">
+<aside class=book-menu>
+<div class=book-menu-content>
+<nav>
+<h2 class=book-brand>
+<a class="flex align-center" href=/><img src=/j.png alt=Logo><span>老J的博客</span>
+</a>
+</h2>
+<div class=book-search>
+<input type=text id=book-search-input placeholder=搜索 aria-label=搜索 maxlength=64 data-hotkeys=s/>
+<div class="book-search-spinner hidden"></div>
+<ul id=book-search-results></ul>
+</div>
+<ul>
+<li>
+<a href=/posts/>
+文章
+</a>
+</li>
+</ul>
+<ul>
+<li>
+<a href=/docs/oauth2nsso/>OAuth2&SSO</a>
+<ul>
+<li>
+<a href=/docs/oauth2nsso/configuration/>配置</a>
+</li>
+<li>
+<a href=/docs/oauth2nsso/apis/>API列表</a>
+</li>
+<li>
+<a href=/docs/oauth2nsso/deploy/>部署</a>
+</li>
+<li>
+<a href=/docs/oauth2nsso/note/>说明</a>
+</li>
+<li>
+<a href=/docs/oauth2nsso/demo/>示例</a>
+</li>
+<li>
+<a href=/docs/oauth2nsso/for-client/>接入指引</a>
+</li>
+</ul>
+</li>
+<li>
+<a href=/docs/about/>关于</a>
+<ul>
+</ul>
+</li>
+</ul>
+<ul>
+<li>
+<a href=https://www.cncf.io/ target=_blank rel=noopener>
+CNCF
+</a>
+</li>
+<li>
+<a href=https://ebpf.io/ target=_blank rel=noopener>
+eBPF
+</a>
+</li>
+</ul>
+<div class=book-menu-after>
+<a href=https://www.rutron.net/ target=_blank>@如创科技</a><br>提供云计算支持
+</div>
+</nav>
+<script>(function(){var a=document.querySelector("aside .book-menu-content");addEventListener("beforeunload",function(b){localStorage.setItem("menu.scrollTop",a.scrollTop)}),a.scrollTop=localStorage.getItem("menu.scrollTop")})()</script>
+</div>
+</aside>
+<div class=book-page>
+<header class=book-header>
+<div class="flex align-center justify-between">
+<label for=menu-control>
+<img src=/svg/menu.svg class=book-icon alt=Menu>
+</label>
 <strong>使用rsync在主机之间同步目录</strong>
-<label for=toc-control><img src=/svg/toc.svg class=book-icon alt="Table of Contents"></label></div><aside class="hidden clearfix"><nav id=TableOfContents><ul><li><a href=#rsync安装>rsync安装</a></li><li><a href=#启动rsync守护进程>启动rsync守护进程</a></li><li><a href=#开始传输>开始传输</a></li></ul></nav></aside></header><article class=markdown><h1><a href=/posts/2208/rsync-usage/>使用rsync在主机之间同步目录</a></h1><h5>2022-8-30</h5><div><a href=/categories/technology/>technology</a></div><div><a href=/tags/rsync/>rsync</a></div><h2 id=rsync安装>rsync安装
-<a class=anchor href=#rsync%e5%ae%89%e8%a3%85>#</a></h2><p>在传输双方的服务器上都安装rsync软件. 如果服务器上有rsync可以跳过.</p><p>先检查有没有安装rsync:</p><div class=highlight><pre tabindex=0 style=background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-shell data-lang=shell><span style=display:flex><span>rsync -h
-</span></span></code></pre></div><p>如果没有安装, 使用下面的命令安装:</p><div class=highlight><pre tabindex=0 style=background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-shell data-lang=shell><span style=display:flex><span><span style=color:#998;font-style:italic># Debian</span>
-</span></span><span style=display:flex><span>sudo apt-get install rsync
-</span></span><span style=display:flex><span>
-</span></span><span style=display:flex><span><span style=color:#998;font-style:italic># Red Hat</span>
-</span></span><span style=display:flex><span>sudo yum install rsync
-</span></span><span style=display:flex><span>
-</span></span><span style=display:flex><span><span style=color:#998;font-style:italic># Arch Linux</span>
-</span></span><span style=display:flex><span>sudo pacman -S rsync
-</span></span></code></pre></div><h2 id=启动rsync守护进程>启动rsync守护进程
-<a class=anchor href=#%e5%90%af%e5%8a%a8rsync%e5%ae%88%e6%8a%a4%e8%bf%9b%e7%a8%8b>#</a></h2><p>rsync使用最多的是ssh模式. 在现代的公司中, 出于安全的原因, 很多ssh是被禁止使用的. 所以, 我们可以使用rsync的守护进程模式. 一起看看怎么用吧.</p><p>rsync守护进程部署在传输双方(发送方或者接受方)的任何一端都可以的.</p><p>下面的配置和命令中, 我以发送方(<code>10.138.228.201</code>)和接收方(<code>10.206.38.30</code>)为例.</p><p>我选择接收方, 先部署配置文件. 配置文件地址: <code>/etc/rsyncd.conf</code>. 配置文件
-<a href=https://linux.die.net/man/5/rsyncd.conf>官方参考手册</a></p><p>以下是一个参考的配置, 每一项配置我都增加了备注说明:</p><div class=highlight><pre tabindex=0 style=background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-shell data-lang=shell><span style=display:flex><span><span style=color:#998;font-style:italic># 指定rsync以什么用户/组传输文件</span>
-</span></span><span style=display:flex><span><span style=color:#998;font-style:italic># 默认nobody,如果使用了系统不存在的用户和组</span>
-</span></span><span style=display:flex><span><span style=color:#998;font-style:italic># 需要先手动创建用户和组</span>
-</span></span><span style=display:flex><span><span style=color:#998;font-style:italic># 它会是生成的文件所属的用户和组</span>
-</span></span><span style=display:flex><span><span style=color:#998;font-style:italic># 也可以把它们配置到模块中</span>
-</span></span><span style=display:flex><span><span style=color:teal>uid</span> <span style=color:#000;font-weight:700>=</span> root
-</span></span><span style=display:flex><span><span style=color:teal>gid</span> <span style=color:#000;font-weight:700>=</span> root
-</span></span><span style=display:flex><span>
-</span></span><span style=display:flex><span><span style=color:#998;font-style:italic># 选择yes可以在操作模块时chroot到同步目录中</span>
-</span></span><span style=display:flex><span><span style=color:#998;font-style:italic># 优势是面对安全威胁能提供额外保护</span>
-</span></span><span style=display:flex><span><span style=color:#998;font-style:italic># 缺点是使用chroot需要root权限,</span>
-</span></span><span style=display:flex><span><span style=color:#998;font-style:italic># 以及在传输符号连接或保存用户名/组时会有些问题</span>
-</span></span><span style=display:flex><span>use <span style=color:teal>chroot</span> <span style=color:#000;font-weight:700>=</span> no
-</span></span><span style=display:flex><span>
-</span></span><span style=display:flex><span><span style=color:#998;font-style:italic># 指定监听端口</span>
-</span></span><span style=display:flex><span><span style=color:#998;font-style:italic># 默认873</span>
-</span></span><span style=display:flex><span><span style=color:teal>port</span> <span style=color:#000;font-weight:700>=</span> <span style=color:#099>873</span>
-</span></span><span style=display:flex><span>
-</span></span><span style=display:flex><span><span style=color:#998;font-style:italic># 最大连接数</span>
-</span></span><span style=display:flex><span>max <span style=color:teal>connections</span> <span style=color:#000;font-weight:700>=</span> <span style=color:#099>200</span>
-</span></span><span style=display:flex><span><span style=color:#998;font-style:italic># 超时时间</span>
-</span></span><span style=display:flex><span><span style=color:teal>timeout</span> <span style=color:#000;font-weight:700>=</span> <span style=color:#099>600</span>
-</span></span><span style=display:flex><span>
-</span></span><span style=display:flex><span><span style=color:#998;font-style:italic># 进程pid所在的文件</span>
-</span></span><span style=display:flex><span>pid <span style=color:teal>file</span> <span style=color:#000;font-weight:700>=</span> /var/run/rsyncd.pid
-</span></span><span style=display:flex><span><span style=color:#998;font-style:italic># 多连接时所用的锁</span>
-</span></span><span style=display:flex><span>lock <span style=color:teal>file</span> <span style=color:#000;font-weight:700>=</span> /var/run/rsyncd.lock
-</span></span><span style=display:flex><span><span style=color:#998;font-style:italic># 出错的日志文件</span>
-</span></span><span style=display:flex><span>log <span style=color:teal>file</span> <span style=color:#000;font-weight:700>=</span> /var/log/rsyncd.log
-</span></span><span style=display:flex><span>
-</span></span><span style=display:flex><span><span style=color:#998;font-style:italic># 忽略错误</span>
-</span></span><span style=display:flex><span>ignore <span style=color:teal>errors</span> <span style=color:#000;font-weight:700>=</span> <span style=color:#0086b3>true</span>
-</span></span><span style=display:flex><span><span style=color:#0086b3>read</span> <span style=color:teal>only</span> <span style=color:#000;font-weight:700>=</span> <span style=color:#0086b3>false</span>
-</span></span><span style=display:flex><span><span style=color:#998;font-style:italic># 是否允许查看module列表</span>
-</span></span><span style=display:flex><span><span style=color:teal>list</span> <span style=color:#000;font-weight:700>=</span> <span style=color:#0086b3>false</span>
-</span></span><span style=display:flex><span>
-</span></span><span style=display:flex><span><span style=color:#998;font-style:italic># 允许的客户端IP</span>
-</span></span><span style=display:flex><span>hosts <span style=color:teal>allow</span> <span style=color:#000;font-weight:700>=</span> 10.138.228.201
-</span></span><span style=display:flex><span>hosts <span style=color:teal>deny</span> <span style=color:#000;font-weight:700>=</span> 0.0.0.0/32
-</span></span><span style=display:flex><span>
-</span></span><span style=display:flex><span><span style=color:#998;font-style:italic># rsync认证用的用户</span>
-</span></span><span style=display:flex><span>auth <span style=color:teal>users</span> <span style=color:#000;font-weight:700>=</span> rsync
-</span></span><span style=display:flex><span><span style=color:#998;font-style:italic># 认证用户对应的密码文件</span>
-</span></span><span style=display:flex><span>secrets <span style=color:teal>file</span> <span style=color:#000;font-weight:700>=</span> /etc/rsyncd.secrets
-</span></span><span style=display:flex><span>
-</span></span><span style=display:flex><span><span style=color:#998;font-style:italic># 排除目录,空格分隔</span>
-</span></span><span style=display:flex><span><span style=color:#998;font-style:italic># 可以配置到特定的模块上</span>
-</span></span><span style=display:flex><span><span style=color:#998;font-style:italic># 如果没有需要排除的目录可以不用写</span>
-</span></span><span style=display:flex><span><span style=color:#998;font-style:italic># exclude=tmp etc</span>
-</span></span><span style=display:flex><span>
-</span></span><span style=display:flex><span><span style=color:#998;font-style:italic># 模块的定义,它是暴露的一个目录</span>
-</span></span><span style=display:flex><span><span style=color:#000;font-weight:700>[</span>test<span style=color:#000;font-weight:700>]</span>
-</span></span><span style=display:flex><span><span style=color:#998;font-style:italic># 需要同步的目录</span>
-</span></span><span style=display:flex><span><span style=color:#998;font-style:italic># 该目录必须要是存在的,如果没有请创建</span>
-</span></span><span style=display:flex><span><span style=color:teal>path</span> <span style=color:#000;font-weight:700>=</span> /opt/test/
-</span></span><span style=display:flex><span><span style=color:#998;font-style:italic># 模块的备注说明,展示用</span>
-</span></span><span style=display:flex><span><span style=color:teal>comment</span> <span style=color:#000;font-weight:700>=</span> <span style=color:#0086b3>test</span>
-</span></span></code></pre></div><p>然后配置认证用户密码文件, 文件路径在上述配置文件中指定<code>/etc/rsyncd.secrets</code>:</p><div class=highlight><pre tabindex=0 style=background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-shell data-lang=shell><span style=display:flex><span><span style=color:#0086b3>echo</span> <span style=color:#d14>&#34;rsync:6j_ioU1xA&#34;</span> &gt; /etc/rsyncd.secrets
-</span></span><span style=display:flex><span><span style=color:#998;font-style:italic># rsync对密钥文件的权限有要求</span>
-</span></span><span style=display:flex><span><span style=color:#998;font-style:italic># 仅文件拥有者可以读写</span>
-</span></span><span style=display:flex><span>chmod <span style=color:#099>600</span> /etc/rsyncd.secrets
-</span></span></code></pre></div><p>通过shell运行以下命令启动守护进程:</p><div class=highlight><pre tabindex=0 style=background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-shell data-lang=shell><span style=display:flex><span>rsync --daemon
-</span></span></code></pre></div><p>查看是否启动成功, 且已经开始监听端口:</p><div class=highlight><pre tabindex=0 style=background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-shell data-lang=shell><span style=display:flex><span>$ ss -apnl | grep <span style=color:#099>873</span>
-</span></span><span style=display:flex><span>tcp    LISTEN     <span style=color:#099>0</span>      <span style=color:#099>5</span>         *:873          *:*       users:<span style=color:#000;font-weight:700>((</span><span style=color:#d14>&#34;rsync&#34;</span>,pid<span style=color:#000;font-weight:700>=</span>20945,fd<span style=color:#000;font-weight:700>=</span>4<span style=color:#000;font-weight:700>))</span>
-</span></span><span style=display:flex><span>tcp    LISTEN     <span style=color:#099>0</span>      <span style=color:#099>5</span>      <span style=color:#000;font-weight:700>[</span>::<span style=color:#000;font-weight:700>]</span>:873       <span style=color:#000;font-weight:700>[</span>::<span style=color:#000;font-weight:700>]</span>:*       users:<span style=color:#000;font-weight:700>((</span><span style=color:#d14>&#34;rsync&#34;</span>,pid<span style=color:#000;font-weight:700>=</span>20945,fd<span style=color:#000;font-weight:700>=</span>5<span style=color:#000;font-weight:700>))</span>
-</span></span></code></pre></div><p>启动成功~</p><h2 id=开始传输>开始传输
-<a class=anchor href=#%e5%bc%80%e5%a7%8b%e4%bc%a0%e8%be%93>#</a></h2><p>登录到发送方, 使用下面的命令开始传输目录文件:</p><div class=highlight><pre tabindex=0 style=background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-shell data-lang=shell><span style=display:flex><span><span style=color:#998;font-style:italic># 创建密码文件避免手输密码</span>
-</span></span><span style=display:flex><span><span style=color:#0086b3>echo</span> <span style=color:#d14>&#34;6j_ioU1xA&#34;</span> &gt; /etc/rsync.password
-</span></span><span style=display:flex><span>chmod <span style=color:#099>600</span> /etc/rsync.password
-</span></span><span style=display:flex><span><span style=color:#998;font-style:italic># 开始同步文件到10.206.38.30</span>
-</span></span><span style=display:flex><span>rsync -avzPh /opt/test/ rsync@10.206.38.30::test --password-file<span style=color:#000;font-weight:700>=</span>/etc/rsync.password
-</span></span></code></pre></div><p>参数说明:</p><div class=highlight><pre tabindex=0 style=background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-shell data-lang=shell><span style=display:flex><span>-a, --archive               存档模式,等同于 -rlptgoD <span style=color:#000;font-weight:700>(</span>no -H,-A,-X<span style=color:#000;font-weight:700>)</span>
-</span></span><span style=display:flex><span>-r, --recursive             递归进入文件夹
-</span></span><span style=display:flex><span>-l, --links                 拷贝符号连接到符号连接
-</span></span><span style=display:flex><span>-p, --perms                 文件权限保持一致
-</span></span><span style=display:flex><span>-t, --times                 文件修改时间保持一致
-</span></span><span style=display:flex><span>-g, --group                 组保持一致
-</span></span><span style=display:flex><span>-o, --owner                 用户保持一致 
-</span></span><span style=display:flex><span>-D                          等同于 --devices --specials
-</span></span><span style=display:flex><span>    --devices               设备文件保持一致
-</span></span><span style=display:flex><span>    --specials              特殊文件保持一致
-</span></span><span style=display:flex><span>-v, --verbose               显示更多的输出信息
-</span></span><span style=display:flex><span>-z, --compress              传输期间压缩文件
-</span></span><span style=display:flex><span>-P                          等同于 --partial --progress
-</span></span><span style=display:flex><span>    --progress              显示传输进度
-</span></span><span style=display:flex><span>    --partial               保留部分传输<span style=color:#000;font-weight:700>(</span>没传输完成<span style=color:#000;font-weight:700>)</span>的文件
-</span></span><span style=display:flex><span>-h, --human-readable        以易读的格式输出数字
-</span></span></code></pre></div><p>执行完成之后, 文件就会从当前机器拷贝到<code>10.206.38.30</code>上了.</p><p>创建一个定时同步的任务, 每隔2小时同步一次:</p><div class=highlight><pre tabindex=0 style=background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-shell data-lang=shell><span style=display:flex><span>cat &gt;&gt; /var/spool/cron/root <span style=color:#d14>&lt;&lt;EOF
-</span></span></span><span style=display:flex><span><span style=color:#d14>
-</span></span></span><span style=display:flex><span><span style=color:#d14>0 */2 * * * /bin/rsync -avzPh /opt/test/ rsync@10.206.38.30::storage --password-file=/etc/rsync.password &gt; /tmp/rsync.log 2&gt;&amp;1
-</span></span></span><span style=display:flex><span><span style=color:#d14>EOF</span>
-</span></span></code></pre></div></article><footer class=book-footer><div class="flex flex-wrap justify-between"></div><script>(function(){function e(e){const t=window.getSelection(),n=document.createRange();n.selectNodeContents(e),t.removeAllRanges(),t.addRange(n)}document.querySelectorAll("pre code").forEach(t=>{t.addEventListener("click",function(){if(window.getSelection().toString())return;e(t.parentElement),navigator.clipboard&&navigator.clipboard.writeText(t.parentElement.textContent)})})})()</script></footer><div class=book-comments><link rel=stylesheet href=https://unpkg.com/gitalk/dist/gitalk.css><script src=https://unpkg.com/gitalk/dist/gitalk.min.js></script><div id=gitalk-container></div><script type=text/javascript>const gitalk=new Gitalk({clientID:"53c7373e7b1554a4abc3",clientSecret:"7c9dcef80ea6bde5d8695d1ab94bcef87063fb3b",repo:"llaoj.github.io",owner:"llaoj",admin:["llaoj"],id:location.pathname,distractionFreeMode:!1});gitalk.render("gitalk-container")</script></div><label for=menu-control class="hidden book-menu-overlay"></label></div><aside class=book-toc><div class=book-toc-content><nav id=TableOfContents><ul><li><a href=#rsync安装>rsync安装</a></li><li><a href=#启动rsync守护进程>启动rsync守护进程</a></li><li><a href=#开始传输>开始传输</a></li></ul></nav></div></aside></main></body></html>
+<label for=toc-control>
+<img src=/svg/toc.svg class=book-icon alt="Table of Contents">
+</label>
+</div>
+<aside class="hidden clearfix">
+<nav id=TableOfContents>
+<ul>
+<li><a href=#rsync安装>rsync安装</a></li>
+<li><a href=#启动rsync守护进程>启动rsync守护进程</a></li>
+<li><a href=#开始传输>开始传输</a></li>
+</ul>
+</nav>
+</aside>
+</header>
+<article class=markdown>
+<h1>
+<a href=/posts/2208/rsync-usage/>使用rsync在主机之间同步目录</a>
+</h1>
+<h5>2022-8-30</h5>
+<div>
+<a href=/categories/technology/>technology</a>
+</div>
+<div>
+<a href=/tags/rsync/>rsync</a>
+</div>
+<h2 id=rsync安装>
+rsync安装
+<a class=anchor href=#rsync%e5%ae%89%e8%a3%85>#</a>
+</h2>
+<p>在传输双方的服务器上都安装rsync软件. 如果服务器上有rsync可以跳过.</p>
+<p>先检查有没有安装rsync:</p>
+<div class=highlight><pre tabindex=0 style=background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-shell data-lang=shell>rsync -h
+</code></pre></div><p>如果没有安装, 使用下面的命令安装:</p>
+<div class=highlight><pre tabindex=0 style=background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-shell data-lang=shell><span style=color:#998;font-style:italic># Debian</span>
+sudo apt-get install rsync
+
+<span style=color:#998;font-style:italic># Red Hat</span>
+sudo yum install rsync
+
+<span style=color:#998;font-style:italic># Arch Linux</span>
+sudo pacman -S rsync
+</code></pre></div><h2 id=启动rsync守护进程>
+启动rsync守护进程
+<a class=anchor href=#%e5%90%af%e5%8a%a8rsync%e5%ae%88%e6%8a%a4%e8%bf%9b%e7%a8%8b>#</a>
+</h2>
+<p>rsync使用最多的是ssh模式. 在现代的公司中, 出于安全的原因, 很多ssh是被禁止使用的. 所以, 我们可以使用rsync的守护进程模式. 一起看看怎么用吧.</p>
+<p>rsync守护进程部署在传输双方(发送方或者接受方)的任何一端都可以的.</p>
+<p>下面的配置和命令中, 我以发送方(<code>10.138.228.201</code>)和接收方(<code>10.206.38.30</code>)为例.</p>
+<p>我选择接收方, 先部署配置文件. 配置文件地址: <code>/etc/rsyncd.conf</code>. 配置文件
+<a href=https://linux.die.net/man/5/rsyncd.conf>官方参考手册</a></p>
+<p>以下是一个参考的配置, 每一项配置我都增加了备注说明:</p>
+<div class=highlight><pre tabindex=0 style=background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-shell data-lang=shell><span style=color:#998;font-style:italic># 指定rsync以什么用户/组传输文件</span>
+<span style=color:#998;font-style:italic># 默认nobody,如果使用了系统不存在的用户和组</span>
+<span style=color:#998;font-style:italic># 需要先手动创建用户和组</span>
+<span style=color:#998;font-style:italic># 它会是生成的文件所属的用户和组</span>
+<span style=color:#998;font-style:italic># 也可以把它们配置到模块中</span>
+<span style=color:teal>uid</span> <span style=color:#000;font-weight:700>=</span> root
+<span style=color:teal>gid</span> <span style=color:#000;font-weight:700>=</span> root
+
+<span style=color:#998;font-style:italic># 选择yes可以在操作模块时chroot到同步目录中</span>
+<span style=color:#998;font-style:italic># 优势是面对安全威胁能提供额外保护</span>
+<span style=color:#998;font-style:italic># 缺点是使用chroot需要root权限,</span>
+<span style=color:#998;font-style:italic># 以及在传输符号连接或保存用户名/组时会有些问题</span>
+use <span style=color:teal>chroot</span> <span style=color:#000;font-weight:700>=</span> no
+
+<span style=color:#998;font-style:italic># 指定监听端口</span>
+<span style=color:#998;font-style:italic># 默认873</span>
+<span style=color:teal>port</span> <span style=color:#000;font-weight:700>=</span> <span style=color:#099>873</span>
+
+<span style=color:#998;font-style:italic># 最大连接数</span>
+max <span style=color:teal>connections</span> <span style=color:#000;font-weight:700>=</span> <span style=color:#099>200</span>
+<span style=color:#998;font-style:italic># 超时时间</span>
+<span style=color:teal>timeout</span> <span style=color:#000;font-weight:700>=</span> <span style=color:#099>600</span>
+
+<span style=color:#998;font-style:italic># 进程pid所在的文件</span>
+pid <span style=color:teal>file</span> <span style=color:#000;font-weight:700>=</span> /var/run/rsyncd.pid
+<span style=color:#998;font-style:italic># 多连接时所用的锁</span>
+lock <span style=color:teal>file</span> <span style=color:#000;font-weight:700>=</span> /var/run/rsyncd.lock
+<span style=color:#998;font-style:italic># 出错的日志文件</span>
+log <span style=color:teal>file</span> <span style=color:#000;font-weight:700>=</span> /var/log/rsyncd.log
+
+<span style=color:#998;font-style:italic># 忽略错误</span>
+ignore <span style=color:teal>errors</span> <span style=color:#000;font-weight:700>=</span> <span style=color:#0086b3>true</span>
+<span style=color:#0086b3>read</span> <span style=color:teal>only</span> <span style=color:#000;font-weight:700>=</span> <span style=color:#0086b3>false</span>
+<span style=color:#998;font-style:italic># 是否允许查看module列表</span>
+<span style=color:teal>list</span> <span style=color:#000;font-weight:700>=</span> <span style=color:#0086b3>false</span>
+
+<span style=color:#998;font-style:italic># 允许的客户端IP</span>
+hosts <span style=color:teal>allow</span> <span style=color:#000;font-weight:700>=</span> 10.138.228.201
+hosts <span style=color:teal>deny</span> <span style=color:#000;font-weight:700>=</span> 0.0.0.0/32
+
+<span style=color:#998;font-style:italic># rsync认证用的用户</span>
+auth <span style=color:teal>users</span> <span style=color:#000;font-weight:700>=</span> rsync
+<span style=color:#998;font-style:italic># 认证用户对应的密码文件</span>
+secrets <span style=color:teal>file</span> <span style=color:#000;font-weight:700>=</span> /etc/rsyncd.secrets
+
+<span style=color:#998;font-style:italic># 排除目录,空格分隔</span>
+<span style=color:#998;font-style:italic># 可以配置到特定的模块上</span>
+<span style=color:#998;font-style:italic># 如果没有需要排除的目录可以不用写</span>
+<span style=color:#998;font-style:italic># exclude=tmp etc</span>
+
+<span style=color:#998;font-style:italic># 模块的定义,它是暴露的一个目录</span>
+<span style=color:#000;font-weight:700>[</span>test<span style=color:#000;font-weight:700>]</span>
+<span style=color:#998;font-style:italic># 需要同步的目录</span>
+<span style=color:#998;font-style:italic># 该目录必须要是存在的,如果没有请创建</span>
+<span style=color:teal>path</span> <span style=color:#000;font-weight:700>=</span> /opt/test/
+<span style=color:#998;font-style:italic># 模块的备注说明,展示用</span>
+<span style=color:teal>comment</span> <span style=color:#000;font-weight:700>=</span> <span style=color:#0086b3>test</span>
+</code></pre></div><p>然后配置认证用户密码文件, 文件路径在上述配置文件中指定<code>/etc/rsyncd.secrets</code>:</p>
+<div class=highlight><pre tabindex=0 style=background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-shell data-lang=shell><span style=color:#0086b3>echo</span> <span style=color:#d14>&#34;rsync:6j_ioU1xA&#34;</span> &gt; /etc/rsyncd.secrets
+<span style=color:#998;font-style:italic># rsync对密钥文件的权限有要求</span>
+<span style=color:#998;font-style:italic># 仅文件拥有者可以读写</span>
+chmod <span style=color:#099>600</span> /etc/rsyncd.secrets
+</code></pre></div><p>通过shell运行以下命令启动守护进程:</p>
+<div class=highlight><pre tabindex=0 style=background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-shell data-lang=shell>rsync --daemon
+</code></pre></div><p>查看是否启动成功, 且已经开始监听端口:</p>
+<div class=highlight><pre tabindex=0 style=background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-shell data-lang=shell>$ ss -apnl | grep <span style=color:#099>873</span>
+tcp    LISTEN     <span style=color:#099>0</span>      <span style=color:#099>5</span>         *:873          *:*       users:<span style=color:#000;font-weight:700>((</span><span style=color:#d14>&#34;rsync&#34;</span>,pid<span style=color:#000;font-weight:700>=</span>20945,fd<span style=color:#000;font-weight:700>=</span>4<span style=color:#000;font-weight:700>))</span>
+tcp    LISTEN     <span style=color:#099>0</span>      <span style=color:#099>5</span>      <span style=color:#000;font-weight:700>[</span>::<span style=color:#000;font-weight:700>]</span>:873       <span style=color:#000;font-weight:700>[</span>::<span style=color:#000;font-weight:700>]</span>:*       users:<span style=color:#000;font-weight:700>((</span><span style=color:#d14>&#34;rsync&#34;</span>,pid<span style=color:#000;font-weight:700>=</span>20945,fd<span style=color:#000;font-weight:700>=</span>5<span style=color:#000;font-weight:700>))</span>
+</code></pre></div><p>启动成功~</p>
+<h2 id=开始传输>
+开始传输
+<a class=anchor href=#%e5%bc%80%e5%a7%8b%e4%bc%a0%e8%be%93>#</a>
+</h2>
+<p>登录到发送方, 使用下面的命令开始传输目录文件:</p>
+<div class=highlight><pre tabindex=0 style=background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-shell data-lang=shell><span style=color:#998;font-style:italic># 创建密码文件避免手输密码</span>
+<span style=color:#0086b3>echo</span> <span style=color:#d14>&#34;6j_ioU1xA&#34;</span> &gt; /etc/rsync.password
+chmod <span style=color:#099>600</span> /etc/rsync.password
+<span style=color:#998;font-style:italic># 开始同步文件到10.206.38.30</span>
+rsync -avzPh /opt/test/ rsync@10.206.38.30::test --password-file<span style=color:#000;font-weight:700>=</span>/etc/rsync.password
+</code></pre></div><p>参数说明:</p>
+<div class=highlight><pre tabindex=0 style=background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-shell data-lang=shell>-a, --archive               存档模式,等同于 -rlptgoD <span style=color:#000;font-weight:700>(</span>no -H,-A,-X<span style=color:#000;font-weight:700>)</span>
+-r, --recursive             递归进入文件夹
+-l, --links                 拷贝符号连接到符号连接
+-p, --perms                 文件权限保持一致
+-t, --times                 文件修改时间保持一致
+-g, --group                 组保持一致
+-o, --owner                 用户保持一致 
+-D                          等同于 --devices --specials
+    --devices               设备文件保持一致
+    --specials              特殊文件保持一致
+-v, --verbose               显示更多的输出信息
+-z, --compress              传输期间压缩文件
+-P                          等同于 --partial --progress
+    --progress              显示传输进度
+    --partial               保留部分传输<span style=color:#000;font-weight:700>(</span>没传输完成<span style=color:#000;font-weight:700>)</span>的文件
+-h, --human-readable        以易读的格式输出数字
+</code></pre></div><p>执行完成之后, 文件就会从当前机器拷贝到<code>10.206.38.30</code>上了.</p>
+<p>创建一个定时同步的任务, 每隔2小时同步一次:</p>
+<div class=highlight><pre tabindex=0 style=background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-shell data-lang=shell>cat &gt;&gt; /var/spool/cron/root <span style=color:#d14>&lt;&lt;EOF
+</span><span style=color:#d14>
+</span><span style=color:#d14>0 */2 * * * /bin/rsync -avzPh /opt/test/ rsync@10.206.38.30::storage --password-file=/etc/rsync.password &gt; /tmp/rsync.log 2&gt;&amp;1
+</span><span style=color:#d14>EOF</span>
+</code></pre></div></article>
+<footer class=book-footer>
+<div class="flex flex-wrap justify-between">
+</div>
+<script>(function(){function a(c){const a=window.getSelection(),b=document.createRange();b.selectNodeContents(c),a.removeAllRanges(),a.addRange(b)}document.querySelectorAll("pre code").forEach(b=>{b.addEventListener("click",function(c){if(window.getSelection().toString())return;a(b.parentElement),navigator.clipboard&&navigator.clipboard.writeText(b.parentElement.textContent)})})})()</script>
+</footer>
+<div class=book-comments><link rel=stylesheet href=https://unpkg.com/gitalk/dist/gitalk.css>
+<script src=https://unpkg.com/gitalk/dist/gitalk.min.js></script>
+<div id=gitalk-container></div>
+<script type=text/javascript>const gitalk=new Gitalk({clientID:'53c7373e7b1554a4abc3',clientSecret:'7c9dcef80ea6bde5d8695d1ab94bcef87063fb3b',repo:'llaoj.github.io',owner:'llaoj',admin:['llaoj'],id:location.pathname,distractionFreeMode:!1});gitalk.render('gitalk-container')</script></div>
+<label for=menu-control class="hidden book-menu-overlay"></label>
+</div>
+<aside class=book-toc>
+<div class=book-toc-content>
+<nav id=TableOfContents>
+<ul>
+<li><a href=#rsync安装>rsync安装</a></li>
+<li><a href=#启动rsync守护进程>启动rsync守护进程</a></li>
+<li><a href=#开始传输>开始传输</a></li>
+</ul>
+</nav>
+</div>
+</aside>
+</main>
+</body>
+</html>

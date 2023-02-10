@@ -1,158 +1,282 @@
-<!doctype html><html lang=zh dir=ltr><head><meta charset=utf-8><meta name=viewport content="width=device-width,initial-scale=1"><meta name=description content="Fluentd负责Kubernetes中容器日志的收集工作, 以Daemonset形式运行在每一个节点上. 下面这个配置是在多个生产集群使用的配置, 经过多次调优的. 有一些关键的配置增加了配置解释说明. 目前使用问题不大. 持续更新配置中&mldr;"><meta name=theme-color content="#FFFFFF"><meta name=color-scheme content="light dark"><meta property="og:title" content="Fluentd配置文件最佳实践"><meta property="og:description" content="Fluentd负责Kubernetes中容器日志的收集工作, 以Daemonset形式运行在每一个节点上. 下面这个配置是在多个生产集群使用的配置, 经过多次调优的. 有一些关键的配置增加了配置解释说明. 目前使用问题不大. 持续更新配置中&mldr;"><meta property="og:type" content="article"><meta property="og:url" content="https://blog.llaoj.cn/posts/2207/fluentd-es-config/"><meta property="article:section" content="posts"><meta property="article:published_time" content="2022-07-31T00:00:00+00:00"><meta property="article:modified_time" content="2022-07-31T00:00:00+00:00"><title>Fluentd配置文件最佳实践 | 老J的博客</title><link rel=manifest href=/manifest.json><link rel=icon href=/favicon.png type=image/x-icon><link rel=stylesheet href=/book.min.18b5d651e266e5e9cfc7455e2e50eb1b74a62aee16cf204b69de1d9e695276f7.css integrity="sha256-GLXWUeJm5enPx0VeLlDrG3SmKu4WzyBLad4dnmlSdvc=" crossorigin=anonymous><script defer src=/flexsearch.min.js></script>
-<script defer src=/zh.search.min.02becbbc2ba62115c50fcb4c3c7dc8a6d9685d9f9b173b24eb3219843f470f52.js integrity="sha256-Ar7LvCumIRXFD8tMPH3IptloXZ+bFzsk6zIZhD9HD1I=" crossorigin=anonymous></script>
+<!doctype html><html lang=zh dir=ltr>
+<head>
+<meta charset=utf-8>
+<meta name=viewport content="width=device-width,initial-scale=1">
+<meta name=description content="Fluentd负责Kubernetes中容器日志的收集工作, 以Daemonset形式运行在每一个节点上. 下面这个配置是在多个生产集群使用的配置, 经过多次调优的. 有一些关键的配置增加了配置解释说明. 目前使用问题不大. 持续更新配置中&mldr;">
+<meta name=theme-color content="#FFFFFF">
+<meta name=color-scheme content="light dark"><meta property="og:title" content="Fluentd配置文件最佳实践">
+<meta property="og:description" content="Fluentd负责Kubernetes中容器日志的收集工作, 以Daemonset形式运行在每一个节点上. 下面这个配置是在多个生产集群使用的配置, 经过多次调优的. 有一些关键的配置增加了配置解释说明. 目前使用问题不大. 持续更新配置中&mldr;">
+<meta property="og:type" content="article">
+<meta property="og:url" content="https://blog.llaoj.cn/posts/2207/fluentd-es-config/"><meta property="article:section" content="posts">
+<meta property="article:published_time" content="2022-07-31T00:00:00+00:00">
+<meta property="article:modified_time" content="2022-07-31T00:00:00+00:00">
+<title>Fluentd配置文件最佳实践 | 老J的博客</title>
+<link rel=manifest href=/manifest.json>
+<link rel=icon href=/favicon.png type=image/x-icon>
+<link rel=stylesheet href=/book.min.18b5d651e266e5e9cfc7455e2e50eb1b74a62aee16cf204b69de1d9e695276f7.css integrity="sha256-GLXWUeJm5enPx0VeLlDrG3SmKu4WzyBLad4dnmlSdvc=" crossorigin=anonymous>
+<script defer src=/flexsearch.min.js></script>
+<script defer src=/zh.search.min.abbe5ab420c396d7e24c093dc83c6eaf070ba6629ccd1475a3bc5c001c790f13.js integrity="sha256-q75atCDDltfiTAk9yDxurwcLpmKczRR1o7xcABx5DxM=" crossorigin=anonymous></script>
 <script defer src=/sw.min.6f6f90fcb8eb1c49ec389838e6b801d0de19430b8e516902f8d75c3c8bd98739.js integrity="sha256-b2+Q/LjrHEnsOJg45rgB0N4ZQwuOUWkC+NdcPIvZhzk=" crossorigin=anonymous></script>
-<script>var _hmt=_hmt||[];(function(){var e,t=document.createElement("script");t.src="https://hm.baidu.com/hm.js?7f5ad4632a1c2df3cd8e1199a7aaf48a",e=document.getElementsByTagName("script")[0],e.parentNode.insertBefore(t,e)})()</script></head><body dir=ltr><input type=checkbox class="hidden toggle" id=menu-control>
-<input type=checkbox class="hidden toggle" id=toc-control><main class="container flex"><aside class=book-menu><div class=book-menu-content><nav><h2 class=book-brand><a class="flex align-center" href=/><img src=/j.png alt=Logo><span>老J的博客</span></a></h2><div class=book-search><input type=text id=book-search-input placeholder=搜索 aria-label=搜索 maxlength=64 data-hotkeys=s/><div class="book-search-spinner hidden"></div><ul id=book-search-results></ul></div><ul><li><a href=/posts/>文章</a></li></ul><ul><li><a href=/docs/oauth2nsso/>OAuth2&SSO</a><ul><li><a href=/docs/oauth2nsso/configuration/>配置</a></li><li><a href=/docs/oauth2nsso/apis/>API列表</a></li><li><a href=/docs/oauth2nsso/deploy/>部署</a></li><li><a href=/docs/oauth2nsso/note/>说明</a></li><li><a href=/docs/oauth2nsso/demo/>示例</a></li><li><a href=/docs/oauth2nsso/for-client/>接入指引</a></li></ul></li><li><a href=/docs/about/>关于</a><ul></ul></li></ul><ul><li><a href=https://www.cncf.io/ target=_blank rel=noopener>CNCF</a></li><li><a href=https://ebpf.io/ target=_blank rel=noopener>eBPF</a></li></ul><div class=book-menu-after><a href=https://www.rutron.net/ target=_blank>@如创科技</a><br>提供云计算支持</div></nav><script>(function(){var e=document.querySelector("aside .book-menu-content");addEventListener("beforeunload",function(){localStorage.setItem("menu.scrollTop",e.scrollTop)}),e.scrollTop=localStorage.getItem("menu.scrollTop")})()</script></div></aside><div class=book-page><header class=book-header><div class="flex align-center justify-between"><label for=menu-control><img src=/svg/menu.svg class=book-icon alt=Menu></label>
+<script>var _hmt=_hmt||[];(function(){var a=document.createElement("script"),b;a.src="https://hm.baidu.com/hm.js?7f5ad4632a1c2df3cd8e1199a7aaf48a",b=document.getElementsByTagName("script")[0],b.parentNode.insertBefore(a,b)})()</script>
+</head>
+<body dir=ltr>
+<input type=checkbox class="hidden toggle" id=menu-control>
+<input type=checkbox class="hidden toggle" id=toc-control>
+<main class="container flex">
+<aside class=book-menu>
+<div class=book-menu-content>
+<nav>
+<h2 class=book-brand>
+<a class="flex align-center" href=/><img src=/j.png alt=Logo><span>老J的博客</span>
+</a>
+</h2>
+<div class=book-search>
+<input type=text id=book-search-input placeholder=搜索 aria-label=搜索 maxlength=64 data-hotkeys=s/>
+<div class="book-search-spinner hidden"></div>
+<ul id=book-search-results></ul>
+</div>
+<ul>
+<li>
+<a href=/posts/>
+文章
+</a>
+</li>
+</ul>
+<ul>
+<li>
+<a href=/docs/oauth2nsso/>OAuth2&SSO</a>
+<ul>
+<li>
+<a href=/docs/oauth2nsso/configuration/>配置</a>
+</li>
+<li>
+<a href=/docs/oauth2nsso/apis/>API列表</a>
+</li>
+<li>
+<a href=/docs/oauth2nsso/deploy/>部署</a>
+</li>
+<li>
+<a href=/docs/oauth2nsso/note/>说明</a>
+</li>
+<li>
+<a href=/docs/oauth2nsso/demo/>示例</a>
+</li>
+<li>
+<a href=/docs/oauth2nsso/for-client/>接入指引</a>
+</li>
+</ul>
+</li>
+<li>
+<a href=/docs/about/>关于</a>
+<ul>
+</ul>
+</li>
+</ul>
+<ul>
+<li>
+<a href=https://www.cncf.io/ target=_blank rel=noopener>
+CNCF
+</a>
+</li>
+<li>
+<a href=https://ebpf.io/ target=_blank rel=noopener>
+eBPF
+</a>
+</li>
+</ul>
+<div class=book-menu-after>
+<a href=https://www.rutron.net/ target=_blank>@如创科技</a><br>提供云计算支持
+</div>
+</nav>
+<script>(function(){var a=document.querySelector("aside .book-menu-content");addEventListener("beforeunload",function(b){localStorage.setItem("menu.scrollTop",a.scrollTop)}),a.scrollTop=localStorage.getItem("menu.scrollTop")})()</script>
+</div>
+</aside>
+<div class=book-page>
+<header class=book-header>
+<div class="flex align-center justify-between">
+<label for=menu-control>
+<img src=/svg/menu.svg class=book-icon alt=Menu>
+</label>
 <strong>Fluentd配置文件最佳实践</strong>
-<label for=toc-control></label></div></header><article class=markdown><h1><a href=/posts/2207/fluentd-es-config/>Fluentd配置文件最佳实践</a></h1><h5>2022-7-31</h5><div><a href=/categories/technology/>technology</a></div><div><a href=/tags/kubernetes/>kubernetes</a>,
-<a href=/tags/fluentd/>fluentd</a></div><p>Fluentd负责Kubernetes中容器日志的收集工作, 以Daemonset形式运行在每一个节点上. 下面这个配置是在多个生产集群使用的配置, 经过多次调优的. 有一些关键的配置增加了配置解释说明. 目前使用问题不大. 持续更新配置中&mldr;</p><div class=highlight><pre tabindex=0 style=background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-yaml data-lang=yaml><span style=display:flex><span><span style=color:navy>kind</span>:<span style=color:#bbb> </span>ConfigMap<span style=color:#bbb>
-</span></span></span><span style=display:flex><span><span style=color:#bbb></span><span style=color:navy>apiVersion</span>:<span style=color:#bbb> </span>v1<span style=color:#bbb>
-</span></span></span><span style=display:flex><span><span style=color:#bbb></span><span style=color:navy>metadata</span>:<span style=color:#bbb>
-</span></span></span><span style=display:flex><span><span style=color:#bbb>  </span><span style=color:navy>name</span>:<span style=color:#bbb> </span>fluentd-es-config<span style=color:#bbb>
-</span></span></span><span style=display:flex><span><span style=color:#bbb>  </span><span style=color:navy>namespace</span>:<span style=color:#bbb> </span>logging<span style=color:#bbb>
-</span></span></span><span style=display:flex><span><span style=color:#bbb>  </span><span style=color:navy>labels</span>:<span style=color:#bbb>
-</span></span></span><span style=display:flex><span><span style=color:#bbb>    </span><span style=color:navy>addonmanager.kubernetes.io/mode</span>:<span style=color:#bbb> </span>Reconcile<span style=color:#bbb>
-</span></span></span><span style=display:flex><span><span style=color:#bbb></span><span style=color:navy>data</span>:<span style=color:#bbb>
-</span></span></span><span style=display:flex><span><span style=color:#bbb>  </span><span style=color:navy>system.conf</span>:<span style=color:#bbb> </span>|-<span style=color:#d14>
-</span></span></span><span style=display:flex><span><span style=color:#d14>    &lt;system&gt;
-</span></span></span><span style=display:flex><span><span style=color:#d14>      root_dir /tmp/fluentd-buffers/
-</span></span></span><span style=display:flex><span><span style=color:#d14>    &lt;/system&gt;</span><span style=color:#bbb>    
-</span></span></span><span style=display:flex><span><span style=color:#bbb>
-</span></span></span><span style=display:flex><span><span style=color:#bbb>  </span><span style=color:navy>containers.input.conf</span>:<span style=color:#bbb> </span>|-<span style=color:#d14>
-</span></span></span><span style=display:flex><span><span style=color:#d14>    # Json Log Example:
-</span></span></span><span style=display:flex><span><span style=color:#d14>    # {&#34;log&#34;:&#34;[info:2016-02-16T16:04:05.930-08:00] Some log text here\n&#34;,&#34;stream&#34;:&#34;stdout&#34;,&#34;time&#34;:&#34;2016-02-17T00:04:05.931087621Z&#34;}
-</span></span></span><span style=display:flex><span><span style=color:#d14>    # CRI Log Example:
-</span></span></span><span style=display:flex><span><span style=color:#d14>    # 2016-02-17T00:04:05.931087621Z stdout F [info:2016-02-16T16:04:05.930-08:00] Some log text here
-</span></span></span><span style=display:flex><span><span style=color:#d14>    &lt;source&gt;
-</span></span></span><span style=display:flex><span><span style=color:#d14>      @id fluentd-containers.log
-</span></span></span><span style=display:flex><span><span style=color:#d14>      @type tail
-</span></span></span><span style=display:flex><span><span style=color:#d14>      path /var/log/containers/*.log
-</span></span></span><span style=display:flex><span><span style=color:#d14>      pos_file /var/log/es-containers.log.pos
-</span></span></span><span style=display:flex><span><span style=color:#d14>      tag raw.kubernetes.*
-</span></span></span><span style=display:flex><span><span style=color:#d14>      read_from_head true
-</span></span></span><span style=display:flex><span><span style=color:#d14>      &lt;parse&gt;
-</span></span></span><span style=display:flex><span><span style=color:#d14>        @type multi_format
-</span></span></span><span style=display:flex><span><span style=color:#d14>        &lt;pattern&gt;
-</span></span></span><span style=display:flex><span><span style=color:#d14>          format json
-</span></span></span><span style=display:flex><span><span style=color:#d14>          time_key time
-</span></span></span><span style=display:flex><span><span style=color:#d14>          time_format %Y-%m-%dT%H:%M:%S.%NZ
-</span></span></span><span style=display:flex><span><span style=color:#d14>        &lt;/pattern&gt;
-</span></span></span><span style=display:flex><span><span style=color:#d14>        &lt;pattern&gt;
-</span></span></span><span style=display:flex><span><span style=color:#d14>          format /^(?&lt;time&gt;.+) (?&lt;stream&gt;stdout|stderr) [^ ]* (?&lt;log&gt;.*)$/
-</span></span></span><span style=display:flex><span><span style=color:#d14>          time_format %Y-%m-%dT%H:%M:%S.%N%:z
-</span></span></span><span style=display:flex><span><span style=color:#d14>        &lt;/pattern&gt;
-</span></span></span><span style=display:flex><span><span style=color:#d14>      &lt;/parse&gt;
-</span></span></span><span style=display:flex><span><span style=color:#d14>    &lt;/source&gt;
-</span></span></span><span style=display:flex><span><span style=color:#d14>
-</span></span></span><span style=display:flex><span><span style=color:#d14>    # Detect exceptions in the log output and forward them as one log entry.
-</span></span></span><span style=display:flex><span><span style=color:#d14>    &lt;match raw.kubernetes.**&gt;
-</span></span></span><span style=display:flex><span><span style=color:#d14>      @id raw.kubernetes
-</span></span></span><span style=display:flex><span><span style=color:#d14>      @type detect_exceptions
-</span></span></span><span style=display:flex><span><span style=color:#d14>      remove_tag_prefix raw
-</span></span></span><span style=display:flex><span><span style=color:#d14>      message log
-</span></span></span><span style=display:flex><span><span style=color:#d14>      stream stream
-</span></span></span><span style=display:flex><span><span style=color:#d14>      multiline_flush_interval 5
-</span></span></span><span style=display:flex><span><span style=color:#d14>      max_bytes 500000
-</span></span></span><span style=display:flex><span><span style=color:#d14>      max_lines 1000
-</span></span></span><span style=display:flex><span><span style=color:#d14>    &lt;/match&gt;
-</span></span></span><span style=display:flex><span><span style=color:#d14>
-</span></span></span><span style=display:flex><span><span style=color:#d14>    # Concatenate multi-line logs
-</span></span></span><span style=display:flex><span><span style=color:#d14>    # &lt;filter kubernetes.**&gt;
-</span></span></span><span style=display:flex><span><span style=color:#d14>    #   @id filter_concat
-</span></span></span><span style=display:flex><span><span style=color:#d14>    #   @type concat
-</span></span></span><span style=display:flex><span><span style=color:#d14>    #   key log
-</span></span></span><span style=display:flex><span><span style=color:#d14>    #   multiline_end_regexp /\n$/
-</span></span></span><span style=display:flex><span><span style=color:#d14>    #   separator &#34;&#34;
-</span></span></span><span style=display:flex><span><span style=color:#d14>    # &lt;/filter&gt;
-</span></span></span><span style=display:flex><span><span style=color:#d14>
-</span></span></span><span style=display:flex><span><span style=color:#d14>    # Enriches records with Kubernetes metadata
-</span></span></span><span style=display:flex><span><span style=color:#d14>    &lt;filter kubernetes.**&gt;
-</span></span></span><span style=display:flex><span><span style=color:#d14>      @id filter_kubernetes_metadata
-</span></span></span><span style=display:flex><span><span style=color:#d14>      @type kubernetes_metadata
-</span></span></span><span style=display:flex><span><span style=color:#d14>    &lt;/filter&gt;
-</span></span></span><span style=display:flex><span><span style=color:#d14>
-</span></span></span><span style=display:flex><span><span style=color:#d14>    # 防止ES中出现重复数据
-</span></span></span><span style=display:flex><span><span style=color:#d14>    &lt;filter collect-logs.**&gt;
-</span></span></span><span style=display:flex><span><span style=color:#d14>      @type elasticsearch_genid
-</span></span></span><span style=display:flex><span><span style=color:#d14>      hash_id_key _hash # storing generated hash id key (default is _hash)
-</span></span></span><span style=display:flex><span><span style=color:#d14>    &lt;/filter&gt;</span><span style=color:#bbb>    
-</span></span></span><span style=display:flex><span><span style=color:#bbb>
-</span></span></span><span style=display:flex><span><span style=color:#bbb>  </span><span style=color:navy>output.conf</span>:<span style=color:#bbb> </span>|-<span style=color:#d14>
-</span></span></span><span style=display:flex><span><span style=color:#d14>    # 根据pod.metadata.labels来判断是否收集日志
-</span></span></span><span style=display:flex><span><span style=color:#d14>    # collect-logs: true
-</span></span></span><span style=display:flex><span><span style=color:#d14>    # 添加标识集群ID的tag: collect-logs.&lt;clustername&gt; 
-</span></span></span><span style=display:flex><span><span style=color:#d14>    &lt;match kubernetes.**&gt;
-</span></span></span><span style=display:flex><span><span style=color:#d14>      @type rewrite_tag_filter
-</span></span></span><span style=display:flex><span><span style=color:#d14>      &lt;rule&gt;
-</span></span></span><span style=display:flex><span><span style=color:#d14>        key $.kubernetes.labels.collect-logs
-</span></span></span><span style=display:flex><span><span style=color:#d14>        pattern /^true$/
-</span></span></span><span style=display:flex><span><span style=color:#d14>        tag collect-logs.&lt;clustername&gt;
-</span></span></span><span style=display:flex><span><span style=color:#d14>      &lt;/rule&gt;
-</span></span></span><span style=display:flex><span><span style=color:#d14>    &lt;/match&gt;
-</span></span></span><span style=display:flex><span><span style=color:#d14>
-</span></span></span><span style=display:flex><span><span style=color:#d14>    &lt;match collect-logs.**&gt;
-</span></span></span><span style=display:flex><span><span style=color:#d14>      @type elasticsearch
-</span></span></span><span style=display:flex><span><span style=color:#d14>      @log_level info
-</span></span></span><span style=display:flex><span><span style=color:#d14>      hosts 10.138.1.51:9200,10.138.1.52:9200,10.138.1.53:9200
-</span></span></span><span style=display:flex><span><span style=color:#d14>      user &lt;user&gt;
-</span></span></span><span style=display:flex><span><span style=color:#d14>      password &lt;password&gt;
-</span></span></span><span style=display:flex><span><span style=color:#d14>      reload_connections false
-</span></span></span><span style=display:flex><span><span style=color:#d14>      reconnect_on_error true
-</span></span></span><span style=display:flex><span><span style=color:#d14>      reload_on_failure true
-</span></span></span><span style=display:flex><span><span style=color:#d14>      request_timeout 30s
-</span></span></span><span style=display:flex><span><span style=color:#d14>      suppress_type_name true
-</span></span></span><span style=display:flex><span><span style=color:#d14>      id_key _hash # specify same key name which is specified in hash_id_key
-</span></span></span><span style=display:flex><span><span style=color:#d14>      remove_keys _hash # Elasticsearch doesn&#39;t like keys that start with _
-</span></span></span><span style=display:flex><span><span style=color:#d14>      include_tag_key true
-</span></span></span><span style=display:flex><span><span style=color:#d14>      logstash_format true
-</span></span></span><span style=display:flex><span><span style=color:#d14>      &lt;buffer&gt;
-</span></span></span><span style=display:flex><span><span style=color:#d14>        @type file
-</span></span></span><span style=display:flex><span><span style=color:#d14>        path /var/log/fluentd-buffers/elasticsearch01.buffer
-</span></span></span><span style=display:flex><span><span style=color:#d14>        flush_mode interval
-</span></span></span><span style=display:flex><span><span style=color:#d14>        retry_type exponential_backoff
-</span></span></span><span style=display:flex><span><span style=color:#d14>        flush_thread_count 2
-</span></span></span><span style=display:flex><span><span style=color:#d14>        flush_interval 5s
-</span></span></span><span style=display:flex><span><span style=color:#d14>        retry_forever
-</span></span></span><span style=display:flex><span><span style=color:#d14>        retry_max_interval 30
-</span></span></span><span style=display:flex><span><span style=color:#d14>        chunk_limit_size 2M
-</span></span></span><span style=display:flex><span><span style=color:#d14>        # total_limit_size 500M # 默认64G, 太小会因为buffer灌满卡住并丢失数据
-</span></span></span><span style=display:flex><span><span style=color:#d14>        overflow_action block
-</span></span></span><span style=display:flex><span><span style=color:#d14>      &lt;/buffer&gt;
-</span></span></span><span style=display:flex><span><span style=color:#d14>    &lt;/match&gt;</span><span style=color:#bbb>    
-</span></span></span><span style=display:flex><span><span style=color:#bbb>
-</span></span></span><span style=display:flex><span><span style=color:#bbb>  </span><span style=color:navy>monitoring.conf</span>:<span style=color:#bbb> </span>|-<span style=color:#d14>
-</span></span></span><span style=display:flex><span><span style=color:#d14>    # Prometheus Exporter Plugin
-</span></span></span><span style=display:flex><span><span style=color:#d14>    # input plugin that exports metrics
-</span></span></span><span style=display:flex><span><span style=color:#d14>    &lt;source&gt;
-</span></span></span><span style=display:flex><span><span style=color:#d14>      @id prometheus
-</span></span></span><span style=display:flex><span><span style=color:#d14>      @type prometheus
-</span></span></span><span style=display:flex><span><span style=color:#d14>    &lt;/source&gt;
-</span></span></span><span style=display:flex><span><span style=color:#d14>    &lt;source&gt;
-</span></span></span><span style=display:flex><span><span style=color:#d14>      @id monitor_agent
-</span></span></span><span style=display:flex><span><span style=color:#d14>      @type monitor_agent
-</span></span></span><span style=display:flex><span><span style=color:#d14>    &lt;/source&gt;
-</span></span></span><span style=display:flex><span><span style=color:#d14>    # input plugin that collects metrics from MonitorAgent
-</span></span></span><span style=display:flex><span><span style=color:#d14>    &lt;source&gt;
-</span></span></span><span style=display:flex><span><span style=color:#d14>      @id prometheus_monitor
-</span></span></span><span style=display:flex><span><span style=color:#d14>      @type prometheus_monitor
-</span></span></span><span style=display:flex><span><span style=color:#d14>      &lt;labels&gt;
-</span></span></span><span style=display:flex><span><span style=color:#d14>        host ${hostname}
-</span></span></span><span style=display:flex><span><span style=color:#d14>      &lt;/labels&gt;
-</span></span></span><span style=display:flex><span><span style=color:#d14>    &lt;/source&gt;
-</span></span></span><span style=display:flex><span><span style=color:#d14>    # input plugin that collects metrics for output plugin
-</span></span></span><span style=display:flex><span><span style=color:#d14>    &lt;source&gt;
-</span></span></span><span style=display:flex><span><span style=color:#d14>      @id prometheus_output_monitor
-</span></span></span><span style=display:flex><span><span style=color:#d14>      @type prometheus_output_monitor
-</span></span></span><span style=display:flex><span><span style=color:#d14>      &lt;labels&gt;
-</span></span></span><span style=display:flex><span><span style=color:#d14>        host ${hostname}
-</span></span></span><span style=display:flex><span><span style=color:#d14>      &lt;/labels&gt;
-</span></span></span><span style=display:flex><span><span style=color:#d14>    &lt;/source&gt;
-</span></span></span><span style=display:flex><span><span style=color:#d14>    # input plugin that collects metrics for in_tail plugin
-</span></span></span><span style=display:flex><span><span style=color:#d14>    &lt;source&gt;
-</span></span></span><span style=display:flex><span><span style=color:#d14>      @id prometheus_tail_monitor
-</span></span></span><span style=display:flex><span><span style=color:#d14>      @type prometheus_tail_monitor
-</span></span></span><span style=display:flex><span><span style=color:#d14>      &lt;labels&gt;
-</span></span></span><span style=display:flex><span><span style=color:#d14>        host ${hostname}
-</span></span></span><span style=display:flex><span><span style=color:#d14>      &lt;/labels&gt;
-</span></span></span><span style=display:flex><span><span style=color:#d14>    &lt;/source&gt;</span><span style=color:#bbb>    
-</span></span></span></code></pre></div></article><footer class=book-footer><div class="flex flex-wrap justify-between"></div><script>(function(){function e(e){const t=window.getSelection(),n=document.createRange();n.selectNodeContents(e),t.removeAllRanges(),t.addRange(n)}document.querySelectorAll("pre code").forEach(t=>{t.addEventListener("click",function(){if(window.getSelection().toString())return;e(t.parentElement),navigator.clipboard&&navigator.clipboard.writeText(t.parentElement.textContent)})})})()</script></footer><div class=book-comments><link rel=stylesheet href=https://unpkg.com/gitalk/dist/gitalk.css><script src=https://unpkg.com/gitalk/dist/gitalk.min.js></script><div id=gitalk-container></div><script type=text/javascript>const gitalk=new Gitalk({clientID:"53c7373e7b1554a4abc3",clientSecret:"7c9dcef80ea6bde5d8695d1ab94bcef87063fb3b",repo:"llaoj.github.io",owner:"llaoj",admin:["llaoj"],id:location.pathname,distractionFreeMode:!1});gitalk.render("gitalk-container")</script></div><label for=menu-control class="hidden book-menu-overlay"></label></div></main></body></html>
+<label for=toc-control>
+</label>
+</div>
+</header>
+<article class=markdown>
+<h1>
+<a href=/posts/2207/fluentd-es-config/>Fluentd配置文件最佳实践</a>
+</h1>
+<h5>2022-7-31</h5>
+<div>
+<a href=/categories/technology/>technology</a>
+</div>
+<div>
+<a href=/tags/kubernetes/>kubernetes</a>,
+<a href=/tags/fluentd/>fluentd</a>
+</div>
+<p>Fluentd负责Kubernetes中容器日志的收集工作, 以Daemonset形式运行在每一个节点上. 下面这个配置是在多个生产集群使用的配置, 经过多次调优的. 有一些关键的配置增加了配置解释说明. 目前使用问题不大. 持续更新配置中&mldr;</p>
+<div class=highlight><pre tabindex=0 style=background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-yaml data-lang=yaml><span style=color:navy>kind</span>:<span style=color:#bbb> </span>ConfigMap<span style=color:#bbb>
+</span><span style=color:#bbb></span><span style=color:navy>apiVersion</span>:<span style=color:#bbb> </span>v1<span style=color:#bbb>
+</span><span style=color:#bbb></span><span style=color:navy>metadata</span>:<span style=color:#bbb>
+</span><span style=color:#bbb>  </span><span style=color:navy>name</span>:<span style=color:#bbb> </span>fluentd-es-config<span style=color:#bbb>
+</span><span style=color:#bbb>  </span><span style=color:navy>namespace</span>:<span style=color:#bbb> </span>logging<span style=color:#bbb>
+</span><span style=color:#bbb>  </span><span style=color:navy>labels</span>:<span style=color:#bbb>
+</span><span style=color:#bbb>    </span><span style=color:navy>addonmanager.kubernetes.io/mode</span>:<span style=color:#bbb> </span>Reconcile<span style=color:#bbb>
+</span><span style=color:#bbb></span><span style=color:navy>data</span>:<span style=color:#bbb>
+</span><span style=color:#bbb>  </span><span style=color:navy>system.conf</span>:<span style=color:#bbb> </span>|-<span style=color:#d14>
+</span><span style=color:#d14>    &lt;system&gt;
+</span><span style=color:#d14>      root_dir /tmp/fluentd-buffers/
+</span><span style=color:#d14>    &lt;/system&gt;</span><span style=color:#bbb>    
+</span><span style=color:#bbb>
+</span><span style=color:#bbb>  </span><span style=color:navy>containers.input.conf</span>:<span style=color:#bbb> </span>|-<span style=color:#d14>
+</span><span style=color:#d14>    # Json Log Example:
+</span><span style=color:#d14>    # {&#34;log&#34;:&#34;[info:2016-02-16T16:04:05.930-08:00] Some log text here\n&#34;,&#34;stream&#34;:&#34;stdout&#34;,&#34;time&#34;:&#34;2016-02-17T00:04:05.931087621Z&#34;}
+</span><span style=color:#d14>    # CRI Log Example:
+</span><span style=color:#d14>    # 2016-02-17T00:04:05.931087621Z stdout F [info:2016-02-16T16:04:05.930-08:00] Some log text here
+</span><span style=color:#d14>    &lt;source&gt;
+</span><span style=color:#d14>      @id fluentd-containers.log
+</span><span style=color:#d14>      @type tail
+</span><span style=color:#d14>      path /var/log/containers/*.log
+</span><span style=color:#d14>      pos_file /var/log/es-containers.log.pos
+</span><span style=color:#d14>      tag raw.kubernetes.*
+</span><span style=color:#d14>      read_from_head true
+</span><span style=color:#d14>      &lt;parse&gt;
+</span><span style=color:#d14>        @type multi_format
+</span><span style=color:#d14>        &lt;pattern&gt;
+</span><span style=color:#d14>          format json
+</span><span style=color:#d14>          time_key time
+</span><span style=color:#d14>          time_format %Y-%m-%dT%H:%M:%S.%NZ
+</span><span style=color:#d14>        &lt;/pattern&gt;
+</span><span style=color:#d14>        &lt;pattern&gt;
+</span><span style=color:#d14>          format /^(?&lt;time&gt;.+) (?&lt;stream&gt;stdout|stderr) [^ ]* (?&lt;log&gt;.*)$/
+</span><span style=color:#d14>          time_format %Y-%m-%dT%H:%M:%S.%N%:z
+</span><span style=color:#d14>        &lt;/pattern&gt;
+</span><span style=color:#d14>      &lt;/parse&gt;
+</span><span style=color:#d14>    &lt;/source&gt;
+</span><span style=color:#d14>
+</span><span style=color:#d14>    # Detect exceptions in the log output and forward them as one log entry.
+</span><span style=color:#d14>    &lt;match raw.kubernetes.**&gt;
+</span><span style=color:#d14>      @id raw.kubernetes
+</span><span style=color:#d14>      @type detect_exceptions
+</span><span style=color:#d14>      remove_tag_prefix raw
+</span><span style=color:#d14>      message log
+</span><span style=color:#d14>      stream stream
+</span><span style=color:#d14>      multiline_flush_interval 5
+</span><span style=color:#d14>      max_bytes 500000
+</span><span style=color:#d14>      max_lines 1000
+</span><span style=color:#d14>    &lt;/match&gt;
+</span><span style=color:#d14>
+</span><span style=color:#d14>    # Concatenate multi-line logs
+</span><span style=color:#d14>    # &lt;filter kubernetes.**&gt;
+</span><span style=color:#d14>    #   @id filter_concat
+</span><span style=color:#d14>    #   @type concat
+</span><span style=color:#d14>    #   key log
+</span><span style=color:#d14>    #   multiline_end_regexp /\n$/
+</span><span style=color:#d14>    #   separator &#34;&#34;
+</span><span style=color:#d14>    # &lt;/filter&gt;
+</span><span style=color:#d14>
+</span><span style=color:#d14>    # Enriches records with Kubernetes metadata
+</span><span style=color:#d14>    &lt;filter kubernetes.**&gt;
+</span><span style=color:#d14>      @id filter_kubernetes_metadata
+</span><span style=color:#d14>      @type kubernetes_metadata
+</span><span style=color:#d14>    &lt;/filter&gt;
+</span><span style=color:#d14>
+</span><span style=color:#d14>    # 防止ES中出现重复数据
+</span><span style=color:#d14>    &lt;filter collect-logs.**&gt;
+</span><span style=color:#d14>      @type elasticsearch_genid
+</span><span style=color:#d14>      hash_id_key _hash # storing generated hash id key (default is _hash)
+</span><span style=color:#d14>    &lt;/filter&gt;</span><span style=color:#bbb>    
+</span><span style=color:#bbb>
+</span><span style=color:#bbb>  </span><span style=color:navy>output.conf</span>:<span style=color:#bbb> </span>|-<span style=color:#d14>
+</span><span style=color:#d14>    # 根据pod.metadata.labels来判断是否收集日志
+</span><span style=color:#d14>    # collect-logs: true
+</span><span style=color:#d14>    # 添加标识集群ID的tag: collect-logs.&lt;clustername&gt; 
+</span><span style=color:#d14>    &lt;match kubernetes.**&gt;
+</span><span style=color:#d14>      @type rewrite_tag_filter
+</span><span style=color:#d14>      &lt;rule&gt;
+</span><span style=color:#d14>        key $.kubernetes.labels.collect-logs
+</span><span style=color:#d14>        pattern /^true$/
+</span><span style=color:#d14>        tag collect-logs.&lt;clustername&gt;
+</span><span style=color:#d14>      &lt;/rule&gt;
+</span><span style=color:#d14>    &lt;/match&gt;
+</span><span style=color:#d14>
+</span><span style=color:#d14>    &lt;match collect-logs.**&gt;
+</span><span style=color:#d14>      @type elasticsearch
+</span><span style=color:#d14>      @log_level info
+</span><span style=color:#d14>      hosts 10.138.1.51:9200,10.138.1.52:9200,10.138.1.53:9200
+</span><span style=color:#d14>      user &lt;user&gt;
+</span><span style=color:#d14>      password &lt;password&gt;
+</span><span style=color:#d14>      reload_connections false
+</span><span style=color:#d14>      reconnect_on_error true
+</span><span style=color:#d14>      reload_on_failure true
+</span><span style=color:#d14>      request_timeout 30s
+</span><span style=color:#d14>      suppress_type_name true
+</span><span style=color:#d14>      id_key _hash # specify same key name which is specified in hash_id_key
+</span><span style=color:#d14>      remove_keys _hash # Elasticsearch doesn&#39;t like keys that start with _
+</span><span style=color:#d14>      include_tag_key true
+</span><span style=color:#d14>      logstash_format true
+</span><span style=color:#d14>      &lt;buffer&gt;
+</span><span style=color:#d14>        @type file
+</span><span style=color:#d14>        path /var/log/fluentd-buffers/elasticsearch01.buffer
+</span><span style=color:#d14>        flush_mode interval
+</span><span style=color:#d14>        retry_type exponential_backoff
+</span><span style=color:#d14>        flush_thread_count 2
+</span><span style=color:#d14>        flush_interval 5s
+</span><span style=color:#d14>        retry_forever
+</span><span style=color:#d14>        retry_max_interval 30
+</span><span style=color:#d14>        chunk_limit_size 2M
+</span><span style=color:#d14>        # total_limit_size 500M # 默认64G, 太小会因为buffer灌满卡住并丢失数据
+</span><span style=color:#d14>        overflow_action block
+</span><span style=color:#d14>      &lt;/buffer&gt;
+</span><span style=color:#d14>    &lt;/match&gt;</span><span style=color:#bbb>    
+</span><span style=color:#bbb>
+</span><span style=color:#bbb>  </span><span style=color:navy>monitoring.conf</span>:<span style=color:#bbb> </span>|-<span style=color:#d14>
+</span><span style=color:#d14>    # Prometheus Exporter Plugin
+</span><span style=color:#d14>    # input plugin that exports metrics
+</span><span style=color:#d14>    &lt;source&gt;
+</span><span style=color:#d14>      @id prometheus
+</span><span style=color:#d14>      @type prometheus
+</span><span style=color:#d14>    &lt;/source&gt;
+</span><span style=color:#d14>    &lt;source&gt;
+</span><span style=color:#d14>      @id monitor_agent
+</span><span style=color:#d14>      @type monitor_agent
+</span><span style=color:#d14>    &lt;/source&gt;
+</span><span style=color:#d14>    # input plugin that collects metrics from MonitorAgent
+</span><span style=color:#d14>    &lt;source&gt;
+</span><span style=color:#d14>      @id prometheus_monitor
+</span><span style=color:#d14>      @type prometheus_monitor
+</span><span style=color:#d14>      &lt;labels&gt;
+</span><span style=color:#d14>        host ${hostname}
+</span><span style=color:#d14>      &lt;/labels&gt;
+</span><span style=color:#d14>    &lt;/source&gt;
+</span><span style=color:#d14>    # input plugin that collects metrics for output plugin
+</span><span style=color:#d14>    &lt;source&gt;
+</span><span style=color:#d14>      @id prometheus_output_monitor
+</span><span style=color:#d14>      @type prometheus_output_monitor
+</span><span style=color:#d14>      &lt;labels&gt;
+</span><span style=color:#d14>        host ${hostname}
+</span><span style=color:#d14>      &lt;/labels&gt;
+</span><span style=color:#d14>    &lt;/source&gt;
+</span><span style=color:#d14>    # input plugin that collects metrics for in_tail plugin
+</span><span style=color:#d14>    &lt;source&gt;
+</span><span style=color:#d14>      @id prometheus_tail_monitor
+</span><span style=color:#d14>      @type prometheus_tail_monitor
+</span><span style=color:#d14>      &lt;labels&gt;
+</span><span style=color:#d14>        host ${hostname}
+</span><span style=color:#d14>      &lt;/labels&gt;
+</span><span style=color:#d14>    &lt;/source&gt;</span><span style=color:#bbb>    
+</span></code></pre></div></article>
+<footer class=book-footer>
+<div class="flex flex-wrap justify-between">
+</div>
+<script>(function(){function a(c){const a=window.getSelection(),b=document.createRange();b.selectNodeContents(c),a.removeAllRanges(),a.addRange(b)}document.querySelectorAll("pre code").forEach(b=>{b.addEventListener("click",function(c){if(window.getSelection().toString())return;a(b.parentElement),navigator.clipboard&&navigator.clipboard.writeText(b.parentElement.textContent)})})})()</script>
+</footer>
+<div class=book-comments><link rel=stylesheet href=https://unpkg.com/gitalk/dist/gitalk.css>
+<script src=https://unpkg.com/gitalk/dist/gitalk.min.js></script>
+<div id=gitalk-container></div>
+<script type=text/javascript>const gitalk=new Gitalk({clientID:'53c7373e7b1554a4abc3',clientSecret:'7c9dcef80ea6bde5d8695d1ab94bcef87063fb3b',repo:'llaoj.github.io',owner:'llaoj',admin:['llaoj'],id:location.pathname,distractionFreeMode:!1});gitalk.render('gitalk-container')</script></div>
+<label for=menu-control class="hidden book-menu-overlay"></label>
+</div>
+</main>
+</body>
+</html>
