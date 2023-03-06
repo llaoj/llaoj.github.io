@@ -27,8 +27,7 @@ categories:
 本项目所有的资源创建在logging下, 先创建它:
 
 ```sh
-NAMESPACE=logging-kafka
-kubectl create ns $NAMESPACE
+kubectl create ns logging-kafka
 ```
 
 ## 先创建服务账号
@@ -36,7 +35,7 @@ kubectl create ns $NAMESPACE
 创建服务账号并赋予集群查看的权限, 使用下面的命令:
 
 ```sh
-kubectl -n $NAMESPACE create -f - <<EOF
+kubectl -n logging-kafka create -f - <<EOF
 apiVersion: v1
 kind: ServiceAccount
 metadata:
@@ -59,7 +58,7 @@ roleRef:
 subjects:
 - kind: ServiceAccount
   name: fluentd
-  namespace: ${NAMESPACE}
+  namespace: logging-kafka
 EOF
 ```
 
@@ -101,6 +100,15 @@ EOF
   skip_namespace_metadata "#{ENV['FLUENT_KUBERNETES_METADATA_SKIP_NAMESPACE_METADATA'] || 'false'}"
   watch "#{ENV['FLUENT_KUBERNETES_WATCH'] || 'true'}"
 </filter>
+
+<match **>
+  @type rewrite_tag_filter
+  <rule>
+    key $.kubernetes.pod_name
+    pattern /.+/
+    tag collect-logs.CLUSTERID
+  </rule>
+</match>
 
 <match **>
   @type kafka2
@@ -153,7 +161,7 @@ EOF
 cat < /tmp/fluentd.conf <<EOF
 # 粘贴上面的配置
 EOF
-kubectl -n $NAMESPACE create configmap fluentd-kafka-conf --from-file=fluent.conf=/tmp/fluentd.conf
+kubectl -n logging-kafka create configmap fluentd-kafka-conf --from-file=fluent.conf=/tmp/fluentd.conf
 ```
 
 ## 创建daemonset部署
@@ -244,5 +252,5 @@ spec:
 ```
 
 ```sh
-kubectl -n $NAMESPACE apply -f /tmp/deployment.yaml
+kubectl -n logging-kafka apply -f /tmp/deployment.yaml
 ```
