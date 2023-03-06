@@ -107,7 +107,7 @@ EOF
 <filter kubernetes.**>
   @type record_transformer
   <record>
-    cluster_id 'hdb'
+    cluster_id 'CLUSTER_ID'
   </record>
 </filter>
 
