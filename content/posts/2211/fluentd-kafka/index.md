@@ -67,7 +67,7 @@ EOF
 配置文件内容如下, 它只收集容器日志:
 
 ```sh
-@include "#{ENV['FLUENTD_PROMETHEUS_CONF'] || 'prometheus'}.conf"
+@include 'prometheus.conf'
 
 <label @FLUENT_LOG>
   <match fluent.**>
@@ -79,36 +79,37 @@ EOF
 <source>
   @type tail
   @id in_tail_container_logs
-  path "#{ENV['FLUENT_CONTAINER_TAIL_PATH'] || '/var/log/containers/*.log'}"
+  path '/var/log/containers/*.log'
   pos_file /var/log/fluentd-containers.log.pos
-  tag "#{ENV['FLUENT_CONTAINER_TAIL_TAG'] || 'kubernetes.*'}"
-  exclude_path "#{ENV['FLUENT_CONTAINER_TAIL_EXCLUDE_PATH'] || use_default}"
+  tag 'kubernetes.*'
+  exclude_path use_default
   read_from_head true
   follow_inodes true
-  @include ./tail_container_parse.conf
+  <parse>
+    @type "#{ENV['FLUENT_CONTAINER_TAIL_PARSER_TYPE'] || 'json'}"
+    time_format "#{ENV['FLUENT_CONTAINER_TAIL_PARSER_TIME_FORMAT'] || '%Y-%m-%dT%H:%M:%S.%NZ'}"
+  </parse>
 </source>
 
 <filter kubernetes.**>
   @type kubernetes_metadata
   @id filter_kube_metadata
-  kubernetes_url "#{ENV['FLUENT_FILTER_KUBERNETES_URL'] || 'https://' + ENV.fetch('KUBERNETES_SERVICE_HOST') + ':' + ENV.fetch('KUBERNETES_SERVICE_PORT') + '/api'}"
+  kubernetes_url "#{'https://' + ENV.fetch('KUBERNETES_SERVICE_HOST') + ':' + ENV.fetch('KUBERNETES_SERVICE_PORT') + '/api'}"
   verify_ssl "#{ENV['KUBERNETES_VERIFY_SSL'] || true}"
   ca_file "#{ENV['KUBERNETES_CA_FILE']}"
-  skip_labels "#{ENV['FLUENT_KUBERNETES_METADATA_SKIP_LABELS'] || 'false'}"
-  skip_container_metadata "#{ENV['FLUENT_KUBERNETES_METADATA_SKIP_CONTAINER_METADATA'] || 'false'}"
-  skip_master_url "#{ENV['FLUENT_KUBERNETES_METADATA_SKIP_MASTER_URL'] || 'false'}"
-  skip_namespace_metadata "#{ENV['FLUENT_KUBERNETES_METADATA_SKIP_NAMESPACE_METADATA'] || 'false'}"
-  watch "#{ENV['FLUENT_KUBERNETES_WATCH'] || 'true'}"
+  skip_labels false
+  skip_container_metadata false
+  skip_master_url false
+  skip_namespace_metadata false
+  watch true
 </filter>
 
-<match **>
-  @type rewrite_tag_filter
-  <rule>
-    key $.kubernetes.pod_name
-    pattern /.+/
-    tag hdb.${tag}
-  </rule>
-</match>
+<filter kubernetes.**>
+  @type record_transformer
+  <record>
+    cluster_id 'hdb'
+  </record>
+</filter>
 
 <match **>
   @type kafka2
@@ -124,9 +125,14 @@ EOF
 
   use_event_time true
   get_kafka_client_log true
-  output_data_type 'json'
-  output_include_tag true
-  output_include_time true
+
+  <format>
+    @type 'json'
+  </format>
+
+  <inject>
+    time_key time
+  </inject>
 
   <buffer>
     @type file
