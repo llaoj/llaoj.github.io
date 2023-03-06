@@ -106,7 +106,7 @@ EOF
   <rule>
     key $.kubernetes.pod_name
     pattern /.+/
-    tag collect-logs.CLUSTERID
+    tag hdb.${tag}
   </rule>
 </match>
 
@@ -119,46 +119,39 @@ EOF
   # password "#{ENV['FLUENT_KAFKA2_PASSWORD'] || nil}"
   # scram_mechanism 'sha256'
   # sasl_over_ssl false
+  default_topic "#{ENV['FLUENT_KAFKA2_DEFAULT_TOPIC'] || nil}"
+  partition_key_key 'kubernetes.host'
 
   use_event_time true
-  get_kafka_client_log "#{ENV['FLUENT_KAFKA2_GET_KAFKA_CLIENT_LOG'] || false}"
-
-  default_topic "#{ENV['FLUENT_KAFKA2_DEFAULT_TOPIC'] || nil}"
-  partition_key_key "#{ENV['FLUENT_KAFKA2_PARTITION_KEY_KEY'] || nil}"
+  get_kafka_client_log true
+  output_data_type 'json'
+  output_include_tag true
+  output_include_time true
 
   <buffer>
     @type file
     path /var/log/fluentd/kafka-buffers
-    flush_thread_count "#{ENV['FLUENT_BUFFER_FLUSH_THREAD_COUNT'] || '8'}"
-    flush_interval "#{ENV['FLUENT_BUFFER_FLUSH_INTERVAL'] || '5s'}"
-    chunk_limit_size "#{ENV['FLUENT_BUFFER_CHUNK_LIMIT_SIZE'] || '2M'}"
-    retry_max_interval "#{ENV['FLUENT_BUFFER_RETRY_MAX_INTERVAL'] || '30'}"
+    flush_thread_count 8
+    flush_interval '5s'
+    chunk_limit_size '2M'
+    retry_max_interval 30
     retry_forever true
-    overflow_action "#{ENV['FLUENT_BUFFER_OVERFLOW_ACTION'] || 'block'}"
+    overflow_action 'block'
   </buffer>
 
-  <format>
-    @type "#{ENV['FLUENT_KAFKA2_OUTPUT_FORMAT_TYPE'] || 'json'}"
-  </format>
-  
-  <inject>
-    tag_key "#{ENV['FLUENT_KAFKA2_OUTPUT_TAG_KEY'] || 'fluentd_tag'}"
-    time_key "#{ENV['FLUENT_KAFKA2_OUTPUT_TIME_KEY'] || 'fluentd_time'}"
-  </inject>
-
   # ruby-kafka producer options
-  max_send_retries "#{ENV['FLUENT_KAFKA2_MAX_SEND_RETRIES'] || 2}"
-  required_acks "#{ENV['FLUENT_KAFKA2_REQUIRED_ACKS'] || -1}"
-  ack_timeout "#{ENV['FLUENT_KAFKA2_ACK_TIMEOUT'] || 10}"
-  compression_codec "#{ENV['FLUENT_KAFKA2_COMPRESSION_CODEC'] || 'gzip'}"
-  discard_kafka_delivery_failed "#{ENV['FLUENT_KAFKA2_DISCARD_KAFKA_DELIVERY_FAILED'] || false}"
+  max_send_retries 10000
+  required_acks 1
+  ack_timeout 20
+  compression_codec 'gzip'
+  discard_kafka_delivery_failed false
 </match>
 ```
 
 执行下面到命令创建configmap:
 
 ```sh
-cat < /tmp/fluentd.conf <<EOF
+cat > /tmp/fluentd.conf <<EOF
 # 粘贴上面的配置
 EOF
 kubectl -n logging-kafka create configmap fluentd-kafka-conf --from-file=fluent.conf=/tmp/fluentd.conf
@@ -214,8 +207,6 @@ spec:
             value: "10.206.1.1:9092,10.206.1.2:9092,10.206.1.3:9092"
           - name: FLUENT_KAFKA2_DEFAULT_TOPIC
             value: "container-log"
-          - name: FLUENT_KAFKA2_PARTITION_KEY_KEY
-            value: "kubernetes.host"
           # when log formt is not json, unconmment
           - name: FLUENT_CONTAINER_TAIL_PARSER_TYPE
             value: "/^(?<time>.+) (?<stream>stdout|stderr) [^ ]* (?<log>.*)$/"
