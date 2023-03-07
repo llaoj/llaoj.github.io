@@ -50,7 +50,7 @@ kubectl create -f - <<EOF
 kind: ClusterRoleBinding
 apiVersion: rbac.authorization.k8s.io/v1
 metadata:
-  name: fluentd
+  name: fluentd-kafka
 roleRef:
   kind: ClusterRole
   name: view
@@ -80,7 +80,7 @@ EOF
   @type tail
   @id in_tail_container_logs
   path '/var/log/containers/*.log'
-  pos_file /var/log/fluentd-containers.log.pos
+  pos_file /var/log/fluentd-kafka-containers.log.pos
   tag 'kubernetes.*'
   exclude_path use_default
   read_from_head true
