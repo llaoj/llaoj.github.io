@@ -64,6 +64,15 @@ EOF
 
 ## 创建配置文件
 
+执行下面到命令创建configmap:
+
+```sh
+cat > /tmp/fluentd.conf <<EOF
+# 粘贴下面的配置
+EOF
+kubectl -n logging-kafka create configmap fluentd-kafka-conf --from-file=fluent.conf=/tmp/fluentd.conf
+```
+
 配置文件内容如下, 它只收集容器日志:
 
 ```sh
@@ -154,14 +163,6 @@ EOF
 </match>
 ```
 
-执行下面到命令创建configmap:
-
-```sh
-cat > /tmp/fluentd.conf <<EOF
-# 粘贴上面的配置
-EOF
-kubectl -n logging-kafka create configmap fluentd-kafka-conf --from-file=fluent.conf=/tmp/fluentd.conf
-```
 
 ## 创建daemonset部署
 
@@ -170,10 +171,12 @@ kubectl -n logging-kafka create configmap fluentd-kafka-conf --from-file=fluent.
 先创建deployment部署文件:
 
 ```sh
-vi /tmp/deployment.yaml
+kubectl -n logging-kafka apply -f - <<EOF
+# 粘贴下面的内容
+EOF
 ```
 
-将下面的内容拷贝进去,之后`:wq`:
+将下面的内容拷贝进去:
 
 ```yaml
 apiVersion: apps/v1
@@ -210,7 +213,7 @@ spec:
               fieldRef:
                 fieldPath: spec.nodeName
           - name: FLUENT_KAFKA2_BROKERS
-            value: "10.206.1.1:9092,10.206.1.2:9092,10.206.1.3:9092"
+            value: "10.206.96.26:9092,10.206.96.27:9092,10.206.96.28:9092"
           - name: FLUENT_KAFKA2_DEFAULT_TOPIC
             value: "container-log"
           # when log formt is not json, unconmment
@@ -246,8 +249,4 @@ spec:
       - name: config-volume
         configMap:
           name: fluentd-kafka-conf
-```
-
-```sh
-kubectl -n logging-kafka apply -f /tmp/deployment.yaml
 ```
