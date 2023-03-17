@@ -69,6 +69,7 @@ EOF
 
 - 根据用户为pod配置的标签`collect-logs: true`来判断是否收集该容器日志, 没有配置该标签不会收集.
 - 需要将日志输出到elasticsearch中, 同时要保证日志的唯一, 不能同一条日志在elasticsearch中存在多条.
+- 推送到ES中的日志都带有集群标识, 方便检索.
 
 好, 开始创建, 先创建一个文件:
 
@@ -77,6 +78,8 @@ vi /tmp/fluent.conf
 ```
 
 写入下面的内容, 这里的内容大部分是官方镜像中拷贝过来的, 我在其基础之上做了一些修改以满足我的需求:
+
+**注意**: `CLUSTER_ID`表示为集群的唯一标识,请替换!
 
 ```sh
 # AUTOMATICALLY GENERATED
@@ -92,16 +95,16 @@ vi /tmp/fluent.conf
   <rule>
     key $.kubernetes.labels.collect-logs
     pattern /^true$/
-    tag collect-logs.true
+    tag collect-logs.CLUSTER_ID
   </rule>
 </match>
 
-<filter collect-logs.true>
+<filter collect-logs.CLUSTER_ID>
   @type elasticsearch_genid
   hash_id_key _hash
 </filter>
 
-<match collect-logs.true>
+<match collect-logs.CLUSTER_ID>
    @type elasticsearch
    @id out_es
    @log_level info
