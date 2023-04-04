@@ -47,9 +47,16 @@ cantainer_tcp_conn() {
 cantainer_tcp_conn
 ```
 
+解释一下:
+
+> 1. 为了避免疯狂输出文件, 必须添加过滤字符串
+> 2. 根据节点是否有docker命令来选择获取pid的方式
+> 3. 每次扫描都会记录时间
+> 4. 进入容器的网络namespace使用ss命令获取tcp连接信息
+
 你可以这样执行上面的脚本:
 
-```
+```sh
 ./container_tcp_conn.sh ip地址:端口号
 ```
 
@@ -57,6 +64,6 @@ cantainer_tcp_conn
 
 最后, 通过执行下面的命令, 你应该就能看到具体是哪个pod哪个容器请求的你关注的主机和端口号:
 
-```
+```sh
 grep -rn "关键词" /tmp/container_tcp_conn
 ```
