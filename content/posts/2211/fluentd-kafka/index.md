@@ -96,7 +96,7 @@ kubectl -n logging-kafka create configmap fluentd-kafka-conf --from-file=fluent.
   follow_inodes true
   <parse>
     @type "#{ENV['FLUENT_CONTAINER_TAIL_PARSER_TYPE'] || 'json'}"
-    time_format "#{ENV['FLUENT_CONTAINER_TAIL_PARSER_TIME_FORMAT'] || '%Y-%m-%dT%H:%M:%S.%NZ'}"
+    time_key "read_time"
   </parse>
 </source>
 
@@ -140,7 +140,7 @@ kubectl -n logging-kafka create configmap fluentd-kafka-conf --from-file=fluent.
   </format>
 
   <inject>
-    time_key time
+    time_key "read_time"
   </inject>
 
   <buffer>
@@ -163,6 +163,7 @@ kubectl -n logging-kafka create configmap fluentd-kafka-conf --from-file=fluent.
 </match>
 ```
 
+**注意:** 因为CPU调度原因, 日志在日志文件中的排列顺序和`time`的顺序不一致. 所以, 使用`read_time`作为日志的envent time, 表示日志的采集时间. 这样就能确保日志的顺序和日志源文件中保持一致. 源日志中的`time`字段保留, 作为日志生成时间.
 
 ## 创建daemonset部署
 
@@ -219,8 +220,6 @@ spec:
           # when log formt is not json, unconmment
           - name: FLUENT_CONTAINER_TAIL_PARSER_TYPE
             value: "/^(?<time>.+) (?<stream>stdout|stderr) [^ ]* (?<log>.*)$/"
-          - name: FLUENT_CONTAINER_TAIL_PARSER_TIME_FORMAT
-            value: "%Y-%m-%dT%H:%M:%S.%N%:z"
         resources:
           limits:
             memory: 600Mi
