@@ -13,7 +13,7 @@
 <link rel=icon href=/favicon.png type=image/x-icon>
 <link rel=stylesheet href=/book.min.18b5d651e266e5e9cfc7455e2e50eb1b74a62aee16cf204b69de1d9e695276f7.css integrity="sha256-GLXWUeJm5enPx0VeLlDrG3SmKu4WzyBLad4dnmlSdvc=" crossorigin=anonymous>
 <script defer src=/flexsearch.min.js></script>
-<script defer src=/zh.search.min.1fc8c10d0f9cd4908514c7392f382a6d7989aee850d0d4d9a39895c5c492bac2.js integrity="sha256-H8jBDQ+c1JCFFMc5LzgqbXmJruhQ0NTZo5iVxcSSusI=" crossorigin=anonymous></script>
+<script defer src=/zh.search.min.342c6a0df0840d839703dd568762acef1820febc22dd985f574641550a35b7b8.js integrity="sha256-NCxqDfCEDYOXA91Wh2Ks7xgg/rwi3ZhfV0ZBVQo1t7g=" crossorigin=anonymous></script>
 <script defer src=/sw.min.6f6f90fcb8eb1c49ec389838e6b801d0de19430b8e516902f8d75c3c8bd98739.js integrity="sha256-b2+Q/LjrHEnsOJg45rgB0N4ZQwuOUWkC+NdcPIvZhzk=" crossorigin=anonymous></script>
 <link rel=alternate type=application/rss+xml href=https://blog.llaoj.cn/posts/index.xml title=老J的博客>
 <script>var _hmt=_hmt||[];(function(){var a=document.createElement("script"),b;a.src="https://hm.baidu.com/hm.js?7f5ad4632a1c2df3cd8e1199a7aaf48a",b=document.getElementsByTagName("script")[0],b.parentNode.insertBefore(a,b)})()</script>
@@ -109,7 +109,7 @@ eBPF
 <ul>
 <li class="flex justify-between">
 <a href=/categories/technology/>technology</a>
-<span>33</span>
+<span>34</span>
 </li>
 </ul>
 </li>
@@ -130,7 +130,7 @@ eBPF
 </li>
 <li class="flex justify-between">
 <a href=/tags/fluentd/>fluentd</a>
-<span>2</span>
+<span>3</span>
 </li>
 <li class="flex justify-between">
 <a href=/tags/envoy/>envoy</a>
@@ -226,6 +226,24 @@ eBPF
 </nav>
 </aside>
 </header>
+<article class="markdown book-post">
+<h2>
+<a href=/posts/2207/kubernetes-requirement/>Kubernetes 服务器配置和规划建设要求</a>
+</h2>
+<h5>2022-7-16</h5>
+<div>
+<a href=/categories/technology/>technology</a>
+</div>
+<div>
+<a href=/tags/kubernetes/>kubernetes</a>
+</div>
+<p>新建集群的第一步就是要规划服务器、网络、操作系统等等, 下面就结合我平时的工作经验总结下相关的要求, 内容根据日常工作持续补充完善:
+服务器配置 # kubernetes 集群分为控制节点和数据节点, 它们对于配置的要求有所不同:
+控制面 # 节点规模 Master规格 1~5个节点 4核 8Gi（不建议2核 4Gi） 6~20个节点 4核 16Gi 21~100个节点 8核 32Gi 100~200个节点 16核 64Gi 系统盘40+Gi，用于储存 etcd 信息及相关配置文件等
+数据面 # 规格：CPU >= 4核, 内存 >= 8Gi 确定整个集群的日常使用的总核数以及可用度的容忍度 例如：集群总的核数有160核, 可以容忍10%的错误. 那么最小选择10台16核VM, 并且高峰运行的负荷不要超过 160*90%=144核. 如果容忍度是20%, 那么最小选择5台32核VM, 并且高峰运行的负荷不要超过160*80%=128核. 这样就算有一台VM出现故障, 剩余VM仍可以支持现有业务正常运行. 确定 CPU:Memory 比例.
+<a href=/posts/2207/kubernetes-requirement/>...</a>
+</p>
+</article>
 <article class="markdown book-post">
 <h2>
 <a href=/posts/2205/metalb/>MetalLB概念安装配置和使用</a>
@@ -368,21 +386,6 @@ $ vmstat --wide --unit M 5 procs ----------------memory---------------- ---swap-
 <p>eBPF 程序是事件驱动的, 能在内核或应用程序执行到一个特定的 hook 点时执行. 预定义的 hooks 包含系统调用, 函数出/入口, 内核追踪点, 网络事件等等. 如果预定义 hook 不能满足需求, 也可以创建内核探针(kprobe)或者用户探针(uprobe), 在内核/用户应用程序的任何位置, 把探针附加到 eBPF 程序上.
 </p>
 </article>
-<article class="markdown book-post">
-<h2>
-<a href=/posts/2203/kubectl-usefull-command/>比较冷门但有用的 kubectl 命令</a>
-</h2>
-<h5>2022-3-22</h5>
-<div>
-<a href=/categories/technology/>technology</a>
-</div>
-<div>
-<a href=/tags/kubectl/>kubectl</a>,
-<a href=/tags/kubernetes/>kubernetes</a>
-</div>
-<p>以下冷门命令能实现某种具体的功能, 都是在实际工作中摸索总结的经验, 获取到相关的资源名称之后, 就可以配合常用的 kubectl 命令获取其他详细信息.
-</p>
-</article>
 <ul class="pagination pagination-default">
 <li class=page-item>
 <a href=/posts/ aria-label=First class=page-link role=button><span aria-hidden=true>&#171;&#171;</span></a>
@@ -425,7 +428,7 @@ $ vmstat --wide --unit M 5 procs ----------------memory---------------- ---swap-
 <ul>
 <li class="flex justify-between">
 <a href=/categories/technology/>technology</a>
-<span>33</span>
+<span>34</span>
 </li>
 </ul>
 </li>
@@ -446,7 +449,7 @@ $ vmstat --wide --unit M 5 procs ----------------memory---------------- ---swap-
 </li>
 <li class="flex justify-between">
 <a href=/tags/fluentd/>fluentd</a>
-<span>2</span>
+<span>3</span>
 </li>
 <li class="flex justify-between">
 <a href=/tags/envoy/>envoy</a>
