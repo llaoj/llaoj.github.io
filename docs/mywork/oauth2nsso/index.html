@@ -2,22 +2,20 @@
 <head>
 <meta charset=utf-8>
 <meta name=viewport content="width=device-width,initial-scale=1">
-<meta name=description content="版本说明 #  v0.2.0 #  该项目发布以来收到了很多朋友的关注，很多公司都将它应用到了一些比较重要的项目中。同时，也对该项目提出了很多要求。综合这些，开发了这个版本。同时希望朋友们互相交流，多提意见。
-这个版本主要有下面几个改动：
- 由于 go-oauth2.v3 版本安全性原因，将该包升级到 v4 丰富了可配置的项目 增加了容器化部署的脚本和相关文档 多了一些细节的优化 增加了错误页面 用户验证增加了LDAP支持  ">
+<meta name=description content="项目地址: https://github.com/llaoj/oauth2nsso
+llaoj/oauth2nsso 项目是基于 go-oauth2 打造的独立的 OAuth2.0 和 SSO 服务，提供了开箱即用的 OAuth2.0服务和单点登录SSO服务。开源一年多，获得了社区很多用户的关注，该项目多公司线上在用，其中包含上市公司。轻又好用，稳的一P。">
 <meta name=theme-color content="#FFFFFF">
-<meta name=color-scheme content="light dark"><meta property="og:title" content="说明">
-<meta property="og:description" content="版本说明 #  v0.2.0 #  该项目发布以来收到了很多朋友的关注，很多公司都将它应用到了一些比较重要的项目中。同时，也对该项目提出了很多要求。综合这些，开发了这个版本。同时希望朋友们互相交流，多提意见。
-这个版本主要有下面几个改动：
- 由于 go-oauth2.v3 版本安全性原因，将该包升级到 v4 丰富了可配置的项目 增加了容器化部署的脚本和相关文档 多了一些细节的优化 增加了错误页面 用户验证增加了LDAP支持  ">
+<meta name=color-scheme content="light dark"><meta property="og:title" content="OAuth2&SSO">
+<meta property="og:description" content="项目地址: https://github.com/llaoj/oauth2nsso
+llaoj/oauth2nsso 项目是基于 go-oauth2 打造的独立的 OAuth2.0 和 SSO 服务，提供了开箱即用的 OAuth2.0服务和单点登录SSO服务。开源一年多，获得了社区很多用户的关注，该项目多公司线上在用，其中包含上市公司。轻又好用，稳的一P。">
 <meta property="og:type" content="article">
-<meta property="og:url" content="https://blog.llaoj.cn/docs/oauth2nsso/note/"><meta property="article:section" content="docs">
-<title>说明 | 老J的博客</title>
+<meta property="og:url" content="https://blog.llaoj.cn/docs/mywork/oauth2nsso/"><meta property="article:section" content="docs">
+<title>OAuth2&SSO | 老J的博客</title>
 <link rel=manifest href=/manifest.json>
 <link rel=icon href=/favicon.png type=image/x-icon>
 <link rel=stylesheet href=/book.min.18b5d651e266e5e9cfc7455e2e50eb1b74a62aee16cf204b69de1d9e695276f7.css integrity="sha256-GLXWUeJm5enPx0VeLlDrG3SmKu4WzyBLad4dnmlSdvc=" crossorigin=anonymous>
 <script defer src=/flexsearch.min.js></script>
-<script defer src=/zh.search.min.342c6a0df0840d839703dd568762acef1820febc22dd985f574641550a35b7b8.js integrity="sha256-NCxqDfCEDYOXA91Wh2Ks7xgg/rwi3ZhfV0ZBVQo1t7g=" crossorigin=anonymous></script>
+<script defer src=/zh.search.min.cc95b498e5ebefe51126d4763ff39827ca50bd30bf8cb86a802df6ec1a1276c3.js integrity="sha256-zJW0mOXr7+URJtR2P/OYJ8pQvTC/jLhqgC327BoSdsM=" crossorigin=anonymous></script>
 <script defer src=/sw.min.6f6f90fcb8eb1c49ec389838e6b801d0de19430b8e516902f8d75c3c8bd98739.js integrity="sha256-b2+Q/LjrHEnsOJg45rgB0N4ZQwuOUWkC+NdcPIvZhzk=" crossorigin=anonymous></script>
 <script>var _hmt=_hmt||[];(function(){var a=document.createElement("script"),b;a.src="https://hm.baidu.com/hm.js?7f5ad4632a1c2df3cd8e1199a7aaf48a",b=document.getElementsByTagName("script")[0],b.parentNode.insertBefore(a,b)})()</script>
 </head>
@@ -46,25 +44,16 @@
 </ul>
 <ul>
 <li>
-<a href=/docs/oauth2nsso/>OAuth2&SSO</a>
+<span>我的项目</span>
 <ul>
 <li>
-<a href=/docs/oauth2nsso/configuration/>配置</a>
+<a href=/docs/mywork/gcopy/>GCopy</a>
 </li>
 <li>
-<a href=/docs/oauth2nsso/apis/>API列表</a>
+<a href=/docs/mywork/oauth2nsso/ class=active>OAuth2&SSO</a>
 </li>
 <li>
-<a href=/docs/oauth2nsso/deploy/>部署</a>
-</li>
-<li>
-<a href=/docs/oauth2nsso/note/ class=active>说明</a>
-</li>
-<li>
-<a href=/docs/oauth2nsso/demo/>示例</a>
-</li>
-<li>
-<a href=/docs/oauth2nsso/for-client/>接入指引</a>
+<a href=/docs/mywork/kubefinder/>KubeFinder</a>
 </li>
 </ul>
 </li>
@@ -99,37 +88,18 @@ eBPF
 <label for=menu-control>
 <img src=/svg/menu.svg class=book-icon alt=Menu>
 </label>
-<strong>说明</strong>
+<strong>OAuth2&SSO</strong>
 <label for=toc-control>
 <img src=/svg/toc.svg class=book-icon alt="Table of Contents">
 </label>
 </div>
 <aside class="hidden clearfix">
-<nav id=TableOfContents>
-<ul>
-<li><a href=#v020>v0.2.0</a></li>
-</ul>
-</nav>
+<nav id=TableOfContents></nav>
 </aside>
 </header>
-<article class=markdown><h1 id=版本说明>
-版本说明
-<a class=anchor href=#%e7%89%88%e6%9c%ac%e8%af%b4%e6%98%8e>#</a>
-</h1>
-<h2 id=v020>
-v0.2.0
-<a class=anchor href=#v020>#</a>
-</h2>
-<p>该项目发布以来收到了很多朋友的关注，很多公司都将它应用到了一些比较重要的项目中。同时，也对该项目提出了很多要求。综合这些，开发了这个版本。同时希望朋友们互相交流，多提意见。</p>
-<p>这个版本主要有下面几个改动：</p>
-<ol>
-<li>由于 go-oauth2.v3 版本安全性原因，将该包升级到 v4</li>
-<li>丰富了可配置的项目</li>
-<li>增加了容器化部署的脚本和相关文档</li>
-<li>多了一些细节的优化</li>
-<li>增加了错误页面</li>
-<li>用户验证增加了LDAP支持</li>
-</ol>
+<article class=markdown><p>项目地址:
+<a href=https://github.com/llaoj/oauth2nsso>https://github.com/llaoj/oauth2nsso</a></p>
+<p>llaoj/oauth2nsso 项目是基于 go-oauth2 打造的<strong>独立</strong>的 OAuth2.0 和 SSO 服务，提供了开箱即用的 OAuth2.0服务和单点登录SSO服务。开源一年多，获得了社区很多用户的关注，该项目多公司线上在用，其中包含上市公司。轻又好用，稳的一P。</p>
 </article>
 <footer class=book-footer>
 <div class="flex flex-wrap justify-between">
@@ -144,11 +114,7 @@ v0.2.0
 </div>
 <aside class=book-toc>
 <div class=book-toc-content>
-<nav id=TableOfContents>
-<ul>
-<li><a href=#v020>v0.2.0</a></li>
-</ul>
-</nav>
+<nav id=TableOfContents></nav>
 </div>
 </aside>
 </main>

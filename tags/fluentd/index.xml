@@ -3,9 +3,9 @@ https://github.com/fluent/fluentd-kubernetes-daemonset 本文使用的kubernetes
 使用fluentd镜像为: fluent/fluentd-kubernetes-daemonset:v1.15.2-debian-kafka2-1.0
 请注意下文配置中&amp;lt;var&amp;gt;标记, 需要根据需求自行替换.
 创建命名空间 # 本项目所有的资源创建在logging下, 先创建它:
-kubectl create ns logging-kafka 先创建服务账号 # 创建服务账号并赋予集群查看的权限, 使用下面的命令:
-kubectl -n logging-kafka create -f - &amp;lt;&amp;lt;EOF apiVersion: v1 kind: ServiceAccount metadata: name: fluentd EOF 创建绑定关系:
-kubectl create -f - &amp;lt;&amp;lt;EOF kind: ClusterRoleBinding apiVersion: rbac.authorization.k8s.io/v1 metadata: name: fluentd-kafka roleRef: kind: ClusterRole name: view apiGroup: rbac.authorization.k8s.io subjects: - kind: ServiceAccount name: fluentd namespace: logging-kafka EOF 创建配置文件 # 执行下面到命令创建configmap:</description></item><item><title>使用fluentd收集kubernetes日志并推送到ES</title><link>https://blog.llaoj.cn/posts/2209/fluentd-kubernetes-daemonset/</link><pubDate>Tue, 20 Sep 2022 00:00:00 +0000</pubDate><guid>https://blog.llaoj.cn/posts/2209/fluentd-kubernetes-daemonset/</guid><description>这篇文章使用fluentd官方提供的kubernetes部署方案daemonset来部署日志收集, 参考项目地址:
+kubectl create ns fluentd-kafka 先创建服务账号 # 创建服务账号并赋予集群查看的权限, 使用下面的命令:
+kubectl -n fluentd-kafka create -f - &amp;lt;&amp;lt;EOF apiVersion: v1 kind: ServiceAccount metadata: name: fluentd EOF 创建绑定关系:
+kubectl create -f - &amp;lt;&amp;lt;EOF kind: ClusterRoleBinding apiVersion: rbac.authorization.k8s.io/v1 metadata: name: fluentd-kafka roleRef: kind: ClusterRole name: view apiGroup: rbac.authorization.k8s.io subjects: - kind: ServiceAccount name: fluentd namespace: fluentd-kafka EOF 创建配置文件 # 执行下面到命令创建configmap:</description></item><item><title>使用fluentd收集kubernetes日志并推送到ES</title><link>https://blog.llaoj.cn/posts/2209/fluentd-kubernetes-daemonset/</link><pubDate>Tue, 20 Sep 2022 00:00:00 +0000</pubDate><guid>https://blog.llaoj.cn/posts/2209/fluentd-kubernetes-daemonset/</guid><description>这篇文章使用fluentd官方提供的kubernetes部署方案daemonset来部署日志收集, 参考项目地址:
 https://github.com/fluent/fluentd-kubernetes-daemonset 本文使用的kubernetes版本为: 1.22.8
 使用fluentd镜像为: fluent/fluentd-kubernetes-daemonset:v1.15.2-debian-elasticsearch7-1.0
 请注意下文配置中&amp;lt;var&amp;gt;标记, 需要根据需求自行替换.

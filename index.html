@@ -3,11 +3,9 @@
 <meta name=generator content="Hugo 0.91.2">
 <meta charset=utf-8>
 <meta name=viewport content="width=device-width,initial-scale=1">
-<meta name=description content="一直是一个学生 #  喜欢技术, 喜欢云原生. 我们的工作/人生需要不断总结和复盘, 归纳整理. 这里是我记录学习过程, 积累经验, 总结工作的地方. 如果恰好对你也有所帮助, 我真的会很高兴. 水平一般, 能力有限, 希望我们能共同进步, 多创造点价值, 多帮助到别人, 不枉此生!
-package main import ( &#34;fmt&#34; &#34;math/rand&#34; &#34;time&#34; ) func main() { fmt.Println(&#34;Hello, world!&#34;) rand.Seed(time.Now().UnixNano()) for year := 1; year <= rand.Intn(100); year++ { fmt.Println(&#34;Learn, Work, Life...&#34;) fmt.Println(&#34;Review&#34;) } fmt.Println(&#34;Goodbye, world!&#34;) } 我平时还做了点小工具和小项目 #  它们解决了工作中的一个痛点, 能给工作带来便捷, 弥补了行业内一点点的小空缺, 如果你正好需要, 那真太好了!
-OAuth2&SSO #   llaoj/oauth2nsso 项目是基于 go-oauth2 打造的独立的 OAuth2.0 和 SSO 服务，提供了开箱即用的 OAuth2.0服务和单点登录SSO服务。开源一年多，获得了社区很多用户的关注，该项目多公司线上在用，其中包含上市公司。轻又好用，很稳。  KubeFinder #   llaoj/kube-finder是一个独立的容器文件服务器, 可以通过该项目查看集群容器内的文件目录结构, 在指定的目录中上传或者下载文件.">
+<meta name=description content>
 <meta name=theme-color content="#FFFFFF">
-<meta name=color-scheme content="light dark"><meta property="og:title" content="首页">
+<meta name=color-scheme content="light dark"><meta http-equiv=refresh content="0; url='/posts'"><meta property="og:title" content="首页">
 <meta property="og:description" content>
 <meta property="og:type" content="website">
 <meta property="og:url" content="https://blog.llaoj.cn/">
@@ -16,7 +14,7 @@ OAuth2&SSO #   llaoj/oauth2nsso 项目是基于 go-oauth2 打造的独立的 OAu
 <link rel=icon href=/favicon.png type=image/x-icon>
 <link rel=stylesheet href=/book.min.18b5d651e266e5e9cfc7455e2e50eb1b74a62aee16cf204b69de1d9e695276f7.css integrity="sha256-GLXWUeJm5enPx0VeLlDrG3SmKu4WzyBLad4dnmlSdvc=" crossorigin=anonymous>
 <script defer src=/flexsearch.min.js></script>
-<script defer src=/zh.search.min.342c6a0df0840d839703dd568762acef1820febc22dd985f574641550a35b7b8.js integrity="sha256-NCxqDfCEDYOXA91Wh2Ks7xgg/rwi3ZhfV0ZBVQo1t7g=" crossorigin=anonymous></script>
+<script defer src=/zh.search.min.cc95b498e5ebefe51126d4763ff39827ca50bd30bf8cb86a802df6ec1a1276c3.js integrity="sha256-zJW0mOXr7+URJtR2P/OYJ8pQvTC/jLhqgC327BoSdsM=" crossorigin=anonymous></script>
 <script defer src=/sw.min.6f6f90fcb8eb1c49ec389838e6b801d0de19430b8e516902f8d75c3c8bd98739.js integrity="sha256-b2+Q/LjrHEnsOJg45rgB0N4ZQwuOUWkC+NdcPIvZhzk=" crossorigin=anonymous></script>
 <link rel=alternate type=application/rss+xml href=https://blog.llaoj.cn/index.xml title=老J的博客>
 <script>var _hmt=_hmt||[];(function(){var a=document.createElement("script"),b;a.src="https://hm.baidu.com/hm.js?7f5ad4632a1c2df3cd8e1199a7aaf48a",b=document.getElementsByTagName("script")[0],b.parentNode.insertBefore(a,b)})()</script>
@@ -46,25 +44,16 @@ OAuth2&SSO #   llaoj/oauth2nsso 项目是基于 go-oauth2 打造的独立的 OAu
 </ul>
 <ul>
 <li>
-<a href=/docs/oauth2nsso/>OAuth2&SSO</a>
+<span>我的项目</span>
 <ul>
 <li>
-<a href=/docs/oauth2nsso/configuration/>配置</a>
+<a href=/docs/mywork/gcopy/>GCopy</a>
 </li>
 <li>
-<a href=/docs/oauth2nsso/apis/>API列表</a>
+<a href=/docs/mywork/oauth2nsso/>OAuth2&SSO</a>
 </li>
 <li>
-<a href=/docs/oauth2nsso/deploy/>部署</a>
-</li>
-<li>
-<a href=/docs/oauth2nsso/note/>说明</a>
-</li>
-<li>
-<a href=/docs/oauth2nsso/demo/>示例</a>
-</li>
-<li>
-<a href=/docs/oauth2nsso/for-client/>接入指引</a>
+<a href=/docs/mywork/kubefinder/>KubeFinder</a>
 </li>
 </ul>
 </li>
@@ -105,61 +94,10 @@ eBPF
 </label>
 </div>
 <aside class="hidden clearfix">
-<nav id=TableOfContents>
-<ul>
-<li><a href=#一直是一个学生>一直是一个学生</a></li>
-<li><a href=#我平时还做了点小工具和小项目>我平时还做了点小工具和小项目</a></li>
-</ul>
-</nav>
+<nav id=TableOfContents></nav>
 </aside>
 </header>
-<article class=markdown><h2 id=一直是一个学生>
-一直是一个学生
-<a class=anchor href=#%e4%b8%80%e7%9b%b4%e6%98%af%e4%b8%80%e4%b8%aa%e5%ad%a6%e7%94%9f>#</a>
-</h2>
-<p>喜欢技术, 喜欢云原生. 我们的工作/人生需要不断总结和复盘, 归纳整理. 这里是我记录学习过程, 积累经验, 总结工作的地方. 如果恰好对你也有所帮助, 我真的会很高兴. 水平一般, 能力有限, 希望我们能共同进步, 多创造点价值, 多帮助到别人, 不枉此生!</p>
-<div class=highlight><pre tabindex=0 style=background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-go data-lang=go><span style=color:#000;font-weight:700>package</span> main
-
-<span style=color:#000;font-weight:700>import</span> (
-    <span style=color:#d14>&#34;fmt&#34;</span>
-    <span style=color:#d14>&#34;math/rand&#34;</span>
-    <span style=color:#d14>&#34;time&#34;</span>
-)
-
-<span style=color:#000;font-weight:700>func</span> <span style=color:#900;font-weight:700>main</span>() {
-    fmt.<span style=color:#900;font-weight:700>Println</span>(<span style=color:#d14>&#34;Hello, world!&#34;</span>)
-    rand.<span style=color:#900;font-weight:700>Seed</span>(time.<span style=color:#900;font-weight:700>Now</span>().<span style=color:#900;font-weight:700>UnixNano</span>())
-    <span style=color:#000;font-weight:700>for</span> year <span style=color:#000;font-weight:700>:=</span> <span style=color:#099>1</span>; year <span style=color:#000;font-weight:700>&lt;=</span> rand.<span style=color:#900;font-weight:700>Intn</span>(<span style=color:#099>100</span>); year<span style=color:#000;font-weight:700>++</span> {
-        fmt.<span style=color:#900;font-weight:700>Println</span>(<span style=color:#d14>&#34;Learn, Work, Life...&#34;</span>)
-        fmt.<span style=color:#900;font-weight:700>Println</span>(<span style=color:#d14>&#34;Review&#34;</span>)
-    }
-    fmt.<span style=color:#900;font-weight:700>Println</span>(<span style=color:#d14>&#34;Goodbye, world!&#34;</span>)
-}
-
-</code></pre></div><h2 id=我平时还做了点小工具和小项目>
-我平时还做了点小工具和小项目
-<a class=anchor href=#%e6%88%91%e5%b9%b3%e6%97%b6%e8%bf%98%e5%81%9a%e4%ba%86%e7%82%b9%e5%b0%8f%e5%b7%a5%e5%85%b7%e5%92%8c%e5%b0%8f%e9%a1%b9%e7%9b%ae>#</a>
-</h2>
-<p>它们解决了工作中的一个痛点, 能给工作带来便捷, 弥补了行业内一点点的小空缺, 如果你正好需要, 那真太好了!</p>
-<div class="book-columns flex flex-wrap">
-<div class="flex-even markdown-inner">
-<h2 id=oauth2sso>
-OAuth2&SSO
-<a class=anchor href=#oauth2sso>#</a>
-</h2>
-<p>
-<a href=https://github.com/llaoj/oauth2nsso>llaoj/oauth2nsso</a> 项目是基于 go-oauth2 打造的<strong>独立</strong>的 OAuth2.0 和 SSO 服务，提供了开箱即用的 OAuth2.0服务和单点登录SSO服务。开源一年多，获得了社区很多用户的关注，该项目多公司线上在用，其中包含上市公司。轻又好用，很稳。
-</div>
-<div class="flex-even markdown-inner">
-<h2 id=kubefinder>
-KubeFinder
-<a class=anchor href=#kubefinder>#</a>
-</h2>
-<p>
-<a href=https://github.com/llaoj/kube-finder>llaoj/kube-finder</a>是一个独立的容器文件服务器, 可以通过该项目查看集群容器内的文件目录结构, 在指定的目录中上传或者下载文件. 使用golang开发, 直接操作主机 <code>/proc/&lt;pid>/root</code> 目录, 速度很快. 这是一个后端项目, 仅提供API.
-</div>
-</div>
-</article>
+<article class=markdown></article>
 <footer class=book-footer>
 <div class="flex flex-wrap justify-between">
 </div>
@@ -169,12 +107,7 @@ KubeFinder
 </div>
 <aside class=book-toc>
 <div class=book-toc-content>
-<nav id=TableOfContents>
-<ul>
-<li><a href=#一直是一个学生>一直是一个学生</a></li>
-<li><a href=#我平时还做了点小工具和小项目>我平时还做了点小工具和小项目</a></li>
-</ul>
-</nav>
+<nav id=TableOfContents></nav>
 </div>
 </aside>
 </main>

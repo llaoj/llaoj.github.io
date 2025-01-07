@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?><rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom"><channel><title>我的项目 on 老J的博客</title><link>https://blog.llaoj.cn/docs/mywork/</link><description>Recent content in 我的项目 on 老J的博客</description><generator>Hugo -- gohugo.io</generator><atom:link href="https://blog.llaoj.cn/docs/mywork/index.xml" rel="self" type="application/rss+xml"/><item><title>GCopy</title><link>https://blog.llaoj.cn/docs/mywork/gcopy/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>https://blog.llaoj.cn/docs/mywork/gcopy/</guid><description>项目地址: https://github.com/llaoj/gcopy
+一个剪切板同步的工具, 支持文字、截图和文件.
+使用 Golang 和 Nextjs 开发. 完全开源.
+GCopy重视您的数据隐私, 不持久化存储您的数据, 它们都在内存中. 如果你24h内不使用, 数据就会被删除.
+背景
+在日常的办公中, 我们通常需要操作两台以上的电脑, 尤其是软件开发工程师.
+假如, 你需要同时操作Windows电脑和MacOS电脑, 在这两个设备之间传递信息变得非常麻烦. 因为很多原因, 我找不到一个非常好的工具能共享两个不同操作系统的设备的剪切板. 当我拷贝了一段文字, 我需要在另外一台电脑上粘贴, 这通常非常困难.
+现在的工具通常只支持文字, 但是截图, 文件不支持. 而且, 他们通常要求设备必须要在同一个局域网, 可以互相访问. 他们往往收费.
+这很不好!
+所以, 我开发了GCopy, 它解决了这些问题. 目前, 你可以在PC、Mac和移动端之间共享剪切板, 支持文字, 截图和文件. 它对网络没有太高的要求, 不同的设备可以在同一个局域网, 也可以不在.
+最开始我使用Git作为后端存储, 使用powershell、osascript这样的脚本在不同的设备之间同步剪切板. 但是因为它依赖Git, 注定不能让更多的非技术朋友使用. 所以, 我使用Golang替换了Git, 来作为不同设备之间的数据中转服务, 但是它仍然需要您在设备上下载运行GCopy客户端, 给使用带来了门槛. 所以, 我做了现在的GCopy v1.0, 它是一个Web服务, 您可以直接打开网站 https://gcopy.rutron.net 使用, 同时不用担心您的数据泄露.</description></item><item><title>OAuth2&amp;SSO</title><link>https://blog.llaoj.cn/docs/mywork/oauth2nsso/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>https://blog.llaoj.cn/docs/mywork/oauth2nsso/</guid><description>项目地址: https://github.com/llaoj/oauth2nsso
+llaoj/oauth2nsso 项目是基于 go-oauth2 打造的独立的 OAuth2.0 和 SSO 服务，提供了开箱即用的 OAuth2.0服务和单点登录SSO服务。开源一年多，获得了社区很多用户的关注，该项目多公司线上在用，其中包含上市公司。轻又好用，稳的一P。</description></item><item><title>KubeFinder</title><link>https://blog.llaoj.cn/docs/mywork/kubefinder/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>https://blog.llaoj.cn/docs/mywork/kubefinder/</guid><description>项目地址: https://github.com/llaoj/kube-finder
+一个独立的容器文件服务器, 可以通过该项目查看容器内(namespace/pod/container)的文件目录结构/列表, 下载文件或者上传文件到指定目录中. 使用golang开发, 直接操作主机 /proc/&amp;lt;pid&amp;gt;/root 目录, 速度很快.
+这是一个后端项目, 仅提供API, 前端对接之后可以是这样的
+也可以是这样的：
+项目名取自MacOS Finder, 希望它像Finder一样好用.</description></item></channel></rss>

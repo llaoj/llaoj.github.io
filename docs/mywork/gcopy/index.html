@@ -1,0 +1,152 @@
+<!doctype html><html lang=zh dir=ltr>
+<head>
+<meta charset=utf-8>
+<meta name=viewport content="width=device-width,initial-scale=1">
+<meta name=description content="项目地址: https://github.com/llaoj/gcopy
+一个剪切板同步的工具, 支持文字、截图和文件.
+使用 Golang 和 Nextjs 开发. 完全开源.
+GCopy重视您的数据隐私, 不持久化存储您的数据, 它们都在内存中. 如果你24h内不使用, 数据就会被删除.
+背景
+在日常的办公中, 我们通常需要操作两台以上的电脑, 尤其是软件开发工程师.
+假如, 你需要同时操作Windows电脑和MacOS电脑, 在这两个设备之间传递信息变得非常麻烦. 因为很多原因, 我找不到一个非常好的工具能共享两个不同操作系统的设备的剪切板. 当我拷贝了一段文字, 我需要在另外一台电脑上粘贴, 这通常非常困难.
+现在的工具通常只支持文字, 但是截图, 文件不支持. 而且, 他们通常要求设备必须要在同一个局域网, 可以互相访问. 他们往往收费.
+这很不好!
+所以, 我开发了GCopy, 它解决了这些问题. 目前, 你可以在PC、Mac和移动端之间共享剪切板, 支持文字, 截图和文件. 它对网络没有太高的要求, 不同的设备可以在同一个局域网, 也可以不在.
+最开始我使用Git作为后端存储, 使用powershell、osascript这样的脚本在不同的设备之间同步剪切板. 但是因为它依赖Git, 注定不能让更多的非技术朋友使用. 所以, 我使用Golang替换了Git, 来作为不同设备之间的数据中转服务, 但是它仍然需要您在设备上下载运行GCopy客户端, 给使用带来了门槛. 所以, 我做了现在的GCopy v1.0, 它是一个Web服务, 您可以直接打开网站 https://gcopy.rutron.net 使用, 同时不用担心您的数据泄露.">
+<meta name=theme-color content="#FFFFFF">
+<meta name=color-scheme content="light dark"><meta property="og:title" content="GCopy">
+<meta property="og:description" content="项目地址: https://github.com/llaoj/gcopy
+一个剪切板同步的工具, 支持文字、截图和文件.
+使用 Golang 和 Nextjs 开发. 完全开源.
+GCopy重视您的数据隐私, 不持久化存储您的数据, 它们都在内存中. 如果你24h内不使用, 数据就会被删除.
+背景
+在日常的办公中, 我们通常需要操作两台以上的电脑, 尤其是软件开发工程师.
+假如, 你需要同时操作Windows电脑和MacOS电脑, 在这两个设备之间传递信息变得非常麻烦. 因为很多原因, 我找不到一个非常好的工具能共享两个不同操作系统的设备的剪切板. 当我拷贝了一段文字, 我需要在另外一台电脑上粘贴, 这通常非常困难.
+现在的工具通常只支持文字, 但是截图, 文件不支持. 而且, 他们通常要求设备必须要在同一个局域网, 可以互相访问. 他们往往收费.
+这很不好!
+所以, 我开发了GCopy, 它解决了这些问题. 目前, 你可以在PC、Mac和移动端之间共享剪切板, 支持文字, 截图和文件. 它对网络没有太高的要求, 不同的设备可以在同一个局域网, 也可以不在.
+最开始我使用Git作为后端存储, 使用powershell、osascript这样的脚本在不同的设备之间同步剪切板. 但是因为它依赖Git, 注定不能让更多的非技术朋友使用. 所以, 我使用Golang替换了Git, 来作为不同设备之间的数据中转服务, 但是它仍然需要您在设备上下载运行GCopy客户端, 给使用带来了门槛. 所以, 我做了现在的GCopy v1.0, 它是一个Web服务, 您可以直接打开网站 https://gcopy.rutron.net 使用, 同时不用担心您的数据泄露.">
+<meta property="og:type" content="article">
+<meta property="og:url" content="https://blog.llaoj.cn/docs/mywork/gcopy/"><meta property="article:section" content="docs">
+<title>GCopy | 老J的博客</title>
+<link rel=manifest href=/manifest.json>
+<link rel=icon href=/favicon.png type=image/x-icon>
+<link rel=stylesheet href=/book.min.18b5d651e266e5e9cfc7455e2e50eb1b74a62aee16cf204b69de1d9e695276f7.css integrity="sha256-GLXWUeJm5enPx0VeLlDrG3SmKu4WzyBLad4dnmlSdvc=" crossorigin=anonymous>
+<script defer src=/flexsearch.min.js></script>
+<script defer src=/zh.search.min.cc95b498e5ebefe51126d4763ff39827ca50bd30bf8cb86a802df6ec1a1276c3.js integrity="sha256-zJW0mOXr7+URJtR2P/OYJ8pQvTC/jLhqgC327BoSdsM=" crossorigin=anonymous></script>
+<script defer src=/sw.min.6f6f90fcb8eb1c49ec389838e6b801d0de19430b8e516902f8d75c3c8bd98739.js integrity="sha256-b2+Q/LjrHEnsOJg45rgB0N4ZQwuOUWkC+NdcPIvZhzk=" crossorigin=anonymous></script>
+<script>var _hmt=_hmt||[];(function(){var a=document.createElement("script"),b;a.src="https://hm.baidu.com/hm.js?7f5ad4632a1c2df3cd8e1199a7aaf48a",b=document.getElementsByTagName("script")[0],b.parentNode.insertBefore(a,b)})()</script>
+</head>
+<body dir=ltr>
+<input type=checkbox class="hidden toggle" id=menu-control>
+<input type=checkbox class="hidden toggle" id=toc-control>
+<main class="container flex">
+<aside class=book-menu>
+<div class=book-menu-content>
+<nav>
+<h2 class=book-brand>
+<a class="flex align-center" href=/><img src=/j.png alt=Logo><span>老J的博客</span>
+</a>
+</h2>
+<div class=book-search>
+<input type=text id=book-search-input placeholder=搜索 aria-label=搜索 maxlength=64 data-hotkeys=s/>
+<div class="book-search-spinner hidden"></div>
+<ul id=book-search-results></ul>
+</div>
+<ul>
+<li>
+<a href=/posts/>
+文章
+</a>
+</li>
+</ul>
+<ul>
+<li>
+<span>我的项目</span>
+<ul>
+<li>
+<a href=/docs/mywork/gcopy/ class=active>GCopy</a>
+</li>
+<li>
+<a href=/docs/mywork/oauth2nsso/>OAuth2&SSO</a>
+</li>
+<li>
+<a href=/docs/mywork/kubefinder/>KubeFinder</a>
+</li>
+</ul>
+</li>
+<li>
+<a href=/docs/about/>关于</a>
+<ul>
+</ul>
+</li>
+</ul>
+<ul>
+<li>
+<a href=https://www.cncf.io/ target=_blank rel=noopener>
+CNCF
+</a>
+</li>
+<li>
+<a href=https://ebpf.io/ target=_blank rel=noopener>
+eBPF
+</a>
+</li>
+</ul>
+<div class=book-menu-after>
+<a href=https://www.rutron.net/ target=_blank>@如创科技</a><br>提供云计算支持
+</div>
+</nav>
+<script>(function(){var a=document.querySelector("aside .book-menu-content");addEventListener("beforeunload",function(b){localStorage.setItem("menu.scrollTop",a.scrollTop)}),a.scrollTop=localStorage.getItem("menu.scrollTop")})()</script>
+</div>
+</aside>
+<div class=book-page>
+<header class=book-header>
+<div class="flex align-center justify-between">
+<label for=menu-control>
+<img src=/svg/menu.svg class=book-icon alt=Menu>
+</label>
+<strong>GCopy</strong>
+<label for=toc-control>
+<img src=/svg/toc.svg class=book-icon alt="Table of Contents">
+</label>
+</div>
+<aside class="hidden clearfix">
+<nav id=TableOfContents></nav>
+</aside>
+</header>
+<article class=markdown><p>
+<img src="https://github.com/llaoj/gcopy/blob/main/docs/gcopy.png?raw=true" alt=GCopy></p>
+<p>项目地址:
+<a href=https://github.com/llaoj/gcopy>https://github.com/llaoj/gcopy</a></p>
+<p>一个剪切板同步的工具, 支持文字、截图和文件.</p>
+<p>使用 Golang 和 Nextjs 开发. 完全开源.</p>
+<p>GCopy重视您的数据隐私, 不持久化存储您的数据, 它们都在内存中. 如果你24h内不使用, 数据就会被删除.</p>
+<p><strong>背景</strong></p>
+<p>在日常的办公中, 我们通常需要操作两台以上的电脑, 尤其是软件开发工程师.</p>
+<p>假如, 你需要同时操作Windows电脑和MacOS电脑, 在这两个设备之间传递信息变得非常麻烦. 因为很多原因, 我找不到一个非常好的工具能共享两个不同操作系统的设备的剪切板. 当我拷贝了一段文字, 我需要在另外一台电脑上粘贴, 这通常非常困难.</p>
+<p>现在的工具通常只支持文字, 但是截图, 文件不支持. 而且, 他们通常要求设备必须要在同一个局域网, 可以互相访问. 他们往往收费.</p>
+<p>这很不好!</p>
+<p>所以, 我开发了GCopy, 它解决了这些问题. 目前, 你可以在PC、Mac和移动端之间共享剪切板, 支持文字, 截图和文件. 它对网络没有太高的要求, 不同的设备可以在同一个局域网, 也可以不在.</p>
+<p>最开始我使用Git作为后端存储, 使用powershell、osascript这样的脚本在不同的设备之间同步剪切板. 但是因为它依赖Git, 注定不能让更多的非技术朋友使用. 所以, 我使用Golang替换了Git, 来作为不同设备之间的数据中转服务, 但是它仍然需要您在设备上下载运行GCopy客户端, 给使用带来了门槛. 所以, 我做了现在的GCopy v1.0, 它是一个Web服务, 您可以直接打开网站
+<a href=https://gcopy.rutron.net>https://gcopy.rutron.net</a> 使用, 同时不用担心您的数据泄露.</p>
+</article>
+<footer class=book-footer>
+<div class="flex flex-wrap justify-between">
+</div>
+<script>(function(){function a(c){const a=window.getSelection(),b=document.createRange();b.selectNodeContents(c),a.removeAllRanges(),a.addRange(b)}document.querySelectorAll("pre code").forEach(b=>{b.addEventListener("click",function(c){if(window.getSelection().toString())return;a(b.parentElement),navigator.clipboard&&navigator.clipboard.writeText(b.parentElement.textContent)})})})()</script>
+</footer>
+<div class=book-comments><link rel=stylesheet href=https://unpkg.com/gitalk/dist/gitalk.css>
+<script src=https://unpkg.com/gitalk/dist/gitalk.min.js></script>
+<div id=gitalk-container></div>
+<script type=text/javascript>const gitalk=new Gitalk({clientID:'53c7373e7b1554a4abc3',clientSecret:'7c9dcef80ea6bde5d8695d1ab94bcef87063fb3b',repo:'llaoj.github.io',owner:'llaoj',admin:['llaoj'],id:location.pathname,distractionFreeMode:!1});gitalk.render('gitalk-container')</script></div>
+<label for=menu-control class="hidden book-menu-overlay"></label>
+</div>
+<aside class=book-toc>
+<div class=book-toc-content>
+<nav id=TableOfContents></nav>
+</div>
+</aside>
+</main>
+</body>
+</html>
