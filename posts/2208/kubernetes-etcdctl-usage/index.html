@@ -4,12 +4,12 @@
 <meta name=viewport content="width=device-width,initial-scale=1">
 <meta name=description content="下面这个脚本提供了etcdctl连接etcd所需要的断点、证书相关的信息, 能快速或许并调用命令查看, 这个脚本需要在master节点上执行:
 #!/bin/bash  ENDPOINTS=$(pgrep kube-apiserver | grep -P 'etcd-servers=(.*?)\s' -o | awk -F= '{print $2}') CACERT=$(pgrep kube-apiserver | grep -P 'etcd-cafile=(.*?)\s' -o | awk -F= '{print $2}') CERT=$(pgrep kube-apiserver | grep -P 'etcd-certfile=(.*?)\s' -o | awk -F= '{print $2}') KEY=$(pgrep kube-apiserver | grep -P 'etcd-keyfile=(.*?)\s' -o | awk -F= '{print $2}') ETCDCTL_API=3 etcdctl --endpoints=&#34;$ENDPOINTS&#34; --cacert=&#34;$CACERT&#34; --key=&#34;$KEY&#34; --cert=&#34;$CERT&#34; &#34;$@&#34; 或者, 使用这个命令一键下载脚本:
-curl -o ./etcdctl.sh https://blog.llaoj.cn/posts/2208/kubernetes-etcdctl-usage/etcdctl.sh / && chmod +x .">
+curl -o ./etcdctl.sh https://blog.llaoj.cn/posts/2208/kubernetes-etcdctl-usage/etcdctl.sh \  && chmod +x .">
 <meta name=theme-color content="#FFFFFF">
 <meta name=color-scheme content="light dark"><meta property="og:title" content="使用etcdctl查看kubernetes存储的内容">
 <meta property="og:description" content="下面这个脚本提供了etcdctl连接etcd所需要的断点、证书相关的信息, 能快速或许并调用命令查看, 这个脚本需要在master节点上执行:
 #!/bin/bash  ENDPOINTS=$(pgrep kube-apiserver | grep -P 'etcd-servers=(.*?)\s' -o | awk -F= '{print $2}') CACERT=$(pgrep kube-apiserver | grep -P 'etcd-cafile=(.*?)\s' -o | awk -F= '{print $2}') CERT=$(pgrep kube-apiserver | grep -P 'etcd-certfile=(.*?)\s' -o | awk -F= '{print $2}') KEY=$(pgrep kube-apiserver | grep -P 'etcd-keyfile=(.*?)\s' -o | awk -F= '{print $2}') ETCDCTL_API=3 etcdctl --endpoints=&#34;$ENDPOINTS&#34; --cacert=&#34;$CACERT&#34; --key=&#34;$KEY&#34; --cert=&#34;$CERT&#34; &#34;$@&#34; 或者, 使用这个命令一键下载脚本:
-curl -o ./etcdctl.sh https://blog.llaoj.cn/posts/2208/kubernetes-etcdctl-usage/etcdctl.sh / && chmod +x .">
+curl -o ./etcdctl.sh https://blog.llaoj.cn/posts/2208/kubernetes-etcdctl-usage/etcdctl.sh \  && chmod +x .">
 <meta property="og:type" content="article">
 <meta property="og:url" content="https://blog.llaoj.cn/posts/2208/kubernetes-etcdctl-usage/"><meta property="article:section" content="posts">
 <meta property="article:published_time" content="2022-08-29T00:00:00+00:00">
@@ -19,7 +19,7 @@ curl -o ./etcdctl.sh https://blog.llaoj.cn/posts/2208/kubernetes-etcdctl-usage/e
 <link rel=icon href=/favicon.png type=image/x-icon>
 <link rel=stylesheet href=/book.min.18b5d651e266e5e9cfc7455e2e50eb1b74a62aee16cf204b69de1d9e695276f7.css integrity="sha256-GLXWUeJm5enPx0VeLlDrG3SmKu4WzyBLad4dnmlSdvc=" crossorigin=anonymous>
 <script defer src=/flexsearch.min.js></script>
-<script defer src=/zh.search.min.0399ac5ca4f70db8e68f3272f53734932a486346487c0b5cc93ac39e163cfefd.js integrity="sha256-A5msXKT3DbjmjzJy9Tc0kypIY0ZIfAtcyTrDnhY8/v0=" crossorigin=anonymous></script>
+<script defer src=/zh.search.min.61560ad07dcd4739e4aa1c13cc46ccb9bd61ad4aaba3aff8500f8e875c57fc32.js integrity="sha256-YVYK0H3NRznkqhwTzEbMub1hrUqro6/4UA+Oh1xX/DI=" crossorigin=anonymous></script>
 <script defer src=/sw.min.6f6f90fcb8eb1c49ec389838e6b801d0de19430b8e516902f8d75c3c8bd98739.js integrity="sha256-b2+Q/LjrHEnsOJg45rgB0N4ZQwuOUWkC+NdcPIvZhzk=" crossorigin=anonymous></script>
 </head>
 <body dir=ltr>
@@ -117,8 +117,8 @@ eBPF
 
 <span style=color:teal>ETCDCTL_API</span><span style=color:#000;font-weight:700>=</span><span style=color:#099>3</span> etcdctl --endpoints<span style=color:#000;font-weight:700>=</span><span style=color:#d14>&#34;</span><span style=color:teal>$ENDPOINTS</span><span style=color:#d14>&#34;</span> --cacert<span style=color:#000;font-weight:700>=</span><span style=color:#d14>&#34;</span><span style=color:teal>$CACERT</span><span style=color:#d14>&#34;</span> --key<span style=color:#000;font-weight:700>=</span><span style=color:#d14>&#34;</span><span style=color:teal>$KEY</span><span style=color:#d14>&#34;</span> --cert<span style=color:#000;font-weight:700>=</span><span style=color:#d14>&#34;</span><span style=color:teal>$CERT</span><span style=color:#d14>&#34;</span> <span style=color:#d14>&#34;</span><span style=color:teal>$@</span><span style=color:#d14>&#34;</span>
 </code></pre></div><p>或者, 使用这个命令一键下载脚本:</p>
-<div class=highlight><pre tabindex=0 style=background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-sh data-lang=sh>curl -o ./etcdctl.sh https://blog.llaoj.cn/posts/2208/kubernetes-etcdctl-usage/etcdctl.sh /
-  <span style=color:#000;font-weight:700>&amp;&amp;</span> chmod +x ./etcdctl.sh
+<div class=highlight><pre tabindex=0 style=background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-sh data-lang=sh>curl -o ./etcdctl.sh https://blog.llaoj.cn/posts/2208/kubernetes-etcdctl-usage/etcdctl.sh <span style=color:#d14>\
+</span><span style=color:#d14></span>  <span style=color:#000;font-weight:700>&amp;&amp;</span> chmod +x ./etcdctl.sh
 </code></pre></div><p>好了, 我们已经把证书都提前配置好了. 下面可以直接使用<code>etcdctl.sh</code>命令了, 比如:</p>
 <div class=highlight><pre tabindex=0 style=background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-shell data-lang=shell>./etcdctl.sh --prefix<span style=color:#000;font-weight:700>=</span><span style=color:#0086b3>true</span> get /...
 </code></pre></div></article>
