@@ -11,20 +11,7 @@ categories:
 - "technology"
 ---
 
-下面这个脚本提供了etcdctl连接etcd所需要的断点、证书相关的信息, 能快速或许并调用命令查看, 这个脚本需要在master节点上执行:
-
-```shell
-#!/bin/bash
-
-ENDPOINTS=$(ps -ef | grep kube-apiserver | grep -P 'etcd-servers=(.*?)\s' -o | awk -F= '{print $2}')
-CACERT=$(ps -ef | grep kube-apiserver | grep -P 'etcd-cafile=(.*?)\s' -o | awk -F= '{print $2}')
-CERT=$(ps -ef | grep kube-apiserver | grep -P 'etcd-certfile=(.*?)\s' -o | awk -F= '{print $2}')
-KEY=$(ps -ef | grep kube-apiserver | grep -P 'etcd-keyfile=(.*?)\s' -o | awk -F= '{print $2}')
-
-ETCDCTL_API=3 etcdctl --endpoints="$ENDPOINTS" --cacert="$CACERT" --key="$KEY" --cert="$CERT" "$@"
-```	
-
-或者, 使用这个命令一键下载脚本:
+下面这个脚本提供了etcdctl连接etcd所需要的端点、证书相关的信息. 这个脚本需要在master节点上执行:
 
 ```sh
 curl -o ./etcdctl.sh {{<baseurl>}}posts/2208/kubernetes-etcdctl-usage/etcdctl.sh \
@@ -34,5 +21,8 @@ curl -o ./etcdctl.sh {{<baseurl>}}posts/2208/kubernetes-etcdctl-usage/etcdctl.sh
 好了, 我们已经把证书都提前配置好了. 下面可以直接使用`etcdctl.sh`命令了, 比如:
 
 ```shell
-./etcdctl.sh --prefix=true get /...
+# 获取所有的Key
+./etcdctl.sh get --keys-only --from-key ""
+# 获取指定Key的内容
+./etcdctl.sh get /registry/clusterroles/cluster-admin | auger decode
 ```
