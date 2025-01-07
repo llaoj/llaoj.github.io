@@ -15,7 +15,7 @@
 <link rel=icon href=/favicon.png type=image/x-icon>
 <link rel=stylesheet href=/book.min.18b5d651e266e5e9cfc7455e2e50eb1b74a62aee16cf204b69de1d9e695276f7.css integrity="sha256-GLXWUeJm5enPx0VeLlDrG3SmKu4WzyBLad4dnmlSdvc=" crossorigin=anonymous>
 <script defer src=/flexsearch.min.js></script>
-<script defer src=/zh.search.min.cc95b498e5ebefe51126d4763ff39827ca50bd30bf8cb86a802df6ec1a1276c3.js integrity="sha256-zJW0mOXr7+URJtR2P/OYJ8pQvTC/jLhqgC327BoSdsM=" crossorigin=anonymous></script>
+<script defer src=/zh.search.min.c14d414a5d762c9a0f2327c2bb8740542e626f2dd03ee559573dd8af4dc39ad8.js integrity="sha256-wU1BSl12LJoPIyfCu4dAVC5iby3QPuVZVz3Yr03Dmtg=" crossorigin=anonymous></script>
 <script defer src=/sw.min.6f6f90fcb8eb1c49ec389838e6b801d0de19430b8e516902f8d75c3c8bd98739.js integrity="sha256-b2+Q/LjrHEnsOJg45rgB0N4ZQwuOUWkC+NdcPIvZhzk=" crossorigin=anonymous></script>
 </head>
 <body dir=ltr>
@@ -144,7 +144,7 @@ eBPF
 root  <span style=color:#099>40004</span>  <span style=color:#099>2912</span>  <span style=color:#099>0</span>  Mar08  ?  00:00:33  containerd-shim -namespace moby -workdir /data/docker/containerd/daemon/  
 io.containerd.runtime.v1.linux/moby/&lt;container-hash&gt;
 卡住了
-</code></pre></div><p>根据命令中的 找到对应的 pod, 将其从当前节点移除. 移除之后, ps 命令以及其他系统命令可以成功执行. 被移除的 pod 分别是: 2个 prometheus、 1个 mysql.</p>
+</code></pre></div><p>根据命令中的 <container-hash> 找到对应的 pod, 将其从当前节点移除. 移除之后, ps 命令以及其他系统命令可以成功执行. 被移除的 pod 分别是: 2个 prometheus、 1个 mysql.</p>
 <h3 id=无法执行-umount-卸载>
 无法执行 umount 卸载
 <a class=anchor href=#%e6%97%a0%e6%b3%95%e6%89%a7%e8%a1%8c-umount-%e5%8d%b8%e8%bd%bd>#</a>
