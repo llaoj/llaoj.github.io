@@ -27,7 +27,7 @@ ETCDCTL_API=3 etcdctl --endpoints="$ENDPOINTS" --cacert="$CACERT" --key="$KEY" -
 或者, 使用这个命令一键下载脚本:
 
 ```sh
-curl -o ./etcdctl.sh {{<baseurl>}}posts/2208/kubernetes-etcdctl-usage/etcdctl.sh /
+curl -o ./etcdctl.sh {{<baseurl>}}posts/2208/kubernetes-etcdctl-usage/etcdctl.sh \
   && chmod +x ./etcdctl.sh
 ```
 
