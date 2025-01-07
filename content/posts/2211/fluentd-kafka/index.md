@@ -27,7 +27,7 @@ categories:
 本项目所有的资源创建在logging下, 先创建它:
 
 ```sh
-kubectl create ns logging-kafka
+kubectl create ns fluentd-kafka
 ```
 
 ## 先创建服务账号
@@ -35,7 +35,7 @@ kubectl create ns logging-kafka
 创建服务账号并赋予集群查看的权限, 使用下面的命令:
 
 ```sh
-kubectl -n logging-kafka create -f - <<EOF
+kubectl -n fluentd-kafka create -f - <<EOF
 apiVersion: v1
 kind: ServiceAccount
 metadata:
@@ -58,7 +58,7 @@ roleRef:
 subjects:
 - kind: ServiceAccount
   name: fluentd
-  namespace: logging-kafka
+  namespace: fluentd-kafka
 EOF
 ```
 
@@ -70,7 +70,7 @@ EOF
 cat > /tmp/fluentd.conf <<EOF
 # 粘贴下面的配置
 EOF
-kubectl -n logging-kafka create configmap fluentd-kafka-conf --from-file=fluent.conf=/tmp/fluentd.conf
+kubectl -n fluentd-kafka create configmap fluentd-kafka-conf --from-file=fluent.conf=/tmp/fluentd.conf
 ```
 
 配置文件内容如下, 它只收集容器日志:
@@ -95,7 +95,7 @@ kubectl -n logging-kafka create configmap fluentd-kafka-conf --from-file=fluent.
   read_from_head true
   follow_inodes true
   <parse>
-    @type "#{ENV['FLUENT_CONTAINER_TAIL_PARSER_TYPE'] || 'json'}"
+    @type "json"
     time_key "read_time"
   </parse>
 </source>
@@ -107,8 +107,8 @@ kubectl -n logging-kafka create configmap fluentd-kafka-conf --from-file=fluent.
   verify_ssl "#{ENV['KUBERNETES_VERIFY_SSL'] || true}"
   ca_file "#{ENV['KUBERNETES_CA_FILE']}"
   skip_labels false
-  skip_container_metadata false
-  skip_master_url false
+  skip_container_metadata true
+  skip_master_url true
   skip_namespace_metadata false
   watch true
 </filter>
