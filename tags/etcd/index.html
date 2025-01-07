@@ -13,7 +13,7 @@
 <link rel=icon href=/favicon.png type=image/x-icon>
 <link rel=stylesheet href=/book.min.18b5d651e266e5e9cfc7455e2e50eb1b74a62aee16cf204b69de1d9e695276f7.css integrity="sha256-GLXWUeJm5enPx0VeLlDrG3SmKu4WzyBLad4dnmlSdvc=" crossorigin=anonymous>
 <script defer src=/flexsearch.min.js></script>
-<script defer src=/zh.search.min.3ad3dd677b428358ce3af90aace7d7ba5cd653c6a497dae7847aeb609e223f07.js integrity="sha256-OtPdZ3tCg1jOOvkKrOfXulzWU8akl9rnhHrrYJ4iPwc=" crossorigin=anonymous></script>
+<script defer src=/zh.search.min.c8a06b82bf5c0d984afb4fb411043d953957bacaa54eef9e125fa71d2addd721.js integrity="sha256-yKBrgr9cDZhK+0+0EQQ9lTlXusqlTu+eEl+nHSrd1yE=" crossorigin=anonymous></script>
 <script defer src=/sw.min.6f6f90fcb8eb1c49ec389838e6b801d0de19430b8e516902f8d75c3c8bd98739.js integrity="sha256-b2+Q/LjrHEnsOJg45rgB0N4ZQwuOUWkC+NdcPIvZhzk=" crossorigin=anonymous></script>
 <link rel=alternate type=application/rss+xml href=https://blog.llaoj.cn/tags/etcd/index.xml title=老J的博客>
 </head>
@@ -231,9 +231,9 @@ eBPF
 <div>
 <a href=/tags/etcd/>etcd</a>
 </div>
-<p>下面这个脚本提供了etcdctl连接etcd所需要的断点、证书相关的信息, 能快速或许并调用命令查看, 这个脚本需要在master节点上执行:
-#!/bin/bash ENDPOINTS=$(ps -ef | grep kube-apiserver | grep -P 'etcd-servers=(.*?)\s' -o | awk -F= '{print $2}') CACERT=$(ps -ef | grep kube-apiserver | grep -P 'etcd-cafile=(.*?)\s' -o | awk -F= '{print $2}') CERT=$(ps -ef | grep kube-apiserver | grep -P 'etcd-certfile=(.*?)\s' -o | awk -F= '{print $2}') KEY=$(ps -ef | grep kube-apiserver | grep -P 'etcd-keyfile=(.*?)\s' -o | awk -F= '{print $2}') ETCDCTL_API=3 etcdctl --endpoints="$ENDPOINTS" --cacert="$CACERT" --key="$KEY" --cert="$CERT" "$@" 或者, 使用这个命令一键下载脚本:
-<a href=/posts/2208/kubernetes-etcdctl-usage/>...</a>
+<p>下面这个脚本提供了etcdctl连接etcd所需要的端点、证书相关的信息. 这个脚本需要在master节点上执行:
+curl -o ./etcdctl.sh https://blog.llaoj.cn/posts/2208/kubernetes-etcdctl-usage/etcdctl.sh \ && chmod +x ./etcdctl.sh 好了, 我们已经把证书都提前配置好了. 下面可以直接使用etcdctl.sh命令了, 比如:
+# 获取所有的Key ./etcdctl.sh get --keys-only --from-key "" # 获取指定Key的内容 ./etcdctl.sh get /registry/clusterroles/cluster-admin | auger decode
 </p>
 </article>
 <footer class=book-footer>
