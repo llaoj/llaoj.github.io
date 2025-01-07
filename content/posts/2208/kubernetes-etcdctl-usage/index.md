@@ -16,22 +16,22 @@ categories:
 ```shell
 #!/bin/bash
 
-ENDPOINTS=$(ps -ef | grep kube-apiserver | grep -P 'etcd-servers=(.*?)\s' -o | awk -F= '{print $2}')
-CACERT=$(ps -ef | grep kube-apiserver | grep -P 'etcd-cafile=(.*?)\s' -o | awk -F= '{print $2}')
-CERT=$(ps -ef | grep kube-apiserver | grep -P 'etcd-certfile=(.*?)\s' -o | awk -F= '{print $2}')
-KEY=$(ps -ef | grep kube-apiserver | grep -P 'etcd-keyfile=(.*?)\s' -o | awk -F= '{print $2}')
+ENDPOINTS=$(pgrep kube-apiserver | grep -P 'etcd-servers=(.*?)\s' -o | awk -F= '{print $2}')
+CACERT=$(pgrep kube-apiserver | grep -P 'etcd-cafile=(.*?)\s' -o | awk -F= '{print $2}')
+CERT=$(pgrep kube-apiserver | grep -P 'etcd-certfile=(.*?)\s' -o | awk -F= '{print $2}')
+KEY=$(pgrep kube-apiserver | grep -P 'etcd-keyfile=(.*?)\s' -o | awk -F= '{print $2}')
 
-alias etcdctl='ETCDCTL_API=3 etcdctl --endpoints=${ENDPOINTS} --cacert=${CACERT} --key=${KEY} --cert=${CERT} -w=json'
+ETCDCTL_API=3 etcdctl --endpoints="$ENDPOINTS" --cacert="$CACERT" --key="$KEY" --cert="$CERT" "$@"
 ```	
 
-或者, 使用这个命令一键完成准备工作:
+或者, 使用这个命令一键下载脚本:
 
 ```sh
-curl {{<baseurl>}}posts/2208/kubernetes-etcdctl-usage/prepare.sh | bash
+curl -o ./etcdctl.sh {{<baseurl>}}posts/2208/kubernetes-etcdctl-usage/etcdctl.sh
 ```
 
-好了, 我们已经把证书都提前配置好了, 并给etcdctl命令做了别名. 下面可以直接使用`etcdctl`命令了, 比如:
+好了, 我们已经把证书都提前配置好了. 下面可以直接使用`etcdctl.sh`命令了, 比如:
 
 ```shell
-etcdctl --prefix=true get /...
+./etcdctl.sh --prefix=true get /...
 ```
