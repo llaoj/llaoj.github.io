@@ -24,7 +24,13 @@ KEY=$(ps -ef | grep kube-apiserver | grep -P 'etcd-keyfile=(.*?)\s' -o | awk -F=
 alias etcdctl='ETCDCTL_API=3 etcdctl --endpoints=${ENDPOINTS} --cacert=${CACERT} --key=${KEY} --cert=${CERT} -w=json'
 ```	
 
-好了下面可以直接使用`etcdctl`命令了, 比如:
+或者, 使用这个命令一键完成准备工作:
+
+```sh
+curl {{<baseurl>}}posts/2208/kubernetes-etcdctl-usage/prepare.sh | bash
+```
+
+好了, 我们已经把证书都提前配置好了, 并给etcdctl命令做了别名. 下面可以直接使用`etcdctl`命令了, 比如:
 
 ```shell
 etcdctl --prefix=true get /...
