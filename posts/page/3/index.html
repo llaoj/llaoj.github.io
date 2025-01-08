@@ -13,7 +13,7 @@
 <link rel=icon href=/favicon.png type=image/x-icon>
 <link rel=stylesheet href=/book.min.18b5d651e266e5e9cfc7455e2e50eb1b74a62aee16cf204b69de1d9e695276f7.css integrity="sha256-GLXWUeJm5enPx0VeLlDrG3SmKu4WzyBLad4dnmlSdvc=" crossorigin=anonymous>
 <script defer src=/flexsearch.min.js></script>
-<script defer src=/zh.search.min.28b8565d0e5bc0a12eca98119eebfcdb7a0a5ec614df6e543789d5ad8937ef0b.js integrity="sha256-KLhWXQ5bwKEuypgRnuv823oKXsYU325UN4nVrYk37ws=" crossorigin=anonymous></script>
+<script defer src=/zh.search.min.6d62265cf8d718194c34a2b87aeb2e156f76ba8273000bbbaddc12dd47783380.js integrity="sha256-bWImXPjXGBlMNKK4eusuFW92uoJzAAu7rdwS3Ud4M4A=" crossorigin=anonymous></script>
 <script defer src=/sw.min.6f6f90fcb8eb1c49ec389838e6b801d0de19430b8e516902f8d75c3c8bd98739.js integrity="sha256-b2+Q/LjrHEnsOJg45rgB0N4ZQwuOUWkC+NdcPIvZhzk=" crossorigin=anonymous></script>
 <link rel=alternate type=application/rss+xml href=https://blog.llaoj.cn/posts/index.xml title=老J的博客>
 </head>
@@ -99,13 +99,17 @@ eBPF
 <ul>
 <li class="flex justify-between">
 <a href=/categories/technology/>technology</a>
-<span>35</span>
+<span>36</span>
 </li>
 </ul>
 </li>
 <li class=book-section-flat>
 <strong>Tags</strong>
 <ul>
+<li class="flex justify-between">
+<a href=/tags/harbor/>harbor</a>
+<span>2</span>
+</li>
 <li class="flex justify-between">
 <a href=/tags/kubernetes/>kubernetes</a>
 <span>19</span>
@@ -167,10 +171,6 @@ eBPF
 <span>3</span>
 </li>
 <li class="flex justify-between">
-<a href=/tags/harbor/>harbor</a>
-<span>1</span>
-</li>
-<li class="flex justify-between">
 <a href=/tags/bcc/>bcc</a>
 <span>3</span>
 </li>
@@ -220,6 +220,21 @@ eBPF
 </nav>
 </aside>
 </header>
+<article class="markdown book-post">
+<h2>
+<a href=/posts/2203/find-ns-that-exceed-resource-limits/>在 kubernetes 中找出过度使用资源的 namespaces</a>
+</h2>
+<h5>2022-3-28</h5>
+<div>
+<a href=/categories/technology/>technology</a>
+</div>
+<div>
+<a href=/tags/golang/>golang</a>,
+<a href=/tags/kubernetes/>kubernetes</a>
+</div>
+<p>我们知道, 在 kubernetes 中, namespace 的资源限制在 ResourceQuota 中定义, 比如我们控制 default 名称空间使用 1核1G 的资源. 通常来讲, 由于 kubernetes 的资源控制机制, <code>.status.used</code> 中资源的值会小于 <code>.status.hard</code> 中相应资源的值. 但是也有特例. 当我们开始定义了一个较大的资源限制, 待应用部署完毕, 资源占用了很多之后, 这时调低资源限制. 此时就会出现 <code>.status.used</code> 中的值超过 <code>.status.hard</code> 中相应值的情况, 尤其是内存的限制.
+</p>
+</article>
 <article class="markdown book-post">
 <h2>
 <a href=/posts/2203/what-is-ebpf/>[译]什么是 eBPF?</a>
@@ -359,22 +374,6 @@ $ ps -ef ... root 40004 2912 0 Mar08 ? 00:00:33 containerd-shim -namespace moby 
 docker stop openldap && docker rm openldap && \ docker run --name openldap --detach \ -p 389:389 \ -p 636:636 \ --env LDAP_ORGANISATION="Rutron Net" \ --env LDAP_DOMAIN="rutron.net" \ --env LDAP_ADMIN_PASSWORD="your-password" \ --env LDAP_READONLY_USER=true \ --env LDAP_TLS_VERIFY_CLIENT=try \ --volume /data/openldap/data:/var/lib/ldap \ --volume /data/openldap/slapd.d:/etc/ldap/slapd.d \ --hostname ldap.rutron.net \ osixia/openldap:1.5.0 好了, 现在该服务同时支持 ldap 和 ldaps 协议, 有一个初始化的账号 readonly/readonly, 可以使用了~
 </p>
 </article>
-<article class="markdown book-post">
-<h2>
-<a href=/posts/2202/cannot-allocate-memory/>解决 kubelet cannot allocate memory 错误</a>
-</h2>
-<h5>2022-2-27</h5>
-<div>
-<a href=/categories/technology/>technology</a>
-</div>
-<div>
-<a href=/tags/kubelet/>kubelet</a>,
-<a href=/tags/kubernetes/>kubernetes</a>
-</div>
-<p>问题描述 # 查看 pod 相关 events 如下：
-Events: Type Reason Age From Message ---- ------ ---- ---- ------- Normal Scheduled 18m default-scheduler Successfully assigned container-186002196200947712/itms-5f6d7798-wrpjj to 10.206.65.144 Warning FailedCreatePodContainer 3m31s (x71 over 18m) kubelet unable to ensure pod container exists: failed to create container for [kubepods burstable pod31f4c93c-c3a1-49ad-b091-0802c5f1d396] : mkdir /sys/fs/cgroup/memory/kubepods/burstable/pod31f4c93c-c3a1-49ad-b091-0802c5f1d396: cannot allocate memory 这是内核bug，建议升级内核
-</p>
-</article>
 <ul class="pagination pagination-default">
 <li class=page-item>
 <a href=/posts/ aria-label=First class=page-link role=button><span aria-hidden=true>&#171;&#171;</span></a>
@@ -417,13 +416,17 @@ Events: Type Reason Age From Message ---- ------ ---- ---- ------- Normal Schedu
 <ul>
 <li class="flex justify-between">
 <a href=/categories/technology/>technology</a>
-<span>35</span>
+<span>36</span>
 </li>
 </ul>
 </li>
 <li class=book-section-flat>
 <strong>Tags</strong>
 <ul>
+<li class="flex justify-between">
+<a href=/tags/harbor/>harbor</a>
+<span>2</span>
+</li>
 <li class="flex justify-between">
 <a href=/tags/kubernetes/>kubernetes</a>
 <span>19</span>
@@ -483,10 +486,6 @@ Events: Type Reason Age From Message ---- ------ ---- ---- ------- Normal Schedu
 <li class="flex justify-between">
 <a href=/tags/golang/>golang</a>
 <span>3</span>
-</li>
-<li class="flex justify-between">
-<a href=/tags/harbor/>harbor</a>
-<span>1</span>
 </li>
 <li class="flex justify-between">
 <a href=/tags/bcc/>bcc</a>

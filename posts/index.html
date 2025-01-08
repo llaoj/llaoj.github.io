@@ -13,7 +13,7 @@
 <link rel=icon href=/favicon.png type=image/x-icon>
 <link rel=stylesheet href=/book.min.18b5d651e266e5e9cfc7455e2e50eb1b74a62aee16cf204b69de1d9e695276f7.css integrity="sha256-GLXWUeJm5enPx0VeLlDrG3SmKu4WzyBLad4dnmlSdvc=" crossorigin=anonymous>
 <script defer src=/flexsearch.min.js></script>
-<script defer src=/zh.search.min.28b8565d0e5bc0a12eca98119eebfcdb7a0a5ec614df6e543789d5ad8937ef0b.js integrity="sha256-KLhWXQ5bwKEuypgRnuv823oKXsYU325UN4nVrYk37ws=" crossorigin=anonymous></script>
+<script defer src=/zh.search.min.6d62265cf8d718194c34a2b87aeb2e156f76ba8273000bbbaddc12dd47783380.js integrity="sha256-bWImXPjXGBlMNKK4eusuFW92uoJzAAu7rdwS3Ud4M4A=" crossorigin=anonymous></script>
 <script defer src=/sw.min.6f6f90fcb8eb1c49ec389838e6b801d0de19430b8e516902f8d75c3c8bd98739.js integrity="sha256-b2+Q/LjrHEnsOJg45rgB0N4ZQwuOUWkC+NdcPIvZhzk=" crossorigin=anonymous></script>
 <link rel=alternate type=application/rss+xml href=https://blog.llaoj.cn/posts/index.xml title=老J的博客>
 </head>
@@ -99,13 +99,17 @@ eBPF
 <ul>
 <li class="flex justify-between">
 <a href=/categories/technology/>technology</a>
-<span>35</span>
+<span>36</span>
 </li>
 </ul>
 </li>
 <li class=book-section-flat>
 <strong>Tags</strong>
 <ul>
+<li class="flex justify-between">
+<a href=/tags/harbor/>harbor</a>
+<span>2</span>
+</li>
 <li class="flex justify-between">
 <a href=/tags/kubernetes/>kubernetes</a>
 <span>19</span>
@@ -167,10 +171,6 @@ eBPF
 <span>3</span>
 </li>
 <li class="flex justify-between">
-<a href=/tags/harbor/>harbor</a>
-<span>1</span>
-</li>
-<li class="flex justify-between">
 <a href=/tags/bcc/>bcc</a>
 <span>3</span>
 </li>
@@ -220,6 +220,22 @@ eBPF
 </nav>
 </aside>
 </header>
+<article class="markdown book-post">
+<h2>
+<a href=/posts/2025/fix-harbor-trivy-failure/>解决Harbor漏洞扫描trivy失败</a>
+</h2>
+<h5>2025-1-8</h5>
+<div>
+<a href=/categories/technology/>technology</a>
+</div>
+<div>
+<a href=/tags/harbor/>harbor</a>
+</div>
+<p>问题描述 # 点击查看日志, 错误日志如下：
+2025-01-08T01:53:23Z [INFO] [/pkg/scan/job.go:167]: Report mime types: [application/vnd.security.vulnerability.report; version=1.1] 2025-01-08T01:53:23Z [INFO] [/pkg/scan/job.go:224]: Get report for mime type: application/vnd.security.vulnerability.report; version=1.1 2025-01-08T01:53:25Z [INFO] [/pkg/scan/job.go:245]: Report with mime type application/vnd.security.vulnerability.report; version=1.1 is not ready yet, retry after 5 seconds 2025-01-08T01:53:30Z [ERROR] [/pkg/scan/job.go:294]: check scan report with mime type application/vnd.security.vulnerability.report; version=1.1: running trivy wrapper: running trivy: exit status 2: 2025-01-08T01:53:26.342Z [INFO] Vulnerability scanning is enabled panic: invalid page type: 39: 10 goroutine 1 [running]: go.
+<a href=/posts/2025/fix-harbor-trivy-failure/>...</a>
+</p>
+</article>
 <article class="markdown book-post">
 <h2>
 <a href=/posts/2309/velero-failed-to-list-daemonset-pods/>解决Velero报错: failed to list daemonset pods: client rate limiter Wait returned an error: context deadline exceeded</a>
@@ -395,25 +411,6 @@ kubectl -n metallb-system edit cm config 可以看到目前有两个地址池, �
 <a href=/posts/2208/metallb-l2-usage/>...</a>
 </p>
 </article>
-<article class="markdown book-post">
-<h2>
-<a href=/posts/2208/istio-with-nginx-reserve-proxy/>在istio service mesh中使用nginx反向代理</a>
-</h2>
-<h5>2022-8-8</h5>
-<div>
-<a href=/categories/technology/>technology</a>
-</div>
-<div>
-<a href=/tags/istio/>istio</a>
-</div>
-<p>nginx反向代理的请求, 和我们直接请求有一定的区别, 比如:
-http version # nginx proxy 发出的反向代理请求的http version默认是: 1.0, 但是istio支持1.1 & 2.0, 所以如果不增加http版本限制的话istio就无法进行报文解析, 也就无法应用istio-proxy(sidecar)L7层代理策略, 我们知道istio流量治理是基于L7层的.
-http header: Host # 有时候nginx发出的代理请求的http header中host的值, 不能保证是上游服务的host name. 在这种情况下, 是没办法匹配上游服务在istio-proxy中的L7流量治理的配置.
-怎么解决? # 所以, 需要在nginx代理配置处增加两项配置:
-... location / { proxy_http_version 1.1; &lt;- proxy_set_header Host &lt;upstream-host>; &lt;- proxy_pass http://&lt;upstream-host>:8080; } ... 即可.
-参考 # nginx官方文档proxy_http_version介绍 nginx官方文档proxy_set_header介绍
-</p>
-</article>
 <ul class="pagination pagination-default">
 <li class="page-item disabled">
 <a aria-disabled=true aria-label=First class=page-link role=button tabindex=-1><span aria-hidden=true>&#171;&#171;</span></a>
@@ -456,13 +453,17 @@ http header: Host # 有时候nginx发出的代理请求的http header中host的�
 <ul>
 <li class="flex justify-between">
 <a href=/categories/technology/>technology</a>
-<span>35</span>
+<span>36</span>
 </li>
 </ul>
 </li>
 <li class=book-section-flat>
 <strong>Tags</strong>
 <ul>
+<li class="flex justify-between">
+<a href=/tags/harbor/>harbor</a>
+<span>2</span>
+</li>
 <li class="flex justify-between">
 <a href=/tags/kubernetes/>kubernetes</a>
 <span>19</span>
@@ -522,10 +523,6 @@ http header: Host # 有时候nginx发出的代理请求的http header中host的�
 <li class="flex justify-between">
 <a href=/tags/golang/>golang</a>
 <span>3</span>
-</li>
-<li class="flex justify-between">
-<a href=/tags/harbor/>harbor</a>
-<span>1</span>
 </li>
 <li class="flex justify-between">
 <a href=/tags/bcc/>bcc</a>
