@@ -33,6 +33,7 @@
 <div class="book-search-spinner hidden"></div>
 <ul id=book-search-results></ul>
 </div>
+<img src=/images/avatar.jpg width=150 style=border-radius:8px>
 <ul>
 <li>
 <a href=/posts/>
@@ -249,10 +250,7 @@ eBPF
 <a href=/tags/kubernetes/>kubernetes</a>
 </div>
 <p>设计 # 这篇文章介绍了 Prometheus Operator 的几种自定义资源 (CRD):
-Prometheus Alertmanager ThanosRuler ServiceMonitor PodMonitor Probe PrometheusRule AlertmanagerConfig Prometheus # 它定义了在 Kubernetes 集群中安装 Prometheus 的方式. 它提供了一些配置项, 比如副本数、持久卷还有接收告警的 Alertmanagers.
-对于每一个 Prometheus 资源, Operator 会在同一 namespace 中部署一个经过正确配置的 StatefulSet. 其配置文件 secret/prometheus-name 会被挂载到它的 pod 上.
-它明确了 Prometheus 实例选择 ServiceMonitors 所用的标签. 任何时候, 一旦 ServiceMonitors 和 Prometheus 资源有更改, Operator 会根据他们生成重新配置文件, 然后更新到上述 Secret 配置文件中.
-如果没有提供选择 ServiceMonitors 所用标签, 用户也可以自己管理 Secret, 同时该 Secret 也享受 Operator 配置安装 Prometheus 的能力.
+Prometheus Alertmanager ThanosRuler ServiceMonitor PodMonitor Probe PrometheusRule AlertmanagerConfig Prometheus # 它定义了在 Kubernetes 集群中安装 Prometheus 的方式.
 <a href=/posts/2202/prometheus-operator-design/>...</a>
 </p>
 </article>

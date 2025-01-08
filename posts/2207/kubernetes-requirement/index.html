@@ -4,14 +4,12 @@
 <meta name=viewport content="width=device-width,initial-scale=1">
 <meta name=description content="新建集群的第一步就是要规划服务器、网络、操作系统等等, 下面就结合我平时的工作经验总结下相关的要求, 内容根据日常工作持续补充完善:
 服务器配置 #  kubernetes 集群分为控制节点和数据节点, 它们对于配置的要求有所不同:
-控制面 #     节点规模 Master规格     1~5个节点 4核 8Gi（不建议2核 4Gi）   6~20个节点 4核 16Gi   21~100个节点 8核 32Gi   100~200个节点 16核 64Gi    系统盘40+Gi，用于储存 etcd 信息及相关配置文件等
-数据面 #   规格：CPU >= 4核, 内存 >= 8Gi 确定整个集群的日常使用的总核数以及可用度的容忍度  例如：集群总的核数有160核, 可以容忍10%的错误. 那么最小选择10台16核VM, 并且高峰运行的负荷不要超过 160*90%=144核. 如果容忍度是20%, 那么最小选择5台32核VM, 并且高峰运行的负荷不要超过160*80%=128核. 这样就算有一台VM出现故障, 剩余VM仍可以支持现有业务正常运行.   确定 CPU:Memory 比例.">
+控制面 #     节点规模 Master规格     1~5个节点 4核 8Gi（不建议2核 4Gi）   6~20个节点 4核 16Gi   21~100个节点 8核 32Gi   100~200个节点 16核 64Gi    系统盘40+Gi，用于储存 etcd 信息及相关配置文件等">
 <meta name=theme-color content="#FFFFFF">
 <meta name=color-scheme content="light dark"><meta property="og:title" content="Kubernetes 服务器配置和规划建设要求">
 <meta property="og:description" content="新建集群的第一步就是要规划服务器、网络、操作系统等等, 下面就结合我平时的工作经验总结下相关的要求, 内容根据日常工作持续补充完善:
 服务器配置 #  kubernetes 集群分为控制节点和数据节点, 它们对于配置的要求有所不同:
-控制面 #     节点规模 Master规格     1~5个节点 4核 8Gi（不建议2核 4Gi）   6~20个节点 4核 16Gi   21~100个节点 8核 32Gi   100~200个节点 16核 64Gi    系统盘40+Gi，用于储存 etcd 信息及相关配置文件等
-数据面 #   规格：CPU >= 4核, 内存 >= 8Gi 确定整个集群的日常使用的总核数以及可用度的容忍度  例如：集群总的核数有160核, 可以容忍10%的错误. 那么最小选择10台16核VM, 并且高峰运行的负荷不要超过 160*90%=144核. 如果容忍度是20%, 那么最小选择5台32核VM, 并且高峰运行的负荷不要超过160*80%=128核. 这样就算有一台VM出现故障, 剩余VM仍可以支持现有业务正常运行.   确定 CPU:Memory 比例.">
+控制面 #     节点规模 Master规格     1~5个节点 4核 8Gi（不建议2核 4Gi）   6~20个节点 4核 16Gi   21~100个节点 8核 32Gi   100~200个节点 16核 64Gi    系统盘40+Gi，用于储存 etcd 信息及相关配置文件等">
 <meta property="og:type" content="article">
 <meta property="og:url" content="https://blog.llaoj.cn/posts/2207/kubernetes-requirement/"><meta property="article:section" content="posts">
 <meta property="article:published_time" content="2022-07-16T00:00:00+00:00">
@@ -40,6 +38,7 @@
 <div class="book-search-spinner hidden"></div>
 <ul id=book-search-results></ul>
 </div>
+<img src=/images/avatar.jpg width=150 style=border-radius:8px>
 <ul>
 <li>
 <a href=/posts/>

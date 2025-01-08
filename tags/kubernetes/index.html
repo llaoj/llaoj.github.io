@@ -33,6 +33,7 @@
 <div class="book-search-spinner hidden"></div>
 <ul id=book-search-results></ul>
 </div>
+<img src=/images/avatar.jpg width=150 style=border-radius:8px>
 <ul>
 <li>
 <a href=/posts/>
@@ -233,10 +234,7 @@ eBPF
 </div>
 <p>问题描述 # 反应执行kubectl命令没有权限:
 $ kubectl get pod -A Error from server (Forbidden): pods is forbidden: User "kubernetes-admin" cannot list resource "pods" in API group "" at the cluster scope 解决思路 # 首先要了解几个文件夹的作用:
-/root/.kube/config: kubectl默认使用的认证文件. /etc/kubernetes/: 存放kubernetes相关的配置文件、认证文件等. /etc/kubernetes/pki: 存放kubernetes相关组件的证书密钥文件. 首先通过ls -lh /root/.kube/config查看该文件的创建时间.
-然后通过ls -lh /etc/kubernetes/查看里面的文件的创建时间, 如果差别挺大, 说明可能是当证书更新/轮转的时候, 没有同步更新/root/.kube/config.
-此时, 我们通过将/etc/kubernetes/super-admin.conf(名称不一定固定)复制到/root/.kube/config即可.
-cp /etc/kubernetes/super-admin.conf /root/.kube/config 问题解决!
+<a href=/posts/2025/fix-kubectl-no-authorization/>...</a>
 </p>
 </article>
 <article class="markdown book-post">
@@ -297,7 +295,6 @@ cp /etc/kubernetes/super-admin.conf /root/.kube/config 问题解决!
 <p>新建集群的第一步就是要规划服务器、网络、操作系统等等, 下面就结合我平时的工作经验总结下相关的要求, 内容根据日常工作持续补充完善:
 服务器配置 # kubernetes 集群分为控制节点和数据节点, 它们对于配置的要求有所不同:
 控制面 # 节点规模 Master规格 1~5个节点 4核 8Gi（不建议2核 4Gi） 6~20个节点 4核 16Gi 21~100个节点 8核 32Gi 100~200个节点 16核 64Gi 系统盘40+Gi，用于储存 etcd 信息及相关配置文件等
-数据面 # 规格：CPU >= 4核, 内存 >= 8Gi 确定整个集群的日常使用的总核数以及可用度的容忍度 例如：集群总的核数有160核, 可以容忍10%的错误. 那么最小选择10台16核VM, 并且高峰运行的负荷不要超过 160*90%=144核. 如果容忍度是20%, 那么最小选择5台32核VM, 并且高峰运行的负荷不要超过160*80%=128核. 这样就算有一台VM出现故障, 剩余VM仍可以支持现有业务正常运行. 确定 CPU:Memory 比例.
 <a href=/posts/2207/kubernetes-requirement/>...</a>
 </p>
 </article>

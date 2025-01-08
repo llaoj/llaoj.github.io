@@ -3,13 +3,11 @@
 <meta charset=utf-8>
 <meta name=viewport content="width=device-width,initial-scale=1">
 <meta name=description content="本文使用 kubespray 容器部署 kubernetes v1.22, 提供了从国外搬运的离线软件包/容器镜像. 仅需要几步即可部署高可用集群. 所有离线文件都来自官方下载 kubespray 安装过程会进行软件包验证, 放心使用.
-前提 #   禁用防火墙 重要: 本文使用 kubespray 的容器环境部署, 为避免影响节点部署(特别是 Runtime 部署), 所以需要一台独立于集群外的服务器执行下面的命令, 这台服务器安装 docker 19.03+ 并到所有节点SSH免密进入. 目标服务器要允许 IPv4 转发, 如果要给 pods 和 services 用 IPv6, 目标服务器要允许 IPv6 转发.  注意: 下面配置是适合 kubespray 的配置, 实际配置取决于集群规模.
- Master  Memory: 1500 MB   Node  Memory: 1024 MB    文件和镜像搬运 #  由于国内网络的限制, 直接使用Kubespray是无法成功安装集群的. 所以我写了一个脚本, 将文件上传至阿里云OSS, 镜像上传至阿里云ACR. 下面是脚本的内容, 请在国外服务器上运行, 比如GitHub Actions、Google云控制台等.">
+前提 #   禁用防火墙 重要: 本文使用 kubespray 的容器环境部署, 为避免影响节点部署(特别是 Runtime 部署), 所以需要一台独立于集群外的服务器执行下面的命令, 这台服务器安装 docker 19.">
 <meta name=theme-color content="#FFFFFF">
 <meta name=color-scheme content="light dark"><meta property="og:title" content="使用Kubespray安装kubernetes的教程">
 <meta property="og:description" content="本文使用 kubespray 容器部署 kubernetes v1.22, 提供了从国外搬运的离线软件包/容器镜像. 仅需要几步即可部署高可用集群. 所有离线文件都来自官方下载 kubespray 安装过程会进行软件包验证, 放心使用.
-前提 #   禁用防火墙 重要: 本文使用 kubespray 的容器环境部署, 为避免影响节点部署(特别是 Runtime 部署), 所以需要一台独立于集群外的服务器执行下面的命令, 这台服务器安装 docker 19.03+ 并到所有节点SSH免密进入. 目标服务器要允许 IPv4 转发, 如果要给 pods 和 services 用 IPv6, 目标服务器要允许 IPv6 转发.  注意: 下面配置是适合 kubespray 的配置, 实际配置取决于集群规模.
- Master  Memory: 1500 MB   Node  Memory: 1024 MB    文件和镜像搬运 #  由于国内网络的限制, 直接使用Kubespray是无法成功安装集群的. 所以我写了一个脚本, 将文件上传至阿里云OSS, 镜像上传至阿里云ACR. 下面是脚本的内容, 请在国外服务器上运行, 比如GitHub Actions、Google云控制台等.">
+前提 #   禁用防火墙 重要: 本文使用 kubespray 的容器环境部署, 为避免影响节点部署(特别是 Runtime 部署), 所以需要一台独立于集群外的服务器执行下面的命令, 这台服务器安装 docker 19.">
 <meta property="og:type" content="article">
 <meta property="og:url" content="https://blog.llaoj.cn/posts/2202/Kubespray-kubernetes-setup/"><meta property="article:section" content="posts">
 <meta property="article:published_time" content="2022-02-14T00:00:00+00:00">
@@ -38,6 +36,7 @@
 <div class="book-search-spinner hidden"></div>
 <ul id=book-search-results></ul>
 </div>
+<img src=/images/avatar.jpg width=150 style=border-radius:8px>
 <ul>
 <li>
 <a href=/posts/>

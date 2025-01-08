@@ -33,6 +33,7 @@
 <div class="book-search-spinner hidden"></div>
 <ul id=book-search-results></ul>
 </div>
+<img src=/images/avatar.jpg width=150 style=border-radius:8px>
 <ul>
 <li>
 <a href=/posts/>
@@ -235,8 +236,6 @@ eBPF
 <p>周末, 有一台服务器告警: 系统负载过高, 最高的时候都已经到 100 +, 以下是排查&处理的具体过程.
 发现的问题/现象 # uptime 显示 load average 都在70+ # 因为服务器是40核心, 原则上负载40是满负荷, 现在明显存在大量等待的任务. 继续往下分析进程, 看具体那个进程一直在堵塞.
 ps -ef 执行到某一个进程就卡住了 # 命令执行如下:
-$ ps -ef ... root 40004 2912 0 Mar08 ? 00:00:33 containerd-shim -namespace moby -workdir /data/docker/containerd/daemon/ io.containerd.runtime.v1.linux/moby/&lt;container-hash> 卡住了 根据命令中的 找到对应的 pod, 将其从当前节点移除. 移除之后, ps 命令以及其他系统命令可以成功执行. 被移除的 pod 分别是: 2个 prometheus、 1个 mysql.
-无法执行 umount 卸载 # 测试 mount 挂载正常, 但是 umount 失败, 解决办法:
 <a href=/posts/2203/nfs-options/>...</a>
 </p>
 </article>

@@ -33,6 +33,7 @@
 <div class="book-search-spinner hidden"></div>
 <ul id=book-search-results></ul>
 </div>
+<img src=/images/avatar.jpg width=150 style=border-radius:8px>
 <ul>
 <li>
 <a href=/posts/>
@@ -232,7 +233,7 @@ eBPF
 <a href=/tags/harbor/>harbor</a>
 </div>
 <p>问题描述 # 点击查看日志, 错误日志如下：
-2025-01-08T01:53:23Z [INFO] [/pkg/scan/job.go:167]: Report mime types: [application/vnd.security.vulnerability.report; version=1.1] 2025-01-08T01:53:23Z [INFO] [/pkg/scan/job.go:224]: Get report for mime type: application/vnd.security.vulnerability.report; version=1.1 2025-01-08T01:53:25Z [INFO] [/pkg/scan/job.go:245]: Report with mime type application/vnd.security.vulnerability.report; version=1.1 is not ready yet, retry after 5 seconds 2025-01-08T01:53:30Z [ERROR] [/pkg/scan/job.go:294]: check scan report with mime type application/vnd.security.vulnerability.report; version=1.1: running trivy wrapper: running trivy: exit status 2: 2025-01-08T01:53:26.342Z [INFO] Vulnerability scanning is enabled panic: invalid page type: 39: 10 goroutine 1 [running]: go.
+2025-01-08T01:53:23Z [INFO] [/pkg/scan/job.go:167]: Report mime types: [application/vnd.security.vulnerability.report; version=1.1] 2025-01-08T01:53:23Z [INFO] [/pkg/scan/job.go:224]: Get report for mime type: application/vnd.security.vulnerability.report; version=1.1 2025-01-08T01:53:25Z [INFO] [/pkg/scan/job.
 <a href=/posts/2025/fix-harbor-trivy-failure/>...</a>
 </p>
 </article>
@@ -249,10 +250,7 @@ eBPF
 </div>
 <p>问题描述 # 反应执行kubectl命令没有权限:
 $ kubectl get pod -A Error from server (Forbidden): pods is forbidden: User "kubernetes-admin" cannot list resource "pods" in API group "" at the cluster scope 解决思路 # 首先要了解几个文件夹的作用:
-/root/.kube/config: kubectl默认使用的认证文件. /etc/kubernetes/: 存放kubernetes相关的配置文件、认证文件等. /etc/kubernetes/pki: 存放kubernetes相关组件的证书密钥文件. 首先通过ls -lh /root/.kube/config查看该文件的创建时间.
-然后通过ls -lh /etc/kubernetes/查看里面的文件的创建时间, 如果差别挺大, 说明可能是当证书更新/轮转的时候, 没有同步更新/root/.kube/config.
-此时, 我们通过将/etc/kubernetes/super-admin.conf(名称不一定固定)复制到/root/.kube/config即可.
-cp /etc/kubernetes/super-admin.conf /root/.kube/config 问题解决!
+<a href=/posts/2025/fix-kubectl-no-authorization/>...</a>
 </p>
 </article>
 <article class="markdown book-post">
@@ -298,10 +296,7 @@ cp /etc/kubernetes/super-admin.conf /root/.kube/config 问题解决!
 </div>
 <p>注意: 根据自己实际情况, 替换下面名利中的&lt;var>变量.
 启动orcale xe 11g容器 # Oracle Database XE是人人都可免费使用的 Oracle 数据库. Oracle Database XE 支持最高:
-最多 12 GB 的用户磁盘数据 最大 2 GB 的数据库 RAM 最多 2 个 CPU 线程 产品介绍地址: https://www.oracle.com/cn/database/technologies/appdev/xe.html
-Oracle Database XE支持容器化部署, 镜像项目地址(这里面也有详细使用文档): https://hub.docker.com/r/oracleinanutshell/oracle-xe-11g
-docker run -d \ --name=oracle-xe-11g \ --restart=always \ -p 31521:1521 \ -p 38080:8080 \ -v /data/oracle_data:/opt/oracle/oracle_data:rw \ oracleinanutshell/oracle-xe-11g 该镜像的默认登录信息是:
-hostname: localhost port: 31521 sid: xe username: system 或者 sys password: oracle 使用了主机的/data/oracle_data目录作为数据持久化目录.
+最多 12 GB 的用户磁盘数据 最大 2 GB 的数据库 RAM 最多 2 个 CPU 线程 产品介绍地址: https://www.
 <a href=/posts/2210/docker-oracle-xe-11g/>...</a>
 </p>
 </article>
@@ -322,8 +317,6 @@ https://github.com/fluent/fluentd-kubernetes-daemonset 本文使用的kubernetes
 请注意下文配置中&lt;var>标记, 需要根据需求自行替换.
 创建命名空间 # 本项目所有的资源创建在logging下, 先创建它:
 kubectl create ns fluentd-kafka 先创建服务账号 # 创建服务账号并赋予集群查看的权限, 使用下面的命令:
-kubectl -n fluentd-kafka create -f - &lt;&lt;EOF apiVersion: v1 kind: ServiceAccount metadata: name: fluentd EOF 创建绑定关系:
-kubectl create -f - &lt;&lt;EOF kind: ClusterRoleBinding apiVersion: rbac.authorization.k8s.io/v1 metadata: name: fluentd-kafka roleRef: kind: ClusterRole name: view apiGroup: rbac.authorization.k8s.io subjects: - kind: ServiceAccount name: fluentd namespace: fluentd-kafka EOF 创建配置文件 # 执行下面到命令创建configmap:
 <a href=/posts/2211/fluentd-kafka/>...</a>
 </p>
 </article>
@@ -344,8 +337,6 @@ https://github.com/fluent/fluentd-kubernetes-daemonset 本文使用的kubernetes
 请注意下文配置中&lt;var>标记, 需要根据需求自行替换.
 创建命名空间 # 本项目所有的资源创建在logging下, 先创建它:
 NAMESPACE=logging kubectl create ns $NAMESPACE 先创建服务账号 # 创建服务账号并赋予集群查看的权限, 使用下面的命令:
-kubectl -n $NAMESPACE create -f - &lt;&lt;EOF apiVersion: v1 kind: ServiceAccount metadata: name: fluentd EOF 创建绑定关系:
-kubectl create -f - &lt;&lt;EOF kind: ClusterRoleBinding apiVersion: rbac.authorization.k8s.io/v1 metadata: name: fluentd roleRef: kind: ClusterRole name: view apiGroup: rbac.authorization.k8s.io subjects: - kind: ServiceAccount name: fluentd namespace: ${NAMESPACE} EOF 创建配置文件 # 配置文件使用configmap挂在在容器内, 覆盖容器内现有的配置文件.
 <a href=/posts/2209/fluentd-kubernetes-daemonset/>...</a>
 </p>
 </article>
@@ -362,7 +353,8 @@ kubectl create -f - &lt;&lt;EOF kind: ClusterRoleBinding apiVersion: rbac.author
 </div>
 <p>Envoy静态配置 # L4转发 # 下面的例子是配置4层转发, 将443端口的流量都代理到www.example.com对应的后端的443端口上, 如下:
 static_resources:listeners:- name:listener_0address:socket_address:protocol:TCPaddress:0.0.0.0port_value:443filter_chains:- filters:- name:envoy.filters.network.tcp_proxytyped_config:"@type": type.googleapis.com/envoy.extensions.filters.network.tcp_proxy.v3.TcpProxystat_prefix:tcp_443cluster:cluster_0clusters:- name:cluster_0type:LOGICAL_DNSdns_lookup_family:V4_ONLYload_assignment:cluster_name:cluster_0endpoints:- lb_endpoints:- endpoint:address:socket_address:address:www.example.comport_value:443启动Envoy # 将创建的静态配置文件envoy-custom.yaml映射到容器内部, 启动:
-docker run -d --name=envoy --restart=always \ -p 443:443 -v /root/envoy-custom.yaml:/etc/envoy/envoy.yaml \ envoyproxy/envoy:v1.22.2
+docker run -d --name=envoy --restart=always \ -p 443:443 -v /root/envoy-custom.
+<a href=/posts/2209/envoy-usage/>...</a>
 </p>
 </article>
 <article class="markdown book-post">
@@ -379,12 +371,7 @@ docker run -d --name=envoy --restart=always \ -p 443:443 -v /root/envoy-custom.y
 <p>rsync安装 # 在传输双方的服务器上都安装rsync软件. 如果服务器上有rsync可以跳过.
 先检查有没有安装rsync:
 rsync -h 如果没有安装, 使用下面的命令安装:
-# Debian sudo apt-get install rsync # Red Hat sudo yum install rsync # Arch Linux sudo pacman -S rsync 启动rsync守护进程 # rsync使用最多的是ssh模式. 在现代的公司中, 出于安全的原因, 很多ssh是被禁止使用的. 所以, 我们可以使用rsync的守护进程模式. 一起看看怎么用吧.
-rsync守护进程部署在传输双方(发送方或者接受方)的任何一端都可以的.
-下面的配置和命令中, 我以发送方(10.138.228.201)和接收方(10.206.38.30)为例.
-我选择接收方, 先部署配置文件. 配置文件地址: /etc/rsyncd.conf. 配置文件 官方参考手册
-以下是一个参考的配置, 每一项配置我都增加了备注说明:
-# 指定rsync以什么用户/组传输文件 # 默认nobody,如果使用了系统不存在的用户和组 # 需要先手动创建用户和组 # 它会是生成的文件所属的用户和组 # 也可以把它们配置到模块中 uid = root gid = root # 选择yes可以在操作模块时chroot到同步目录中 # 优势是面对安全威胁能提供额外保护 # 缺点是使用chroot需要root权限, # 以及在传输符号连接或保存用户名/组时会有些问题 use chroot = no # 指定监听端口 # 默认873 port = 873 # 最大连接数 max connections = 200 # 超时时间 timeout = 600 # 进程pid所在的文件 pid file = /var/run/rsyncd.
+# Debian sudo apt-get install rsync # Red Hat sudo yum install rsync # Arch Linux sudo pacman -S rsync 启动rsync守护进程 # rsync使用最多的是ssh模式.
 <a href=/posts/2208/rsync-usage/>...</a>
 </p>
 </article>
@@ -401,8 +388,8 @@ rsync守护进程部署在传输双方(发送方或者接受方)的任何一端�
 </div>
 <p>因为etcd中的内容都是加密的, 使用下面的命令安装解密工具:
 mkdir auger curl -o ./auger/auger_1.0.2_linux_amd64.tar.gz \ https://llaoj.oss-cn-beijing.aliyuncs.com/files/github.com/etcd-io/auger/releases/download/v1.0.2/auger_1.0.2_linux_amd64.tar.gz tar -xvf ./auger/auger_1.0.2_linux_amd64.tar.gz -C ./auger mv ./auger/auger /usr/local/bin/ rm -rf ./auger 下面这个脚本提供了etcdctl连接etcd所需要的端点、证书相关的信息. 这个脚本需要在master节点上执行:
-curl -o ./etcdctl.sh https://blog.llaoj.cn/posts/2208/kubernetes-etcdctl-usage/etcdctl.sh \ && chmod +x ./etcdctl.sh 好了, 我们已经把证书都提前配置好了. 下面可以直接使用etcdctl.sh命令了, 比如:
-# 获取所有的Key ./etcdctl.sh get --keys-only --from-key "" # 获取指定Key的内容 ./etcdctl.sh get /registry/clusterroles/cluster-admin | auger decode
+curl -o .
+<a href=/posts/2208/kubernetes-etcdctl-usage/>...</a>
 </p>
 </article>
 <ul class="pagination pagination-default">

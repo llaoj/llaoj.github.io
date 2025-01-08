@@ -33,6 +33,7 @@
 <div class="book-search-spinner hidden"></div>
 <ul id=book-search-results></ul>
 </div>
+<img src=/images/avatar.jpg width=150 style=border-radius:8px>
 <ul>
 <li>
 <a href=/posts/>
@@ -279,8 +280,6 @@ eBPF
 <p>周末, 有一台服务器告警: 系统负载过高, 最高的时候都已经到 100 +, 以下是排查&处理的具体过程.
 发现的问题/现象 # uptime 显示 load average 都在70+ # 因为服务器是40核心, 原则上负载40是满负荷, 现在明显存在大量等待的任务. 继续往下分析进程, 看具体那个进程一直在堵塞.
 ps -ef 执行到某一个进程就卡住了 # 命令执行如下:
-$ ps -ef ... root 40004 2912 0 Mar08 ? 00:00:33 containerd-shim -namespace moby -workdir /data/docker/containerd/daemon/ io.containerd.runtime.v1.linux/moby/&lt;container-hash> 卡住了 根据命令中的 找到对应的 pod, 将其从当前节点移除. 移除之后, ps 命令以及其他系统命令可以成功执行. 被移除的 pod 分别是: 2个 prometheus、 1个 mysql.
-无法执行 umount 卸载 # 测试 mount 挂载正常, 但是 umount 失败, 解决办法:
 <a href=/posts/2203/nfs-options/>...</a>
 </p>
 </article>
@@ -297,7 +296,8 @@ $ ps -ef ... root 40004 2912 0 Mar08 ? 00:00:33 containerd-shim -namespace moby 
 <a href=/tags/kubernetes/>kubernetes</a>
 </div>
 <p>问题描述 # 查看 pod 相关 events 如下：
-Events: Type Reason Age From Message ---- ------ ---- ---- ------- Normal Scheduled 18m default-scheduler Successfully assigned container-186002196200947712/itms-5f6d7798-wrpjj to 10.206.65.144 Warning FailedCreatePodContainer 3m31s (x71 over 18m) kubelet unable to ensure pod container exists: failed to create container for [kubepods burstable pod31f4c93c-c3a1-49ad-b091-0802c5f1d396] : mkdir /sys/fs/cgroup/memory/kubepods/burstable/pod31f4c93c-c3a1-49ad-b091-0802c5f1d396: cannot allocate memory 这是内核bug，建议升级内核
+Events: Type Reason Age From Message ---- ------ ---- ---- ------- Normal Scheduled 18m default-scheduler Successfully assigned container-186002196200947712/itms-5f6d7798-wrpjj to 10.
+<a href=/posts/2202/cannot-allocate-memory/>...</a>
 </p>
 </article>
 <article class="markdown book-post">
@@ -313,8 +313,7 @@ Events: Type Reason Age From Message ---- ------ ---- ---- ------- Normal Schedu
 <a href=/tags/kubernetes/>kubernetes</a>
 </div>
 <p>本文使用 kubespray 容器部署 kubernetes v1.22, 提供了从国外搬运的离线软件包/容器镜像. 仅需要几步即可部署高可用集群. 所有离线文件都来自官方下载 kubespray 安装过程会进行软件包验证, 放心使用.
-前提 # 禁用防火墙 重要: 本文使用 kubespray 的容器环境部署, 为避免影响节点部署(特别是 Runtime 部署), 所以需要一台独立于集群外的服务器执行下面的命令, 这台服务器安装 docker 19.03+ 并到所有节点SSH免密进入. 目标服务器要允许 IPv4 转发, 如果要给 pods 和 services 用 IPv6, 目标服务器要允许 IPv6 转发. 注意: 下面配置是适合 kubespray 的配置, 实际配置取决于集群规模.
-Master Memory: 1500 MB Node Memory: 1024 MB 文件和镜像搬运 # 由于国内网络的限制, 直接使用Kubespray是无法成功安装集群的. 所以我写了一个脚本, 将文件上传至阿里云OSS, 镜像上传至阿里云ACR. 下面是脚本的内容, 请在国外服务器上运行, 比如GitHub Actions、Google云控制台等.
+前提 # 禁用防火墙 重要: 本文使用 kubespray 的容器环境部署, 为避免影响节点部署(特别是 Runtime 部署), 所以需要一台独立于集群外的服务器执行下面的命令, 这台服务器安装 docker 19.
 <a href=/posts/2202/Kubespray-kubernetes-setup/>...</a>
 </p>
 </article>
@@ -348,9 +347,6 @@ Master Memory: 1500 MB Node Memory: 1024 MB 文件和镜像搬运 # 由于国内
 </div>
 <p>前言 # kubernetes 中 pod 的设计是一个伟大的发明, 今天我很有必要去聊一下 pod 和 container, 探究一下它们究竟是什么? kubernetes 官方文档中关于 pod 概念介绍提供了一个完整的解释, 但写的不够详细, 表达过于专业, 但还是很推荐大家阅读一下. 当然这篇文档应该更接地气.
 容器真的存在吗? # linux 中是没有容器这个概念的, 容器就是 linux 中的普通进程, 它使用了 linux 内核提供的两个重要的特性: namespace & cgroups.
-namespace 提供了一种隔离的特性, 让它之外的内容隐藏, 给它下面的进程一个不被干扰的运行环境(其实不完全,下面说) .
-namespace 包含:
-hostname Process IDs File System Network Interface Inter-Process Communication(IPC) 接上面, 其实 namespace 内部的进程并不是完全不和外面的进程产生影响的. 进程可以不受限制的使用物理机上的所有资源, 这样就会导致其他进程无资源可用. 所以, 为了限制进程资源使用, linux 提供了另一种特性 cgroups. 进程可以像在 namespace 中运行, 但是 cgroups 限制了进程的可以使用的资源. 这些资源包括:
 <a href=/posts/2202/what-are-kubernetes-pods-anyway/>...</a>
 </p>
 </article>
@@ -367,10 +363,7 @@ hostname Process IDs File System Network Interface Inter-Process Communication(I
 <a href=/tags/kubernetes/>kubernetes</a>
 </div>
 <p>设计 # 这篇文章介绍了 Prometheus Operator 的几种自定义资源 (CRD):
-Prometheus Alertmanager ThanosRuler ServiceMonitor PodMonitor Probe PrometheusRule AlertmanagerConfig Prometheus # 它定义了在 Kubernetes 集群中安装 Prometheus 的方式. 它提供了一些配置项, 比如副本数、持久卷还有接收告警的 Alertmanagers.
-对于每一个 Prometheus 资源, Operator 会在同一 namespace 中部署一个经过正确配置的 StatefulSet. 其配置文件 secret/prometheus-name 会被挂载到它的 pod 上.
-它明确了 Prometheus 实例选择 ServiceMonitors 所用的标签. 任何时候, 一旦 ServiceMonitors 和 Prometheus 资源有更改, Operator 会根据他们生成重新配置文件, 然后更新到上述 Secret 配置文件中.
-如果没有提供选择 ServiceMonitors 所用标签, 用户也可以自己管理 Secret, 同时该 Secret 也享受 Operator 配置安装 Prometheus 的能力.
+Prometheus Alertmanager ThanosRuler ServiceMonitor PodMonitor Probe PrometheusRule AlertmanagerConfig Prometheus # 它定义了在 Kubernetes 集群中安装 Prometheus 的方式.
 <a href=/posts/2202/prometheus-operator-design/>...</a>
 </p>
 </article>
@@ -387,10 +380,7 @@ Prometheus Alertmanager ThanosRuler ServiceMonitor PodMonitor Probe PrometheusRu
 <a href=/tags/kubernetes/>kubernetes</a>
 </div>
 <p>要求 # kubernetes 版本 1.7+，velero 的每个主版本对 kuberetes 的版本要求不同，详情请参考官方文档说明。 官方文档通道 velero 所在服务器有 kubectl 命令, 且能连上集群 我们先从最简单的体验开始
-1. 安装 velero 客户端 # 下载二进制安装包, 点击 latest release, 下载 velero-v1.7.0-linux-amd64.tag.gz (以 release 页面为准), 解压
-tar -xvf &lt;RELEASE-TARBALL-NAME>.tar.gz 然后将二进制文件 velero 移动到 $PATH 中的一个目录, 如 /usr/local/bin
-2. 创建 credentials # 备份文件保存在对象存储中, 在当前目录下创建 credentials-velero 文件, 声明连接对象存储所用的账号密码
-[default] aws_access_key_id = &lt;your key_id> aws_secret_access_key = &lt;your secret> 3. 安装 velero 服务端 # 通过 velero 客户端在 kubernetes 中安装 deployment/velero，velero 提供了很多 stroage provider, 能将备份文件存储到比如 aws, aliyun-oss 中, 他们大都是支持 s3 接口的.
+1. 安装 velero 客户端 # 下载二进制安装包, 点击 latest release, 下载 velero-v1.
 <a href=/posts/2202/velero-backup-k8s/>...</a>
 </p>
 </article>

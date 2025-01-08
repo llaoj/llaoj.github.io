@@ -33,6 +33,7 @@
 <div class="book-search-spinner hidden"></div>
 <ul id=book-search-results></ul>
 </div>
+<img src=/images/avatar.jpg width=150 style=border-radius:8px>
 <ul>
 <li>
 <a href=/posts/>
@@ -234,14 +235,6 @@ eBPF
 <p>MetalLB概念安装配置和使用请查看
 测试组件的版本情况 # kubernetes: v1.22.8 metellb: v0.10.3 nginx: latest 创建测试应用 # 创建一个nginx服务和service资源:
 kubectl -n without-istio create deploy nginx --image=nginx 测试分配IP # 创建loadbalancer类型的service:
-kubectl -n without-istio create service loadbalancer nginx --tcp=80:80 查看该service详细配置:
-apiVersion:v1kind:Servicemetadata:labels:app:nginxnamespace:without-istioname:nginx...spec:allocateLoadBalancerNodePorts:trueclusterIP:10.233.15.89clusterIPs:- 10.233.15.89externalTrafficPolicy:ClusterinternalTrafficPolicy:ClusteripFamilies:- IPv4ipFamilyPolicy:SingleStackports:- name:80-80nodePort:30662port:80protocol:TCPtargetPort:80selector:app:nginxsessionAffinity:Nonetype:LoadBalancerstatus:loadBalancer:ingress:- ip:10.206.65.234可以发现external-ip已经完成分配.
-在同一个局域网内, 使用curl命令测试联通情况:
-可以看到, 是可以正常访问的.
-手动指定地址池 # 默认, metallb会从所有的可用地址池中分配IP, 除非我们关闭某一个地址池的自动分配auto-assign: false.
-metallb v0.12之前都是用configmap进行配置, 而不是用CRD. 这里是 配置相关文档.
-下面我们让集群中有两个地址池, 其中一个关闭自动分配. 修改metallb的配置文件, 增加一个address-pools(expensive), 地址范围10.206.65.224-10.206.65.233, 如下:
-kubectl -n metallb-system edit cm config 可以看到目前有两个地址池, 同时配置auto-assign: false来关闭对expensive地址池的自动分配.
 <a href=/posts/2208/metallb-l2-usage/>...</a>
 </p>
 </article>
@@ -260,8 +253,6 @@ kubectl -n metallb-system edit cm config 可以看到目前有两个地址池, �
 为什么使用? # Kubernetes没有提供适用于裸金属集群的网络负载均衡器实现, 也就是LoadBalancer类型的Service. Kubernetes 附带的网络负载均衡器的实现都是调用各种 IaaS 平台（GCP、AWS、Azure ……）的胶水代码。 如果您没有在受支持的 IaaS 平台（GCP、AWS、Azure&mldr;）上运行，LoadBalancers 在创建时将一直保持在pending状态。
 裸金属集群的运维人员只剩下两个方式来将用户流量引入集群内: NodePort和externalIPs. 这两种在生产环境使用有很大的缺点, 这样, 裸金属集群也就成了 Kubernetes 生态中的第二类选择, 并不是首选.
 MetalLB 的目的是实现一个网络负载均衡器来与标准的网络设备集成, 这样这些外部服务就能尽可能的正常工作了.
-要求 # MetalLB 要求如下:
-一个 Kubernetes 集群, Kubernetes 版本 1.13.0+, 没有网络负载均衡器功能. 可以与 MetalLB 共存的集群网络配置。 一些供 MetalLB 分发的 IPv4 地址。 当使用 BGP 操作模式时，您将需要一台或多台能够发布 BGP 的路由器。 使用 L2 操作模式时，节点之间必须允许 7946 端口（TCP 和 UDP，可配置其他端口）上的流量，这是 hashicorp/memberlist 的要求。 功能 # MetalLB 是作为 Kubernetes 中的一个组件, 提供了一个网络负载均衡器的实现.
 <a href=/posts/2205/metalb/>...</a>
 </p>
 </article>

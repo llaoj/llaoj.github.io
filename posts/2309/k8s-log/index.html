@@ -3,13 +3,11 @@
 <meta charset=utf-8>
 <meta name=viewport content="width=device-width,initial-scale=1">
 <meta name=description content="Kubernetes相关日志方案 #  目前的方案 #  目前的方案简单概括来说是: fluentd(daemonset)+es+kibana. 使用fluentd在集群每个节点运行一个fluentd实例采集日志通过调用k8s接口为每个日志添加kubernetes和container相关的标签, 然后直接发送到es存储.
-痛点 #   es集群的维护成本较高, 比如索引的管理和优化, 集群规模的维护等. 需要技术和经验的加持, 故障处理效率不高. es日志需要多副本, 并对整个文档进行索引, 占用资源较多. fluentd直接推送到es, 中间少了流量缓冲.(fluentd自带缓冲区,该问题可有所缓解). fluentd配置复杂  下面的方案会针对当前的方案提出, 分析与当前方案的优劣比较:
-1 升级现有方案 #   节点代理升级为FluentBit, flb使用golang开发速度比flentd快, 而且资源占用也较低. 也已经从cncf毕业. 增加Kafka流量削峰, 虽然flentbit有缓冲机制, 再增加kafka能进一步增加故障/流量高峰缓冲的能力.  增加kafka之后, 推送到es是有消费者来完成的. 日志的流计算、解析、索引的控制不再依赖fluentbit, 相对自由.   优化索引机制, 通过配置可以实现:  按照集群每日一个索引(当前策略) 按照租户每日一个索引    2 promtail+loki+grafana #  loki vs es #  二者最大的不同是索引, loki被设计成使用最小的索引, 但是es是全文索引, 而且每个字段都有数据结构. 所以, loki有好的性能和资源消耗. 但是富文本搜索的能力不及es.">
+痛点 #   es集群的维护成本较高, 比如索引的管理和优化, 集群规模的维护等. 需要技术和经验的加持, 故障处理效率不高. es日志需要多副本, 并对整个文档进行索引, 占用资源较多. fluentd直接推送到es, 中间少了流量缓冲.(fluentd自带缓冲区,该问题可有所缓解). fluentd配置复杂  下面的方案会针对当前的方案提出, 分析与当前方案的优劣比较:">
 <meta name=theme-color content="#FFFFFF">
 <meta name=color-scheme content="light dark"><meta property="og:title" content>
 <meta property="og:description" content="Kubernetes相关日志方案 #  目前的方案 #  目前的方案简单概括来说是: fluentd(daemonset)+es+kibana. 使用fluentd在集群每个节点运行一个fluentd实例采集日志通过调用k8s接口为每个日志添加kubernetes和container相关的标签, 然后直接发送到es存储.
-痛点 #   es集群的维护成本较高, 比如索引的管理和优化, 集群规模的维护等. 需要技术和经验的加持, 故障处理效率不高. es日志需要多副本, 并对整个文档进行索引, 占用资源较多. fluentd直接推送到es, 中间少了流量缓冲.(fluentd自带缓冲区,该问题可有所缓解). fluentd配置复杂  下面的方案会针对当前的方案提出, 分析与当前方案的优劣比较:
-1 升级现有方案 #   节点代理升级为FluentBit, flb使用golang开发速度比flentd快, 而且资源占用也较低. 也已经从cncf毕业. 增加Kafka流量削峰, 虽然flentbit有缓冲机制, 再增加kafka能进一步增加故障/流量高峰缓冲的能力.  增加kafka之后, 推送到es是有消费者来完成的. 日志的流计算、解析、索引的控制不再依赖fluentbit, 相对自由.   优化索引机制, 通过配置可以实现:  按照集群每日一个索引(当前策略) 按照租户每日一个索引    2 promtail+loki+grafana #  loki vs es #  二者最大的不同是索引, loki被设计成使用最小的索引, 但是es是全文索引, 而且每个字段都有数据结构. 所以, loki有好的性能和资源消耗. 但是富文本搜索的能力不及es.">
+痛点 #   es集群的维护成本较高, 比如索引的管理和优化, 集群规模的维护等. 需要技术和经验的加持, 故障处理效率不高. es日志需要多副本, 并对整个文档进行索引, 占用资源较多. fluentd直接推送到es, 中间少了流量缓冲.(fluentd自带缓冲区,该问题可有所缓解). fluentd配置复杂  下面的方案会针对当前的方案提出, 分析与当前方案的优劣比较:">
 <meta property="og:type" content="article">
 <meta property="og:url" content="https://blog.llaoj.cn/posts/2309/k8s-log/"><meta property="article:section" content="posts">
 <title>Index | 老J的博客</title>
@@ -36,6 +34,7 @@
 <div class="book-search-spinner hidden"></div>
 <ul id=book-search-results></ul>
 </div>
+<img src=/images/avatar.jpg width=150 style=border-radius:8px>
 <ul>
 <li>
 <a href=/posts/>

@@ -4,14 +4,12 @@
 <meta name=viewport content="width=device-width,initial-scale=1">
 <meta name=description content="因为etcd中的内容都是加密的, 使用下面的命令安装解密工具:
 mkdir auger curl -o ./auger/auger_1.0.2_linux_amd64.tar.gz \  https://llaoj.oss-cn-beijing.aliyuncs.com/files/github.com/etcd-io/auger/releases/download/v1.0.2/auger_1.0.2_linux_amd64.tar.gz tar -xvf ./auger/auger_1.0.2_linux_amd64.tar.gz -C ./auger mv ./auger/auger /usr/local/bin/ rm -rf ./auger 下面这个脚本提供了etcdctl连接etcd所需要的端点、证书相关的信息. 这个脚本需要在master节点上执行:
-curl -o ./etcdctl.sh https://blog.llaoj.cn/posts/2208/kubernetes-etcdctl-usage/etcdctl.sh \  && chmod +x ./etcdctl.sh 好了, 我们已经把证书都提前配置好了. 下面可以直接使用etcdctl.sh命令了, 比如:
-# 获取所有的Key ./etcdctl.sh get --keys-only --from-key &#34;&#34; # 获取指定Key的内容 ./etcdctl.sh get /registry/clusterroles/cluster-admin | auger decode ">
+curl -o .">
 <meta name=theme-color content="#FFFFFF">
 <meta name=color-scheme content="light dark"><meta property="og:title" content="使用etcdctl查看kubernetes存储的内容">
 <meta property="og:description" content="因为etcd中的内容都是加密的, 使用下面的命令安装解密工具:
 mkdir auger curl -o ./auger/auger_1.0.2_linux_amd64.tar.gz \  https://llaoj.oss-cn-beijing.aliyuncs.com/files/github.com/etcd-io/auger/releases/download/v1.0.2/auger_1.0.2_linux_amd64.tar.gz tar -xvf ./auger/auger_1.0.2_linux_amd64.tar.gz -C ./auger mv ./auger/auger /usr/local/bin/ rm -rf ./auger 下面这个脚本提供了etcdctl连接etcd所需要的端点、证书相关的信息. 这个脚本需要在master节点上执行:
-curl -o ./etcdctl.sh https://blog.llaoj.cn/posts/2208/kubernetes-etcdctl-usage/etcdctl.sh \  && chmod +x ./etcdctl.sh 好了, 我们已经把证书都提前配置好了. 下面可以直接使用etcdctl.sh命令了, 比如:
-# 获取所有的Key ./etcdctl.sh get --keys-only --from-key &#34;&#34; # 获取指定Key的内容 ./etcdctl.sh get /registry/clusterroles/cluster-admin | auger decode ">
+curl -o .">
 <meta property="og:type" content="article">
 <meta property="og:url" content="https://blog.llaoj.cn/posts/2208/kubernetes-etcdctl-usage/"><meta property="article:section" content="posts">
 <meta property="article:published_time" content="2022-08-29T00:00:00+00:00">
@@ -40,6 +38,7 @@ curl -o ./etcdctl.sh https://blog.llaoj.cn/posts/2208/kubernetes-etcdctl-usage/e
 <div class="book-search-spinner hidden"></div>
 <ul id=book-search-results></ul>
 </div>
+<img src=/images/avatar.jpg width=150 style=border-radius:8px>
 <ul>
 <li>
 <a href=/posts/>

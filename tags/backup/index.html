@@ -33,6 +33,7 @@
 <div class="book-search-spinner hidden"></div>
 <ul id=book-search-results></ul>
 </div>
+<img src=/images/avatar.jpg width=150 style=border-radius:8px>
 <ul>
 <li>
 <a href=/posts/>
@@ -233,10 +234,7 @@ eBPF
 <a href=/tags/kubernetes/>kubernetes</a>
 </div>
 <p>要求 # kubernetes 版本 1.7+，velero 的每个主版本对 kuberetes 的版本要求不同，详情请参考官方文档说明。 官方文档通道 velero 所在服务器有 kubectl 命令, 且能连上集群 我们先从最简单的体验开始
-1. 安装 velero 客户端 # 下载二进制安装包, 点击 latest release, 下载 velero-v1.7.0-linux-amd64.tag.gz (以 release 页面为准), 解压
-tar -xvf &lt;RELEASE-TARBALL-NAME>.tar.gz 然后将二进制文件 velero 移动到 $PATH 中的一个目录, 如 /usr/local/bin
-2. 创建 credentials # 备份文件保存在对象存储中, 在当前目录下创建 credentials-velero 文件, 声明连接对象存储所用的账号密码
-[default] aws_access_key_id = &lt;your key_id> aws_secret_access_key = &lt;your secret> 3. 安装 velero 服务端 # 通过 velero 客户端在 kubernetes 中安装 deployment/velero，velero 提供了很多 stroage provider, 能将备份文件存储到比如 aws, aliyun-oss 中, 他们大都是支持 s3 接口的.
+1. 安装 velero 客户端 # 下载二进制安装包, 点击 latest release, 下载 velero-v1.
 <a href=/posts/2202/velero-backup-k8s/>...</a>
 </p>
 </article>
