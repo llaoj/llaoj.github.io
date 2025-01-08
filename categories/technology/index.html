@@ -13,7 +13,7 @@
 <link rel=icon href=/favicon.png type=image/x-icon>
 <link rel=stylesheet href=/book.min.18b5d651e266e5e9cfc7455e2e50eb1b74a62aee16cf204b69de1d9e695276f7.css integrity="sha256-GLXWUeJm5enPx0VeLlDrG3SmKu4WzyBLad4dnmlSdvc=" crossorigin=anonymous>
 <script defer src=/flexsearch.min.js></script>
-<script defer src=/zh.search.min.6d62265cf8d718194c34a2b87aeb2e156f76ba8273000bbbaddc12dd47783380.js integrity="sha256-bWImXPjXGBlMNKK4eusuFW92uoJzAAu7rdwS3Ud4M4A=" crossorigin=anonymous></script>
+<script defer src=/zh.search.min.8de9e877034c987c1e2266583968bb83081bf04ddfc8397228483e0deebeed28.js integrity="sha256-jenodwNMmHweImZYOWi7gwgb8E3fyDlyKEg+De6+7Sg=" crossorigin=anonymous></script>
 <script defer src=/sw.min.6f6f90fcb8eb1c49ec389838e6b801d0de19430b8e516902f8d75c3c8bd98739.js integrity="sha256-b2+Q/LjrHEnsOJg45rgB0N4ZQwuOUWkC+NdcPIvZhzk=" crossorigin=anonymous></script>
 <link rel=alternate type=application/rss+xml href=https://blog.llaoj.cn/categories/technology/index.xml title=老J的博客>
 </head>
@@ -99,7 +99,7 @@ eBPF
 <ul>
 <li class="flex justify-between">
 <a href=/categories/technology/>technology</a>
-<span>36</span>
+<span>37</span>
 </li>
 </ul>
 </li>
@@ -112,7 +112,7 @@ eBPF
 </li>
 <li class="flex justify-between">
 <a href=/tags/kubernetes/>kubernetes</a>
-<span>19</span>
+<span>20</span>
 </li>
 <li class="flex justify-between">
 <a href=/tags/velero/>velero</a>
@@ -234,6 +234,25 @@ eBPF
 <p>问题描述 # 点击查看日志, 错误日志如下：
 2025-01-08T01:53:23Z [INFO] [/pkg/scan/job.go:167]: Report mime types: [application/vnd.security.vulnerability.report; version=1.1] 2025-01-08T01:53:23Z [INFO] [/pkg/scan/job.go:224]: Get report for mime type: application/vnd.security.vulnerability.report; version=1.1 2025-01-08T01:53:25Z [INFO] [/pkg/scan/job.go:245]: Report with mime type application/vnd.security.vulnerability.report; version=1.1 is not ready yet, retry after 5 seconds 2025-01-08T01:53:30Z [ERROR] [/pkg/scan/job.go:294]: check scan report with mime type application/vnd.security.vulnerability.report; version=1.1: running trivy wrapper: running trivy: exit status 2: 2025-01-08T01:53:26.342Z [INFO] Vulnerability scanning is enabled panic: invalid page type: 39: 10 goroutine 1 [running]: go.
 <a href=/posts/2025/fix-harbor-trivy-failure/>...</a>
+</p>
+</article>
+<article class="markdown book-post">
+<h2>
+<a href=/posts/2025/fix-kubectl-no-authorization/>解决执行kubectl命令没有权限</a>
+</h2>
+<h5>2025-1-8</h5>
+<div>
+<a href=/categories/technology/>technology</a>
+</div>
+<div>
+<a href=/tags/kubernetes/>kubernetes</a>
+</div>
+<p>问题描述 # 反应执行kubectl命令没有权限:
+$ kubectl get pod -A Error from server (Forbidden): pods is forbidden: User "kubernetes-admin" cannot list resource "pods" in API group "" at the cluster scope 解决思路 # 首先要了解几个文件夹的作用:
+/root/.kube/config: kubectl默认使用的认证文件. /etc/kubernetes/: 存放kubernetes相关的配置文件、认证文件等. /etc/kubernetes/pki: 存放kubernetes相关组件的证书密钥文件. 首先通过ls -lh /root/.kube/config查看该文件的创建时间.
+然后通过ls -lh /etc/kubernetes/查看里面的文件的创建时间, 如果差别挺大, 说明可能是当证书更新/轮转的时候, 没有同步更新/root/.kube/config.
+此时, 我们通过将/etc/kubernetes/super-admin.conf(名称不一定固定)复制到/root/.kube/config即可.
+cp /etc/kubernetes/super-admin.conf /root/.kube/config 问题解决!
 </p>
 </article>
 <article class="markdown book-post">
@@ -386,31 +405,6 @@ curl -o ./etcdctl.sh https://blog.llaoj.cn/posts/2208/kubernetes-etcdctl-usage/e
 # 获取所有的Key ./etcdctl.sh get --keys-only --from-key "" # 获取指定Key的内容 ./etcdctl.sh get /registry/clusterroles/cluster-admin | auger decode
 </p>
 </article>
-<article class="markdown book-post">
-<h2>
-<a href=/posts/2208/metallb-l2-usage/>MetalLB二层模式使用指南</a>
-</h2>
-<h5>2022-8-8</h5>
-<div>
-<a href=/categories/technology/>technology</a>
-</div>
-<div>
-<a href=/tags/metallb/>metallb</a>
-</div>
-<p>MetalLB概念安装配置和使用请查看
-测试组件的版本情况 # kubernetes: v1.22.8 metellb: v0.10.3 nginx: latest 创建测试应用 # 创建一个nginx服务和service资源:
-kubectl -n without-istio create deploy nginx --image=nginx 测试分配IP # 创建loadbalancer类型的service:
-kubectl -n without-istio create service loadbalancer nginx --tcp=80:80 查看该service详细配置:
-apiVersion:v1kind:Servicemetadata:labels:app:nginxnamespace:without-istioname:nginx...spec:allocateLoadBalancerNodePorts:trueclusterIP:10.233.15.89clusterIPs:- 10.233.15.89externalTrafficPolicy:ClusterinternalTrafficPolicy:ClusteripFamilies:- IPv4ipFamilyPolicy:SingleStackports:- name:80-80nodePort:30662port:80protocol:TCPtargetPort:80selector:app:nginxsessionAffinity:Nonetype:LoadBalancerstatus:loadBalancer:ingress:- ip:10.206.65.234可以发现external-ip已经完成分配.
-在同一个局域网内, 使用curl命令测试联通情况:
-可以看到, 是可以正常访问的.
-手动指定地址池 # 默认, metallb会从所有的可用地址池中分配IP, 除非我们关闭某一个地址池的自动分配auto-assign: false.
-metallb v0.12之前都是用configmap进行配置, 而不是用CRD. 这里是 配置相关文档.
-下面我们让集群中有两个地址池, 其中一个关闭自动分配. 修改metallb的配置文件, 增加一个address-pools(expensive), 地址范围10.206.65.224-10.206.65.233, 如下:
-kubectl -n metallb-system edit cm config 可以看到目前有两个地址池, 同时配置auto-assign: false来关闭对expensive地址池的自动分配.
-<a href=/posts/2208/metallb-l2-usage/>...</a>
-</p>
-</article>
 <ul class="pagination pagination-default">
 <li class="page-item disabled">
 <a aria-disabled=true aria-label=First class=page-link role=button tabindex=-1><span aria-hidden=true>&#171;&#171;</span></a>
@@ -453,7 +447,7 @@ kubectl -n metallb-system edit cm config 可以看到目前有两个地址池, �
 <ul>
 <li class="flex justify-between">
 <a href=/categories/technology/>technology</a>
-<span>36</span>
+<span>37</span>
 </li>
 </ul>
 </li>
@@ -466,7 +460,7 @@ kubectl -n metallb-system edit cm config 可以看到目前有两个地址池, �
 </li>
 <li class="flex justify-between">
 <a href=/tags/kubernetes/>kubernetes</a>
-<span>19</span>
+<span>20</span>
 </li>
 <li class="flex justify-between">
 <a href=/tags/velero/>velero</a>

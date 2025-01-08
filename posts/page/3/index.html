@@ -13,7 +13,7 @@
 <link rel=icon href=/favicon.png type=image/x-icon>
 <link rel=stylesheet href=/book.min.18b5d651e266e5e9cfc7455e2e50eb1b74a62aee16cf204b69de1d9e695276f7.css integrity="sha256-GLXWUeJm5enPx0VeLlDrG3SmKu4WzyBLad4dnmlSdvc=" crossorigin=anonymous>
 <script defer src=/flexsearch.min.js></script>
-<script defer src=/zh.search.min.6d62265cf8d718194c34a2b87aeb2e156f76ba8273000bbbaddc12dd47783380.js integrity="sha256-bWImXPjXGBlMNKK4eusuFW92uoJzAAu7rdwS3Ud4M4A=" crossorigin=anonymous></script>
+<script defer src=/zh.search.min.8de9e877034c987c1e2266583968bb83081bf04ddfc8397228483e0deebeed28.js integrity="sha256-jenodwNMmHweImZYOWi7gwgb8E3fyDlyKEg+De6+7Sg=" crossorigin=anonymous></script>
 <script defer src=/sw.min.6f6f90fcb8eb1c49ec389838e6b801d0de19430b8e516902f8d75c3c8bd98739.js integrity="sha256-b2+Q/LjrHEnsOJg45rgB0N4ZQwuOUWkC+NdcPIvZhzk=" crossorigin=anonymous></script>
 <link rel=alternate type=application/rss+xml href=https://blog.llaoj.cn/posts/index.xml title=老J的博客>
 </head>
@@ -99,7 +99,7 @@ eBPF
 <ul>
 <li class="flex justify-between">
 <a href=/categories/technology/>technology</a>
-<span>36</span>
+<span>37</span>
 </li>
 </ul>
 </li>
@@ -112,7 +112,7 @@ eBPF
 </li>
 <li class="flex justify-between">
 <a href=/tags/kubernetes/>kubernetes</a>
-<span>19</span>
+<span>20</span>
 </li>
 <li class="flex justify-between">
 <a href=/tags/velero/>velero</a>
@@ -220,6 +220,20 @@ eBPF
 </nav>
 </aside>
 </header>
+<article class="markdown book-post">
+<h2>
+<a href=/posts/2203/harbor-dual-master-replication-ha/>Harbor 双主复制解决方案实践</a>
+</h2>
+<h5>2022-3-29</h5>
+<div>
+<a href=/categories/technology/>technology</a>
+</div>
+<div>
+<a href=/tags/harbor/>harbor</a>
+</div>
+<p>既然使用了外部的服务, 那么高可用的压力自然而然的转移到了外部服务上. 我们一开始采用的外部的 NFS 共享存储服务, 由于我们团队实际情况, 我们暂时还不能保证外部存储的高可用. 同时, 鉴于我们对镜像服务高可用的迫切需求, 决定调研新的 Harbor 的高可用方案.
+</p>
+</article>
 <article class="markdown book-post">
 <h2>
 <a href=/posts/2203/find-ns-that-exceed-resource-limits/>在 kubernetes 中找出过度使用资源的 namespaces</a>
@@ -358,22 +372,6 @@ $ ps -ef ... root 40004 2912 0 Mar08 ? 00:00:33 containerd-shim -namespace moby 
 <a href=/posts/2203/nfs-options/>...</a>
 </p>
 </article>
-<article class="markdown book-post">
-<h2>
-<a href=/posts/2203/openldap-docker/>容器化部署 openldap</a>
-</h2>
-<h5>2022-3-3</h5>
-<div>
-<a href=/categories/technology/>technology</a>
-</div>
-<div>
-<a href=/tags/ldap/>ldap</a>,
-<a href=/tags/golang/>golang</a>
-</div>
-<p>使用容器化安装非常便捷, 参考 osixia/openldap仓库使用说明安装即可, 如下:
-docker stop openldap && docker rm openldap && \ docker run --name openldap --detach \ -p 389:389 \ -p 636:636 \ --env LDAP_ORGANISATION="Rutron Net" \ --env LDAP_DOMAIN="rutron.net" \ --env LDAP_ADMIN_PASSWORD="your-password" \ --env LDAP_READONLY_USER=true \ --env LDAP_TLS_VERIFY_CLIENT=try \ --volume /data/openldap/data:/var/lib/ldap \ --volume /data/openldap/slapd.d:/etc/ldap/slapd.d \ --hostname ldap.rutron.net \ osixia/openldap:1.5.0 好了, 现在该服务同时支持 ldap 和 ldaps 协议, 有一个初始化的账号 readonly/readonly, 可以使用了~
-</p>
-</article>
 <ul class="pagination pagination-default">
 <li class=page-item>
 <a href=/posts/ aria-label=First class=page-link role=button><span aria-hidden=true>&#171;&#171;</span></a>
@@ -416,7 +414,7 @@ docker stop openldap && docker rm openldap && \ docker run --name openldap --det
 <ul>
 <li class="flex justify-between">
 <a href=/categories/technology/>technology</a>
-<span>36</span>
+<span>37</span>
 </li>
 </ul>
 </li>
@@ -429,7 +427,7 @@ docker stop openldap && docker rm openldap && \ docker run --name openldap --det
 </li>
 <li class="flex justify-between">
 <a href=/tags/kubernetes/>kubernetes</a>
-<span>19</span>
+<span>20</span>
 </li>
 <li class="flex justify-between">
 <a href=/tags/velero/>velero</a>

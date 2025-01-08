@@ -13,7 +13,7 @@
 <link rel=icon href=/favicon.png type=image/x-icon>
 <link rel=stylesheet href=/book.min.18b5d651e266e5e9cfc7455e2e50eb1b74a62aee16cf204b69de1d9e695276f7.css integrity="sha256-GLXWUeJm5enPx0VeLlDrG3SmKu4WzyBLad4dnmlSdvc=" crossorigin=anonymous>
 <script defer src=/flexsearch.min.js></script>
-<script defer src=/zh.search.min.6d62265cf8d718194c34a2b87aeb2e156f76ba8273000bbbaddc12dd47783380.js integrity="sha256-bWImXPjXGBlMNKK4eusuFW92uoJzAAu7rdwS3Ud4M4A=" crossorigin=anonymous></script>
+<script defer src=/zh.search.min.8de9e877034c987c1e2266583968bb83081bf04ddfc8397228483e0deebeed28.js integrity="sha256-jenodwNMmHweImZYOWi7gwgb8E3fyDlyKEg+De6+7Sg=" crossorigin=anonymous></script>
 <script defer src=/sw.min.6f6f90fcb8eb1c49ec389838e6b801d0de19430b8e516902f8d75c3c8bd98739.js integrity="sha256-b2+Q/LjrHEnsOJg45rgB0N4ZQwuOUWkC+NdcPIvZhzk=" crossorigin=anonymous></script>
 <link rel=alternate type=application/rss+xml href=https://blog.llaoj.cn/posts/index.xml title=老J的博客>
 </head>
@@ -99,7 +99,7 @@ eBPF
 <ul>
 <li class="flex justify-between">
 <a href=/categories/technology/>technology</a>
-<span>36</span>
+<span>37</span>
 </li>
 </ul>
 </li>
@@ -112,7 +112,7 @@ eBPF
 </li>
 <li class="flex justify-between">
 <a href=/tags/kubernetes/>kubernetes</a>
-<span>19</span>
+<span>20</span>
 </li>
 <li class="flex justify-between">
 <a href=/tags/velero/>velero</a>
@@ -220,6 +220,31 @@ eBPF
 </nav>
 </aside>
 </header>
+<article class="markdown book-post">
+<h2>
+<a href=/posts/2208/metallb-l2-usage/>MetalLB二层模式使用指南</a>
+</h2>
+<h5>2022-8-8</h5>
+<div>
+<a href=/categories/technology/>technology</a>
+</div>
+<div>
+<a href=/tags/metallb/>metallb</a>
+</div>
+<p>MetalLB概念安装配置和使用请查看
+测试组件的版本情况 # kubernetes: v1.22.8 metellb: v0.10.3 nginx: latest 创建测试应用 # 创建一个nginx服务和service资源:
+kubectl -n without-istio create deploy nginx --image=nginx 测试分配IP # 创建loadbalancer类型的service:
+kubectl -n without-istio create service loadbalancer nginx --tcp=80:80 查看该service详细配置:
+apiVersion:v1kind:Servicemetadata:labels:app:nginxnamespace:without-istioname:nginx...spec:allocateLoadBalancerNodePorts:trueclusterIP:10.233.15.89clusterIPs:- 10.233.15.89externalTrafficPolicy:ClusterinternalTrafficPolicy:ClusteripFamilies:- IPv4ipFamilyPolicy:SingleStackports:- name:80-80nodePort:30662port:80protocol:TCPtargetPort:80selector:app:nginxsessionAffinity:Nonetype:LoadBalancerstatus:loadBalancer:ingress:- ip:10.206.65.234可以发现external-ip已经完成分配.
+在同一个局域网内, 使用curl命令测试联通情况:
+可以看到, 是可以正常访问的.
+手动指定地址池 # 默认, metallb会从所有的可用地址池中分配IP, 除非我们关闭某一个地址池的自动分配auto-assign: false.
+metallb v0.12之前都是用configmap进行配置, 而不是用CRD. 这里是 配置相关文档.
+下面我们让集群中有两个地址池, 其中一个关闭自动分配. 修改metallb的配置文件, 增加一个address-pools(expensive), 地址范围10.206.65.224-10.206.65.233, 如下:
+kubectl -n metallb-system edit cm config 可以看到目前有两个地址池, 同时配置auto-assign: false来关闭对expensive地址池的自动分配.
+<a href=/posts/2208/metallb-l2-usage/>...</a>
+</p>
+</article>
 <article class="markdown book-post">
 <h2>
 <a href=/posts/2208/istio-with-nginx-reserve-proxy/>在istio service mesh中使用nginx反向代理</a>
@@ -370,20 +395,6 @@ $ vmstat --wide --unit M 5 procs ----------------memory---------------- ---swap-
 <p>近日, Spring Cloud (SPEL) 中发现 RCE 0-day 漏洞, 为了排查 kubernetes 中所有存在安全威胁的应用. 特地开发了一个小工具来寻找。该工具基于 golang&client-go 开发, 程序会找出当前集群中所有 Running 的 pods, 然后逐个进入容器，执行 <code>java -version</code> 命令，将命令输出打印到文件中，使用编辑器进行查找检索即可。
 </p>
 </article>
-<article class="markdown book-post">
-<h2>
-<a href=/posts/2203/harbor-dual-master-replication-ha/>Harbor 双主复制解决方案实践</a>
-</h2>
-<h5>2022-3-29</h5>
-<div>
-<a href=/categories/technology/>technology</a>
-</div>
-<div>
-<a href=/tags/harbor/>harbor</a>
-</div>
-<p>既然使用了外部的服务, 那么高可用的压力自然而然的转移到了外部服务上. 我们一开始采用的外部的 NFS 共享存储服务, 由于我们团队实际情况, 我们暂时还不能保证外部存储的高可用. 同时, 鉴于我们对镜像服务高可用的迫切需求, 决定调研新的 Harbor 的高可用方案.
-</p>
-</article>
 <ul class="pagination pagination-default">
 <li class=page-item>
 <a href=/posts/ aria-label=First class=page-link role=button><span aria-hidden=true>&#171;&#171;</span></a>
@@ -426,7 +437,7 @@ $ vmstat --wide --unit M 5 procs ----------------memory---------------- ---swap-
 <ul>
 <li class="flex justify-between">
 <a href=/categories/technology/>technology</a>
-<span>36</span>
+<span>37</span>
 </li>
 </ul>
 </li>
@@ -439,7 +450,7 @@ $ vmstat --wide --unit M 5 procs ----------------memory---------------- ---swap-
 </li>
 <li class="flex justify-between">
 <a href=/tags/kubernetes/>kubernetes</a>
-<span>19</span>
+<span>20</span>
 </li>
 <li class="flex justify-between">
 <a href=/tags/velero/>velero</a>
