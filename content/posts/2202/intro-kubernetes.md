@@ -4,7 +4,6 @@ description: "实践中总结 Kubernetes 必须了解的核心内容 - 主题分
 date: "2022-02-08"
 menu: "main"
 tags:
-- "ppt"
 - "kubernetes"
 categories:
 - "technology"
