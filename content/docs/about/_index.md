@@ -1,7 +1,7 @@
 ---
 weight: 8
 bookCollapseSection: false
-title: "关于"
+title: "关于我"
 bookComments: false
 ---
 
