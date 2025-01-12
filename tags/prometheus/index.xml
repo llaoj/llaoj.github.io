@@ -1,3 +1,21 @@
-<?xml version="1.0" encoding="utf-8" standalone="yes"?><rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom"><channel><title>prometheus on 老J的博客</title><link>https://blog.llaoj.cn/tags/prometheus/</link><description>Recent content in prometheus on 老J的博客</description><generator>Hugo -- gohugo.io</generator><lastBuildDate>Fri, 01 Apr 2022 00:00:00 +0000</lastBuildDate><atom:link href="https://blog.llaoj.cn/tags/prometheus/index.xml" rel="self" type="application/rss+xml"/><item><title>Grafana Mimir 发布 目前最具扩展性的开源时序数据库</title><link>https://blog.llaoj.cn/posts/2204/announcing-grafana-mimir/</link><pubDate>Fri, 01 Apr 2022 00:00:00 +0000</pubDate><guid>https://blog.llaoj.cn/posts/2204/announcing-grafana-mimir/</guid><description>Grafana Mimir 是目前最具扩展性、性能最好的开源时序数据库，Mimir 允许你将指标扩展到 1 亿。它部署简单、高可用、多租户支持、持久存储、查询性能超高，比 Cortex 快 40 倍。 Mimir 托管在
-&lt;a href="https://github.com/grafana/mimir">https://github.com/grafana/mimir&lt;/a> 并在 AGPLv3 下获得许可。</description></item><item><title>Prometheus Operator 设计思路</title><link>https://blog.llaoj.cn/posts/2202/prometheus-operator-design/</link><pubDate>Mon, 07 Feb 2022 00:00:00 +0000</pubDate><guid>https://blog.llaoj.cn/posts/2202/prometheus-operator-design/</guid><description>设计 # 这篇文章介绍了 Prometheus Operator 的几种自定义资源 (CRD):
-Prometheus Alertmanager ThanosRuler ServiceMonitor PodMonitor Probe PrometheusRule AlertmanagerConfig Prometheus # 它定义了在 Kubernetes 集群中安装 Prometheus 的方式.</description></item></channel></rss>
+<?xml version="1.0" encoding="utf-8" standalone="yes"?><rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom"><channel><title>Prometheus on 老J的博客</title><link>https://blog.llaoj.cn/tags/prometheus/</link><description>Recent content in Prometheus on 老J的博客</description><generator>Hugo</generator><language>zh</language><lastBuildDate>Fri, 01 Apr 2022 00:00:00 +0000</lastBuildDate><atom:link href="https://blog.llaoj.cn/tags/prometheus/index.xml" rel="self" type="application/rss+xml"/><item><title>Grafana Mimir 发布 目前最具扩展性的开源时序数据库</title><link>https://blog.llaoj.cn/posts/2204/announcing-grafana-mimir/</link><pubDate>Fri, 01 Apr 2022 00:00:00 +0000</pubDate><guid>https://blog.llaoj.cn/posts/2204/announcing-grafana-mimir/</guid><description>Grafana Mimir 是目前最具扩展性、性能最好的开源时序数据库，Mimir 允许你将指标扩展到 1 亿。它部署简单、高可用、多租户支持、持久存储、查询性能超高，比 Cortex 快 40 倍。 Mimir 托管在 
+ &lt;a href="https://github.com/grafana/mimir">https://github.com/grafana/mimir&lt;/a> 并在 AGPLv3 下获得许可。</description></item><item><title>Prometheus Operator 设计思路</title><link>https://blog.llaoj.cn/posts/2202/prometheus-operator-design/</link><pubDate>Mon, 07 Feb 2022 00:00:00 +0000</pubDate><guid>https://blog.llaoj.cn/posts/2202/prometheus-operator-design/</guid><description>&lt;h2 id="设计">
+ 设计
+ &lt;a class="anchor" href="#%e8%ae%be%e8%ae%a1">#&lt;/a>
+&lt;/h2>
+&lt;p>这篇文章介绍了 Prometheus Operator 的几种自定义资源 (CRD):&lt;/p>
+&lt;ul>
+&lt;li>Prometheus&lt;/li>
+&lt;li>Alertmanager&lt;/li>
+&lt;li>ThanosRuler&lt;/li>
+&lt;li>ServiceMonitor&lt;/li>
+&lt;li>PodMonitor&lt;/li>
+&lt;li>Probe&lt;/li>
+&lt;li>PrometheusRule&lt;/li>
+&lt;li>AlertmanagerConfig&lt;/li>
+&lt;/ul>
+&lt;h2 id="prometheus">
+ Prometheus
+ &lt;a class="anchor" href="#prometheus">#&lt;/a>
+&lt;/h2>
+&lt;p>它定义了在 Kubernetes 集群中安装 Prometheus 的方式. 它提供了一些配置项, 比如副本数、持久卷还有接收告警的 Alertmanagers.&lt;/p></description></item></channel></rss>

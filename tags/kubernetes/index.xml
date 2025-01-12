@@ -1,14 +1,191 @@
-<?xml version="1.0" encoding="utf-8" standalone="yes"?><rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom"><channel><title>kubernetes on 老J的博客</title><link>https://blog.llaoj.cn/tags/kubernetes/</link><description>Recent content in kubernetes on 老J的博客</description><generator>Hugo -- gohugo.io</generator><lastBuildDate>Wed, 08 Jan 2025 00:00:00 +0000</lastBuildDate><atom:link href="https://blog.llaoj.cn/tags/kubernetes/index.xml" rel="self" type="application/rss+xml"/><item><title>解决执行kubectl命令没有权限</title><link>https://blog.llaoj.cn/posts/2025/fix-kubectl-no-authorization/</link><pubDate>Wed, 08 Jan 2025 00:00:00 +0000</pubDate><guid>https://blog.llaoj.cn/posts/2025/fix-kubectl-no-authorization/</guid><description>问题描述 # 反应执行kubectl命令没有权限:
-$ kubectl get pod -A Error from server (Forbidden): pods is forbidden: User &amp;#34;kubernetes-admin&amp;#34; cannot list resource &amp;#34;pods&amp;#34; in API group &amp;#34;&amp;#34; at the cluster scope 解决思路 # 首先要了解几个文件夹的作用:</description></item><item><title>解决Velero报错: failed to list daemonset pods: client rate limiter Wait returned an error: context deadline exceeded</title><link>https://blog.llaoj.cn/posts/2309/velero-failed-to-list-daemonset-pods/</link><pubDate>Mon, 04 Sep 2023 00:00:00 +0000</pubDate><guid>https://blog.llaoj.cn/posts/2309/velero-failed-to-list-daemonset-pods/</guid><description>使用VeleroFSB备份集群的时候, 遇到了一些错误, 导致整个备份任务没有成功, 状态: &lt;code>PartiallyFailed&lt;/code>: failed to list daemonset pods: client rate limiter Wait returned an error: context deadline exceeded</description></item><item><title>通过shell脚本扫描从Kubernetes节点往外的tcp请求</title><link>https://blog.llaoj.cn/posts/2304/container-tcp-conn/</link><pubDate>Tue, 04 Apr 2023 00:00:00 +0000</pubDate><guid>https://blog.llaoj.cn/posts/2304/container-tcp-conn/</guid><description>由于Kubernetes中部署的服务队外发起的tcp请求很难监控, 最近数据库运维在排查来自集群的大量数据库请求, 网络层只能看到来自哪个Kubernetes节点主机. 所以写了下面这个脚本来定时扫描.</description></item><item><title>Fluentd配置文件最佳实践</title><link>https://blog.llaoj.cn/posts/2207/fluentd-es-config/</link><pubDate>Sun, 31 Jul 2022 00:00:00 +0000</pubDate><guid>https://blog.llaoj.cn/posts/2207/fluentd-es-config/</guid><description>Fluentd负责Kubernetes中容器日志的收集工作, 以Daemonset形式运行在每一个节点上. 下面这个配置是在多个生产集群使用的配置, 经过多次调优的. 有一些关键的配置增加了配置解释说明. 目前使用问题不大. 持续更新配置中&amp;hellip;</description></item><item><title>Kubernetes 服务器配置和规划建设要求</title><link>https://blog.llaoj.cn/posts/2207/kubernetes-requirement/</link><pubDate>Sat, 16 Jul 2022 00:00:00 +0000</pubDate><guid>https://blog.llaoj.cn/posts/2207/kubernetes-requirement/</guid><description>新建集群的第一步就是要规划服务器、网络、操作系统等等, 下面就结合我平时的工作经验总结下相关的要求, 内容根据日常工作持续补充完善:
-服务器配置 # kubernetes 集群分为控制节点和数据节点, 它们对于配置的要求有所不同:
-控制面 # 节点规模 Master规格 1~5个节点 4核 8Gi（不建议2核 4Gi） 6~20个节点 4核 16Gi 21~100个节点 8核 32Gi 100~200个节点 16核 64Gi 系统盘40+Gi，用于储存 etcd 信息及相关配置文件等</description></item><item><title>Linux 控制组(cgroups)和进程隔离</title><link>https://blog.llaoj.cn/posts/2205/cgroups-process-isolation/</link><pubDate>Sun, 15 May 2022 00:00:00 +0000</pubDate><guid>https://blog.llaoj.cn/posts/2205/cgroups-process-isolation/</guid><description>控制组(cgroups)是内核的一个特性，它能限制/统计/隔离一个或者多个进程使用CPU、内存、磁盘I/O和网络。cgroups技术最开始是Google开发，最终在2.6.24版本的内核中出现。3.15和3.16版本内核将合并进重新设计的cgroups，它添加来kernfs(拆分一些sysfs逻辑)。cgroups的主要设计目标是提供一个统一的接口，它可以管理进程或者整个操作系统级别的虚拟化，包含Linux容器，或者LXC。</description></item><item><title>分析告警 kubernetes 节点 load 过高问题</title><link>https://blog.llaoj.cn/posts/2204/kubernetes-node-load/</link><pubDate>Wed, 27 Apr 2022 00:00:00 +0000</pubDate><guid>https://blog.llaoj.cn/posts/2204/kubernetes-node-load/</guid><description>负载过高分析 # 通过 linux 提供的几个命令可以从不同的纬度分析系统负载。
-vmstat # 这命令能从一个系统的角度反应出服务器情况，报告虚拟内存统计信息，报告有关进程、内存、分页、块的信息 IO、陷阱、磁盘和 CPU 活动。看个例子：
-$ vmstat --wide --unit M 5 procs ----------------memory---------------- ---swap--- -----io---- ---system--- ---------cpu-------- r b swpd free buff cache si so bi bo in cs us sy id wa st 1 1 0 127691 1535 73572 0 0 0 3 0 0 2 1 97 0 0 93 0 0 127674 1535 73573 0 0 0 80 49267 67634 5 1 94 1 0 0 2 0 127679 1535 73573 0 0 0 66 38537 56283 3 1 95 1 0 2 2 0 127738 1535 73574 0 0 6 86 41769 61823 5 1 93 2 0 2 0 0 127729 1535 73574 0 0 18 18 41002 59214 4 1 95 0 0 命令以及输出解释：</description></item><item><title>Apisxi Ingress Controller 设计说明</title><link>https://blog.llaoj.cn/posts/2204/apisix-ingress-controller-design/</link><pubDate>Thu, 14 Apr 2022 00:00:00 +0000</pubDate><guid>https://blog.llaoj.cn/posts/2204/apisix-ingress-controller-design/</guid><description>apisix-ingress-controller 要求 kubernetes 版本 1.16+. 因为使用了 CustomResourceDefinition v1 stable 版本的 API. 从 1.0.0 版本开始，APISIX-ingress-controller 要求 Apache APISIX 版本 2.7+.</description></item><item><title>在 kubernetes 中找出使用 jdk9 及以上版本的应用</title><link>https://blog.llaoj.cn/posts/2203/execjava-versioninpod/</link><pubDate>Wed, 30 Mar 2022 00:00:00 +0000</pubDate><guid>https://blog.llaoj.cn/posts/2203/execjava-versioninpod/</guid><description>近日, Spring Cloud (SPEL) 中发现 RCE 0-day 漏洞, 为了排查 kubernetes 中所有存在安全威胁的应用. 特地开发了一个小工具来寻找。该工具基于 golang&amp;amp;client-go 开发, 程序会找出当前集群中所有 Running 的 pods, 然后逐个进入容器，执行 &lt;code>java -version&lt;/code> 命令，将命令输出打印到文件中，使用编辑器进行查找检索即可。</description></item><item><title>在 kubernetes 中找出过度使用资源的 namespaces</title><link>https://blog.llaoj.cn/posts/2203/find-ns-that-exceed-resource-limits/</link><pubDate>Mon, 28 Mar 2022 00:00:00 +0000</pubDate><guid>https://blog.llaoj.cn/posts/2203/find-ns-that-exceed-resource-limits/</guid><description>我们知道, 在 kubernetes 中, namespace 的资源限制在 ResourceQuota 中定义, 比如我们控制 default 名称空间使用 1核1G 的资源. 通常来讲, 由于 kubernetes 的资源控制机制, &lt;code>.status.used&lt;/code> 中资源的值会小于 &lt;code>.status.hard&lt;/code> 中相应资源的值. 但是也有特例. 当我们开始定义了一个较大的资源限制, 待应用部署完毕, 资源占用了很多之后, 这时调低资源限制. 此时就会出现 &lt;code>.status.used&lt;/code> 中的值超过 &lt;code>.status.hard&lt;/code> 中相应值的情况, 尤其是内存的限制.</description></item><item><title>比较冷门但有用的 kubectl 命令</title><link>https://blog.llaoj.cn/posts/2203/kubectl-usefull-command/</link><pubDate>Tue, 22 Mar 2022 00:00:00 +0000</pubDate><guid>https://blog.llaoj.cn/posts/2203/kubectl-usefull-command/</guid><description>以下冷门命令能实现某种具体的功能, 都是在实际工作中摸索总结的经验, 获取到相关的资源名称之后, 就可以配合常用的 kubectl 命令获取其他详细信息.</description></item><item><title>[解决] FailedScheduling pod/&lt;pod-name> pod is &lt;uid> in the cache so can't be assumed</title><link>https://blog.llaoj.cn/posts/2203/pod-cannot-be-assumed/</link><pubDate>Mon, 21 Mar 2022 00:00:00 +0000</pubDate><guid>https://blog.llaoj.cn/posts/2203/pod-cannot-be-assumed/</guid><description>pod is in the cache, so can&amp;rsquo;t be assumed, 这是调度器 scheduler 缓存失效导致的异常事件, 大致原因是 pod 已经调度, 并绑定到指定节点, 由于该节点异常导致启动失败, 重新启动 prometheus statefulset, 让集群重新调度, 其实就是将现有到 prometheus pod 副本数将至 0, 再恢复正常即可.</description></item><item><title>[解决] Warning pod/calico-node-&lt;hash> Readiness probe failed</title><link>https://blog.llaoj.cn/posts/2203/calico-node-readiness-probe-failed/</link><pubDate>Mon, 21 Mar 2022 00:00:00 +0000</pubDate><guid>https://blog.llaoj.cn/posts/2203/calico-node-readiness-probe-failed/</guid><description>&lt;p>calico-node-4fpgp Readiness probe failed, orphaned pod &lt;pod-hash> found, but volume paths are still present on disk : There were a total of N errors similar to this. Turn up verbosity to see them.&lt;/p></description></item><item><title>load average 过高, mount nfs 问题处理</title><link>https://blog.llaoj.cn/posts/2203/nfs-options/</link><pubDate>Mon, 14 Mar 2022 00:00:00 +0000</pubDate><guid>https://blog.llaoj.cn/posts/2203/nfs-options/</guid><description>周末, 有一台服务器告警: 系统负载过高, 最高的时候都已经到 100 +, 以下是排查&amp;amp;处理的具体过程.
-发现的问题/现象 # uptime 显示 load average 都在70+ # 因为服务器是40核心, 原则上负载40是满负荷, 现在明显存在大量等待的任务. 继续往下分析进程, 看具体那个进程一直在堵塞.
-ps -ef 执行到某一个进程就卡住了 # 命令执行如下:</description></item><item><title>解决 kubelet cannot allocate memory 错误</title><link>https://blog.llaoj.cn/posts/2202/cannot-allocate-memory/</link><pubDate>Sun, 27 Feb 2022 00:00:00 +0000</pubDate><guid>https://blog.llaoj.cn/posts/2202/cannot-allocate-memory/</guid><description>问题描述 # 查看 pod 相关 events 如下：
-Events: Type Reason Age From Message ---- ------ ---- ---- ------- Normal Scheduled 18m default-scheduler Successfully assigned container-186002196200947712/itms-5f6d7798-wrpjj to 10.</description></item><item><title>使用Kubespray安装kubernetes的教程</title><link>https://blog.llaoj.cn/posts/2202/Kubespray-kubernetes-setup/</link><pubDate>Mon, 14 Feb 2022 00:00:00 +0000</pubDate><guid>https://blog.llaoj.cn/posts/2202/Kubespray-kubernetes-setup/</guid><description>本文使用 kubespray 容器部署 kubernetes v1.22, 提供了从国外搬运的离线软件包/容器镜像. 仅需要几步即可部署高可用集群. 所有离线文件都来自官方下载 kubespray 安装过程会进行软件包验证, 放心使用.
-前提 # 禁用防火墙 重要: 本文使用 kubespray 的容器环境部署, 为避免影响节点部署(特别是 Runtime 部署), 所以需要一台独立于集群外的服务器执行下面的命令, 这台服务器安装 docker 19.</description></item><item><title>[PPT] 实践中总结 Kubernetes 必须了解的核心内容</title><link>https://blog.llaoj.cn/posts/2202/intro-kubernetes/</link><pubDate>Tue, 08 Feb 2022 00:00:00 +0000</pubDate><guid>https://blog.llaoj.cn/posts/2202/intro-kubernetes/</guid><description>PPT 分享 # 以下是 &amp;lt;实践中总结 Kubernetes 必须了解的核心内容&amp;gt; 主题分享 PPT
-完~</description></item><item><title>kubernetes 中的 pod 究竟是什么</title><link>https://blog.llaoj.cn/posts/2202/what-are-kubernetes-pods-anyway/</link><pubDate>Tue, 08 Feb 2022 00:00:00 +0000</pubDate><guid>https://blog.llaoj.cn/posts/2202/what-are-kubernetes-pods-anyway/</guid><description>前言 # kubernetes 中 pod 的设计是一个伟大的发明, 今天我很有必要去聊一下 pod 和 container, 探究一下它们究竟是什么? kubernetes 官方文档中关于 pod 概念介绍提供了一个完整的解释, 但写的不够详细, 表达过于专业, 但还是很推荐大家阅读一下. 当然这篇文档应该更接地气.
-容器真的存在吗? # linux 中是没有容器这个概念的, 容器就是 linux 中的普通进程, 它使用了 linux 内核提供的两个重要的特性: namespace &amp;amp; cgroups.</description></item><item><title>Prometheus Operator 设计思路</title><link>https://blog.llaoj.cn/posts/2202/prometheus-operator-design/</link><pubDate>Mon, 07 Feb 2022 00:00:00 +0000</pubDate><guid>https://blog.llaoj.cn/posts/2202/prometheus-operator-design/</guid><description>设计 # 这篇文章介绍了 Prometheus Operator 的几种自定义资源 (CRD):
-Prometheus Alertmanager ThanosRuler ServiceMonitor PodMonitor Probe PrometheusRule AlertmanagerConfig Prometheus # 它定义了在 Kubernetes 集群中安装 Prometheus 的方式.</description></item><item><title>使用 velero 备份 kubernetes 指引</title><link>https://blog.llaoj.cn/posts/2202/velero-backup-k8s/</link><pubDate>Wed, 02 Feb 2022 00:00:00 +0000</pubDate><guid>https://blog.llaoj.cn/posts/2202/velero-backup-k8s/</guid><description>要求 # kubernetes 版本 1.7+，velero 的每个主版本对 kuberetes 的版本要求不同，详情请参考官方文档说明。 官方文档通道 velero 所在服务器有 kubectl 命令, 且能连上集群 我们先从最简单的体验开始
-1. 安装 velero 客户端 # 下载二进制安装包, 点击 latest release, 下载 velero-v1.</description></item></channel></rss>
+<?xml version="1.0" encoding="utf-8" standalone="yes"?><rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom"><channel><title>Kubernetes on 老J的博客</title><link>https://blog.llaoj.cn/tags/kubernetes/</link><description>Recent content in Kubernetes on 老J的博客</description><generator>Hugo</generator><language>zh</language><lastBuildDate>Wed, 08 Jan 2025 00:00:00 +0000</lastBuildDate><atom:link href="https://blog.llaoj.cn/tags/kubernetes/index.xml" rel="self" type="application/rss+xml"/><item><title>解决执行kubectl命令没有权限</title><link>https://blog.llaoj.cn/posts/2025/fix-kubectl-no-authorization/</link><pubDate>Wed, 08 Jan 2025 00:00:00 +0000</pubDate><guid>https://blog.llaoj.cn/posts/2025/fix-kubectl-no-authorization/</guid><description>&lt;h2 id="问题描述">
+ 问题描述
+ &lt;a class="anchor" href="#%e9%97%ae%e9%a2%98%e6%8f%8f%e8%bf%b0">#&lt;/a>
+&lt;/h2>
+&lt;p>反应执行kubectl命令没有权限:&lt;/p>
+&lt;div class="highlight">&lt;pre tabindex="0" style="background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4;">&lt;code class="language-fallback" data-lang="fallback">&lt;span style="display:flex;">&lt;span>$ kubectl get pod -A
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>Error from server (Forbidden): pods is forbidden: User &amp;#34;kubernetes-admin&amp;#34; cannot list resource &amp;#34;pods&amp;#34; in API group &amp;#34;&amp;#34; at the cluster scope
+&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;h2 id="解决思路">
+ 解决思路
+ &lt;a class="anchor" href="#%e8%a7%a3%e5%86%b3%e6%80%9d%e8%b7%af">#&lt;/a>
+&lt;/h2>
+&lt;p>首先要了解几个文件夹的作用:&lt;/p></description></item><item><title>解决Velero报错: failed to list daemonset pods: client rate limiter Wait returned an error: context deadline exceeded</title><link>https://blog.llaoj.cn/posts/2309/velero-failed-to-list-daemonset-pods/</link><pubDate>Mon, 04 Sep 2023 00:00:00 +0000</pubDate><guid>https://blog.llaoj.cn/posts/2309/velero-failed-to-list-daemonset-pods/</guid><description>使用VeleroFSB备份集群的时候, 遇到了一些错误, 导致整个备份任务没有成功, 状态: &lt;code>PartiallyFailed&lt;/code>: failed to list daemonset pods: client rate limiter Wait returned an error: context deadline exceeded</description></item><item><title>通过shell脚本扫描从Kubernetes节点往外的tcp请求</title><link>https://blog.llaoj.cn/posts/2304/container-tcp-conn/</link><pubDate>Tue, 04 Apr 2023 00:00:00 +0000</pubDate><guid>https://blog.llaoj.cn/posts/2304/container-tcp-conn/</guid><description>由于Kubernetes中部署的服务队外发起的tcp请求很难监控, 最近数据库运维在排查来自集群的大量数据库请求, 网络层只能看到来自哪个Kubernetes节点主机. 所以写了下面这个脚本来定时扫描.</description></item><item><title>Fluentd配置文件最佳实践</title><link>https://blog.llaoj.cn/posts/2207/fluentd-es-config/</link><pubDate>Sun, 31 Jul 2022 00:00:00 +0000</pubDate><guid>https://blog.llaoj.cn/posts/2207/fluentd-es-config/</guid><description>Fluentd负责Kubernetes中容器日志的收集工作, 以Daemonset形式运行在每一个节点上. 下面这个配置是在多个生产集群使用的配置, 经过多次调优的. 有一些关键的配置增加了配置解释说明. 目前使用问题不大. 持续更新配置中&amp;hellip;</description></item><item><title>Kubernetes 服务器配置和规划建设要求</title><link>https://blog.llaoj.cn/posts/2207/kubernetes-requirement/</link><pubDate>Sat, 16 Jul 2022 00:00:00 +0000</pubDate><guid>https://blog.llaoj.cn/posts/2207/kubernetes-requirement/</guid><description>&lt;p>新建集群的第一步就是要规划服务器、网络、操作系统等等, 下面就结合我平时的工作经验总结下相关的要求, 内容根据日常工作持续补充完善:&lt;/p>
+&lt;h2 id="服务器配置">
+ 服务器配置
+ &lt;a class="anchor" href="#%e6%9c%8d%e5%8a%a1%e5%99%a8%e9%85%8d%e7%bd%ae">#&lt;/a>
+&lt;/h2>
+&lt;p>kubernetes 集群分为控制节点和数据节点, 它们对于配置的要求有所不同:&lt;/p>
+&lt;h3 id="控制面">
+ 控制面
+ &lt;a class="anchor" href="#%e6%8e%a7%e5%88%b6%e9%9d%a2">#&lt;/a>
+&lt;/h3>
+&lt;table>
+ &lt;thead>
+ &lt;tr>
+ &lt;th style="text-align: left">节点规模&lt;/th>
+ &lt;th style="text-align: left">Master规格&lt;/th>
+ &lt;/tr>
+ &lt;/thead>
+ &lt;tbody>
+ &lt;tr>
+ &lt;td style="text-align: left">1~5个节点&lt;/td>
+ &lt;td style="text-align: left">4核 8Gi（不建议2核 4Gi）&lt;/td>
+ &lt;/tr>
+ &lt;tr>
+ &lt;td style="text-align: left">6~20个节点&lt;/td>
+ &lt;td style="text-align: left">4核 16Gi&lt;/td>
+ &lt;/tr>
+ &lt;tr>
+ &lt;td style="text-align: left">21~100个节点&lt;/td>
+ &lt;td style="text-align: left">8核 32Gi&lt;/td>
+ &lt;/tr>
+ &lt;tr>
+ &lt;td style="text-align: left">100~200个节点&lt;/td>
+ &lt;td style="text-align: left">16核 64Gi&lt;/td>
+ &lt;/tr>
+ &lt;/tbody>
+&lt;/table>
+&lt;p>系统盘40+Gi，用于储存 etcd 信息及相关配置文件等&lt;/p></description></item><item><title>Linux 控制组(cgroups)和进程隔离</title><link>https://blog.llaoj.cn/posts/2205/cgroups-process-isolation/</link><pubDate>Sun, 15 May 2022 00:00:00 +0000</pubDate><guid>https://blog.llaoj.cn/posts/2205/cgroups-process-isolation/</guid><description>控制组(cgroups)是内核的一个特性，它能限制/统计/隔离一个或者多个进程使用CPU、内存、磁盘I/O和网络。cgroups技术最开始是Google开发，最终在2.6.24版本的内核中出现。3.15和3.16版本内核将合并进重新设计的cgroups，它添加来kernfs(拆分一些sysfs逻辑)。cgroups的主要设计目标是提供一个统一的接口，它可以管理进程或者整个操作系统级别的虚拟化，包含Linux容器，或者LXC。</description></item><item><title>分析告警 kubernetes 节点 load 过高问题</title><link>https://blog.llaoj.cn/posts/2204/kubernetes-node-load/</link><pubDate>Wed, 27 Apr 2022 00:00:00 +0000</pubDate><guid>https://blog.llaoj.cn/posts/2204/kubernetes-node-load/</guid><description>&lt;h2 id="负载过高分析">
+ 负载过高分析
+ &lt;a class="anchor" href="#%e8%b4%9f%e8%bd%bd%e8%bf%87%e9%ab%98%e5%88%86%e6%9e%90">#&lt;/a>
+&lt;/h2>
+&lt;p>通过 linux 提供的几个命令可以从不同的纬度分析系统负载。&lt;/p>
+&lt;h3 id="vmstat">
+ vmstat
+ &lt;a class="anchor" href="#vmstat">#&lt;/a>
+&lt;/h3>
+&lt;p>这命令能从一个系统的角度反应出服务器情况，报告虚拟内存统计信息，报告有关进程、内存、分页、块的信息 IO、陷阱、磁盘和 CPU 活动。看个例子：&lt;/p>
+&lt;div class="highlight">&lt;pre tabindex="0" style="background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4;">&lt;code class="language-shell" data-lang="shell">&lt;span style="display:flex;">&lt;span>$ vmstat --wide --unit M &lt;span style="color:#099">5&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>procs ----------------memory---------------- ---swap--- -----io---- ---system--- ---------cpu--------
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> r b swpd free buff cache si so bi bo in cs us sy id wa st
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#099">1&lt;/span> &lt;span style="color:#099">1&lt;/span> &lt;span style="color:#099">0&lt;/span> &lt;span style="color:#099">127691&lt;/span> &lt;span style="color:#099">1535&lt;/span> &lt;span style="color:#099">73572&lt;/span> &lt;span style="color:#099">0&lt;/span> &lt;span style="color:#099">0&lt;/span> &lt;span style="color:#099">0&lt;/span> &lt;span style="color:#099">3&lt;/span> &lt;span style="color:#099">0&lt;/span> &lt;span style="color:#099">0&lt;/span> &lt;span style="color:#099">2&lt;/span> &lt;span style="color:#099">1&lt;/span> &lt;span style="color:#099">97&lt;/span> &lt;span style="color:#099">0&lt;/span> &lt;span style="color:#099">0&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#099">93&lt;/span> &lt;span style="color:#099">0&lt;/span> &lt;span style="color:#099">0&lt;/span> &lt;span style="color:#099">127674&lt;/span> &lt;span style="color:#099">1535&lt;/span> &lt;span style="color:#099">73573&lt;/span> &lt;span style="color:#099">0&lt;/span> &lt;span style="color:#099">0&lt;/span> &lt;span style="color:#099">0&lt;/span> &lt;span style="color:#099">80&lt;/span> &lt;span style="color:#099">49267&lt;/span> &lt;span style="color:#099">67634&lt;/span> &lt;span style="color:#099">5&lt;/span> &lt;span style="color:#099">1&lt;/span> &lt;span style="color:#099">94&lt;/span> &lt;span style="color:#099">1&lt;/span> &lt;span style="color:#099">0&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#099">0&lt;/span> &lt;span style="color:#099">2&lt;/span> &lt;span style="color:#099">0&lt;/span> &lt;span style="color:#099">127679&lt;/span> &lt;span style="color:#099">1535&lt;/span> &lt;span style="color:#099">73573&lt;/span> &lt;span style="color:#099">0&lt;/span> &lt;span style="color:#099">0&lt;/span> &lt;span style="color:#099">0&lt;/span> &lt;span style="color:#099">66&lt;/span> &lt;span style="color:#099">38537&lt;/span> &lt;span style="color:#099">56283&lt;/span> &lt;span style="color:#099">3&lt;/span> &lt;span style="color:#099">1&lt;/span> &lt;span style="color:#099">95&lt;/span> &lt;span style="color:#099">1&lt;/span> &lt;span style="color:#099">0&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#099">2&lt;/span> &lt;span style="color:#099">2&lt;/span> &lt;span style="color:#099">0&lt;/span> &lt;span style="color:#099">127738&lt;/span> &lt;span style="color:#099">1535&lt;/span> &lt;span style="color:#099">73574&lt;/span> &lt;span style="color:#099">0&lt;/span> &lt;span style="color:#099">0&lt;/span> &lt;span style="color:#099">6&lt;/span> &lt;span style="color:#099">86&lt;/span> &lt;span style="color:#099">41769&lt;/span> &lt;span style="color:#099">61823&lt;/span> &lt;span style="color:#099">5&lt;/span> &lt;span style="color:#099">1&lt;/span> &lt;span style="color:#099">93&lt;/span> &lt;span style="color:#099">2&lt;/span> &lt;span style="color:#099">0&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#099">2&lt;/span> &lt;span style="color:#099">0&lt;/span> &lt;span style="color:#099">0&lt;/span> &lt;span style="color:#099">127729&lt;/span> &lt;span style="color:#099">1535&lt;/span> &lt;span style="color:#099">73574&lt;/span> &lt;span style="color:#099">0&lt;/span> &lt;span style="color:#099">0&lt;/span> &lt;span style="color:#099">18&lt;/span> &lt;span style="color:#099">18&lt;/span> &lt;span style="color:#099">41002&lt;/span> &lt;span style="color:#099">59214&lt;/span> &lt;span style="color:#099">4&lt;/span> &lt;span style="color:#099">1&lt;/span> &lt;span style="color:#099">95&lt;/span> &lt;span style="color:#099">0&lt;/span> &lt;span style="color:#099">0&lt;/span>
+&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;p>命令以及输出解释：&lt;/p></description></item><item><title>Apisxi Ingress Controller 设计说明</title><link>https://blog.llaoj.cn/posts/2204/apisix-ingress-controller-design/</link><pubDate>Thu, 14 Apr 2022 00:00:00 +0000</pubDate><guid>https://blog.llaoj.cn/posts/2204/apisix-ingress-controller-design/</guid><description>apisix-ingress-controller 要求 kubernetes 版本 1.16+. 因为使用了 CustomResourceDefinition v1 stable 版本的 API. 从 1.0.0 版本开始，APISIX-ingress-controller 要求 Apache APISIX 版本 2.7+.</description></item><item><title>在 kubernetes 中找出使用 jdk9 及以上版本的应用</title><link>https://blog.llaoj.cn/posts/2203/execjava-versioninpod/</link><pubDate>Wed, 30 Mar 2022 00:00:00 +0000</pubDate><guid>https://blog.llaoj.cn/posts/2203/execjava-versioninpod/</guid><description>近日, Spring Cloud (SPEL) 中发现 RCE 0-day 漏洞, 为了排查 kubernetes 中所有存在安全威胁的应用. 特地开发了一个小工具来寻找。该工具基于 golang&amp;amp;client-go 开发, 程序会找出当前集群中所有 Running 的 pods, 然后逐个进入容器，执行 &lt;code>java -version&lt;/code> 命令，将命令输出打印到文件中，使用编辑器进行查找检索即可。</description></item><item><title>在 kubernetes 中找出过度使用资源的 namespaces</title><link>https://blog.llaoj.cn/posts/2203/find-ns-that-exceed-resource-limits/</link><pubDate>Mon, 28 Mar 2022 00:00:00 +0000</pubDate><guid>https://blog.llaoj.cn/posts/2203/find-ns-that-exceed-resource-limits/</guid><description>我们知道, 在 kubernetes 中, namespace 的资源限制在 ResourceQuota 中定义, 比如我们控制 default 名称空间使用 1核1G 的资源. 通常来讲, 由于 kubernetes 的资源控制机制, &lt;code>.status.used&lt;/code> 中资源的值会小于 &lt;code>.status.hard&lt;/code> 中相应资源的值. 但是也有特例. 当我们开始定义了一个较大的资源限制, 待应用部署完毕, 资源占用了很多之后, 这时调低资源限制. 此时就会出现 &lt;code>.status.used&lt;/code> 中的值超过 &lt;code>.status.hard&lt;/code> 中相应值的情况, 尤其是内存的限制.</description></item><item><title>比较冷门但有用的 kubectl 命令</title><link>https://blog.llaoj.cn/posts/2203/kubectl-usefull-command/</link><pubDate>Tue, 22 Mar 2022 00:00:00 +0000</pubDate><guid>https://blog.llaoj.cn/posts/2203/kubectl-usefull-command/</guid><description>以下冷门命令能实现某种具体的功能, 都是在实际工作中摸索总结的经验, 获取到相关的资源名称之后, 就可以配合常用的 kubectl 命令获取其他详细信息.</description></item><item><title>[解决] FailedScheduling pod/&lt;pod-name> pod is &lt;uid> in the cache so can't be assumed</title><link>https://blog.llaoj.cn/posts/2203/pod-cannot-be-assumed/</link><pubDate>Mon, 21 Mar 2022 00:00:00 +0000</pubDate><guid>https://blog.llaoj.cn/posts/2203/pod-cannot-be-assumed/</guid><description>pod is in the cache, so can&amp;rsquo;t be assumed, 这是调度器 scheduler 缓存失效导致的异常事件, 大致原因是 pod 已经调度, 并绑定到指定节点, 由于该节点异常导致启动失败, 重新启动 prometheus statefulset, 让集群重新调度, 其实就是将现有到 prometheus pod 副本数将至 0, 再恢复正常即可.</description></item><item><title>[解决] Warning pod/calico-node-&lt;hash> Readiness probe failed</title><link>https://blog.llaoj.cn/posts/2203/calico-node-readiness-probe-failed/</link><pubDate>Mon, 21 Mar 2022 00:00:00 +0000</pubDate><guid>https://blog.llaoj.cn/posts/2203/calico-node-readiness-probe-failed/</guid><description>calico-node-4fpgp Readiness probe failed, orphaned pod &lt;pod-hash> found, but volume paths are still present on disk : There were a total of N errors similar to this. Turn up verbosity to see them.</description></item><item><title>load average 过高, mount nfs 问题处理</title><link>https://blog.llaoj.cn/posts/2203/nfs-options/</link><pubDate>Mon, 14 Mar 2022 00:00:00 +0000</pubDate><guid>https://blog.llaoj.cn/posts/2203/nfs-options/</guid><description>&lt;p>周末, 有一台服务器告警: 系统负载过高, 最高的时候都已经到 100 +, 以下是排查&amp;amp;处理的具体过程.&lt;/p>
+&lt;h2 id="发现的问题现象">
+ 发现的问题/现象
+ &lt;a class="anchor" href="#%e5%8f%91%e7%8e%b0%e7%9a%84%e9%97%ae%e9%a2%98%e7%8e%b0%e8%b1%a1">#&lt;/a>
+&lt;/h2>
+&lt;h3 id="uptime-显示-load-average-都在70">
+ &lt;code>uptime&lt;/code> 显示 load average 都在70+
+ &lt;a class="anchor" href="#uptime-%e6%98%be%e7%a4%ba-load-average-%e9%83%bd%e5%9c%a870">#&lt;/a>
+&lt;/h3>
+&lt;p>因为服务器是40核心, 原则上负载40是满负荷, 现在明显存在大量等待的任务. 继续往下分析进程, 看具体那个进程一直在堵塞.&lt;/p>
+&lt;h3 id="ps--ef-执行到某一个进程就卡住了">
+ &lt;code>ps -ef&lt;/code> 执行到某一个进程就卡住了
+ &lt;a class="anchor" href="#ps--ef-%e6%89%a7%e8%a1%8c%e5%88%b0%e6%9f%90%e4%b8%80%e4%b8%aa%e8%bf%9b%e7%a8%8b%e5%b0%b1%e5%8d%a1%e4%bd%8f%e4%ba%86">#&lt;/a>
+&lt;/h3>
+&lt;p>命令执行如下:&lt;/p></description></item><item><title>解决 kubelet cannot allocate memory 错误</title><link>https://blog.llaoj.cn/posts/2202/cannot-allocate-memory/</link><pubDate>Sun, 27 Feb 2022 00:00:00 +0000</pubDate><guid>https://blog.llaoj.cn/posts/2202/cannot-allocate-memory/</guid><description>&lt;h2 id="问题描述">
+ 问题描述
+ &lt;a class="anchor" href="#%e9%97%ae%e9%a2%98%e6%8f%8f%e8%bf%b0">#&lt;/a>
+&lt;/h2>
+&lt;p>查看 pod 相关 events 如下：&lt;/p>
+&lt;div class="highlight">&lt;pre tabindex="0" style="background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4;">&lt;code class="language-sh" data-lang="sh">&lt;span style="display:flex;">&lt;span>Events:
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> Type Reason Age From Message
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> ---- ------ ---- ---- -------
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> Normal Scheduled 18m default-scheduler Successfully assigned container-186002196200947712/itms-5f6d7798-wrpjj to 10.206.65.144
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> Warning FailedCreatePodContainer 3m31s &lt;span style="color:#000;font-weight:bold">(&lt;/span>x71 over 18m&lt;span style="color:#000;font-weight:bold">)&lt;/span> kubelet unable to ensure pod container exists: failed to create container &lt;span style="color:#000;font-weight:bold">for&lt;/span> &lt;span style="color:#000;font-weight:bold">[&lt;/span>kubepods burstable pod31f4c93c-c3a1-49ad-b091-0802c5f1d396&lt;span style="color:#000;font-weight:bold">]&lt;/span> : mkdir /sys/fs/cgroup/memory/kubepods/burstable/pod31f4c93c-c3a1-49ad-b091-0802c5f1d396: cannot allocate memory
+&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;p>这是内核bug，建议升级内核&lt;/p></description></item><item><title>使用Kubespray安装kubernetes的教程</title><link>https://blog.llaoj.cn/posts/2202/Kubespray-kubernetes-setup/</link><pubDate>Mon, 14 Feb 2022 00:00:00 +0000</pubDate><guid>https://blog.llaoj.cn/posts/2202/Kubespray-kubernetes-setup/</guid><description>&lt;p>本文使用 kubespray 容器部署 kubernetes v1.22, 提供了从国外搬运的离线软件包/容器镜像. 仅需要几步即可部署高可用集群. 所有离线文件都来自官方下载 kubespray 安装过程会进行软件包验证, 放心使用.&lt;/p>
+&lt;h2 id="前提">
+ 前提
+ &lt;a class="anchor" href="#%e5%89%8d%e6%8f%90">#&lt;/a>
+&lt;/h2>
+&lt;ul>
+&lt;li>禁用防火墙&lt;/li>
+&lt;li>&lt;strong>重要:&lt;/strong> 本文使用 kubespray 的容器环境部署, 为避免影响节点部署(特别是 Runtime 部署), 所以需要一台&lt;strong>独立于集群外的服务器&lt;/strong>执行下面的命令, 这台服务器安装 docker 19.03+ 并到所有节点SSH免密进入.&lt;/li>
+&lt;li>目标服务器要允许 IPv4 转发, 如果要给 pods 和 services 用 IPv6, 目标服务器要允许 IPv6 转发.&lt;/li>
+&lt;/ul>
+&lt;p>注意: 下面配置是适合 kubespray 的配置, 实际配置取决于集群规模.&lt;/p></description></item><item><title>[PPT] 实践中总结 Kubernetes 必须了解的核心内容</title><link>https://blog.llaoj.cn/posts/2202/intro-kubernetes/</link><pubDate>Tue, 08 Feb 2022 00:00:00 +0000</pubDate><guid>https://blog.llaoj.cn/posts/2202/intro-kubernetes/</guid><description>&lt;h2 id="ppt-分享">
+ PPT 分享
+ &lt;a class="anchor" href="#ppt-%e5%88%86%e4%ba%ab">#&lt;/a>
+&lt;/h2>
+&lt;p>以下是 &amp;lt;实践中总结 Kubernetes 必须了解的核心内容&amp;gt; 主题分享 PPT&lt;/p>
+&lt;p>
+ &lt;img src="https://blog.llaoj.cn/posts/2202/intro-kubernetes/1.jpg" alt="ppt-page-1" />&lt;/p>
+&lt;hr>
+&lt;p>
+ &lt;img src="https://blog.llaoj.cn/posts/2202/intro-kubernetes/3.jpg" alt="ppt-page-3" />&lt;/p>
+&lt;hr>
+&lt;p>
+ &lt;img src="https://blog.llaoj.cn/posts/2202/intro-kubernetes/4.jpg" alt="ppt-page-4" />&lt;/p>
+&lt;hr>
+&lt;p>
+ &lt;img src="https://blog.llaoj.cn/posts/2202/intro-kubernetes/5.jpg" alt="ppt-page-5" />&lt;/p>
+&lt;hr>
+&lt;p>
+ &lt;img src="https://blog.llaoj.cn/posts/2202/intro-kubernetes/6.jpg" alt="ppt-page-6" />&lt;/p>
+&lt;hr>
+&lt;p>
+ &lt;img src="https://blog.llaoj.cn/posts/2202/intro-kubernetes/7.jpg" alt="ppt-page-7" />&lt;/p>
+&lt;hr>
+&lt;p>
+ &lt;img src="https://blog.llaoj.cn/posts/2202/intro-kubernetes/8.jpg" alt="ppt-page-8" />&lt;/p>
+&lt;hr>
+&lt;p>
+ &lt;img src="https://blog.llaoj.cn/posts/2202/intro-kubernetes/9.jpg" alt="ppt-page-9" />&lt;/p>
+&lt;hr>
+&lt;p>
+ &lt;img src="https://blog.llaoj.cn/posts/2202/intro-kubernetes/10.jpg" alt="ppt-page-10" />&lt;/p>
+&lt;hr>
+&lt;p>
+ &lt;img src="https://blog.llaoj.cn/posts/2202/intro-kubernetes/11.jpg" alt="ppt-page-11" />&lt;/p>
+&lt;hr>
+&lt;p>
+ &lt;img src="https://blog.llaoj.cn/posts/2202/intro-kubernetes/12.jpg" alt="ppt-page-12" />&lt;/p>
+&lt;hr>
+&lt;p>
+ &lt;img src="https://blog.llaoj.cn/posts/2202/intro-kubernetes/13.jpg" alt="ppt-page-13" />&lt;/p>
+&lt;hr>
+&lt;p>
+ &lt;img src="https://blog.llaoj.cn/posts/2202/intro-kubernetes/14.jpg" alt="ppt-page-14" />&lt;/p>
+&lt;hr>
+&lt;p>
+ &lt;img src="https://blog.llaoj.cn/posts/2202/intro-kubernetes/15.jpg" alt="ppt-page-15" />&lt;/p>
+&lt;hr>
+&lt;p>
+ &lt;img src="https://blog.llaoj.cn/posts/2202/intro-kubernetes/16.jpg" alt="ppt-page-16" />&lt;/p></description></item><item><title>kubernetes 中的 pod 究竟是什么</title><link>https://blog.llaoj.cn/posts/2202/what-are-kubernetes-pods-anyway/</link><pubDate>Tue, 08 Feb 2022 00:00:00 +0000</pubDate><guid>https://blog.llaoj.cn/posts/2202/what-are-kubernetes-pods-anyway/</guid><description>&lt;h2 id="前言">
+ 前言
+ &lt;a class="anchor" href="#%e5%89%8d%e8%a8%80">#&lt;/a>
+&lt;/h2>
+&lt;p>kubernetes 中 pod 的设计是一个伟大的发明, 今天我很有必要去聊一下 pod 和 container, 探究一下它们究竟是什么? kubernetes 官方文档中关于
+ &lt;a href="https://kubernetes.io/zh/docs/concepts/workloads/pods/#pod-storage">pod 概念介绍&lt;/a>提供了一个完整的解释, 但写的不够详细, 表达过于专业, 但还是很推荐大家阅读一下. 当然这篇文档应该更接地气.&lt;/p>
+&lt;h2 id="容器真的存在吗">
+ 容器真的存在吗?
+ &lt;a class="anchor" href="#%e5%ae%b9%e5%99%a8%e7%9c%9f%e7%9a%84%e5%ad%98%e5%9c%a8%e5%90%97">#&lt;/a>
+&lt;/h2>
+&lt;p>linux 中是没有容器这个概念的, 容器就是 linux 中的普通进程, 它使用了 linux 内核提供的两个重要的特性: namespace &amp;amp; cgroups.&lt;/p></description></item><item><title>Prometheus Operator 设计思路</title><link>https://blog.llaoj.cn/posts/2202/prometheus-operator-design/</link><pubDate>Mon, 07 Feb 2022 00:00:00 +0000</pubDate><guid>https://blog.llaoj.cn/posts/2202/prometheus-operator-design/</guid><description>&lt;h2 id="设计">
+ 设计
+ &lt;a class="anchor" href="#%e8%ae%be%e8%ae%a1">#&lt;/a>
+&lt;/h2>
+&lt;p>这篇文章介绍了 Prometheus Operator 的几种自定义资源 (CRD):&lt;/p>
+&lt;ul>
+&lt;li>Prometheus&lt;/li>
+&lt;li>Alertmanager&lt;/li>
+&lt;li>ThanosRuler&lt;/li>
+&lt;li>ServiceMonitor&lt;/li>
+&lt;li>PodMonitor&lt;/li>
+&lt;li>Probe&lt;/li>
+&lt;li>PrometheusRule&lt;/li>
+&lt;li>AlertmanagerConfig&lt;/li>
+&lt;/ul>
+&lt;h2 id="prometheus">
+ Prometheus
+ &lt;a class="anchor" href="#prometheus">#&lt;/a>
+&lt;/h2>
+&lt;p>它定义了在 Kubernetes 集群中安装 Prometheus 的方式. 它提供了一些配置项, 比如副本数、持久卷还有接收告警的 Alertmanagers.&lt;/p></description></item><item><title>使用 velero 备份 kubernetes 指引</title><link>https://blog.llaoj.cn/posts/2202/velero-backup-k8s/</link><pubDate>Wed, 02 Feb 2022 00:00:00 +0000</pubDate><guid>https://blog.llaoj.cn/posts/2202/velero-backup-k8s/</guid><description>&lt;h2 id="要求">
+ 要求
+ &lt;a class="anchor" href="#%e8%a6%81%e6%b1%82">#&lt;/a>
+&lt;/h2>
+&lt;ul>
+&lt;li>kubernetes 版本 1.7+，velero 的每个主版本对 kuberetes 的版本要求不同，详情请参考官方文档说明。
+ &lt;a href="https://velero.io/docs/v1.7/">官方文档通道&lt;/a>&lt;/li>
+&lt;li>velero 所在服务器有 kubectl 命令, 且能连上集群&lt;/li>
+&lt;/ul>
+&lt;p>&lt;strong>我们先从最简单的体验开始&lt;/strong>&lt;/p>
+&lt;h2 id="1-安装-velero-客户端">
+ 1. 安装 velero 客户端
+ &lt;a class="anchor" href="#1-%e5%ae%89%e8%a3%85-velero-%e5%ae%a2%e6%88%b7%e7%ab%af">#&lt;/a>
+&lt;/h2>
+&lt;p>下载二进制安装包, 点击 latest release, 下载 &lt;code>velero-v1.7.0-linux-amd64.tag.gz&lt;/code> (以 release 页面为准), 解压&lt;/p></description></item></channel></rss>

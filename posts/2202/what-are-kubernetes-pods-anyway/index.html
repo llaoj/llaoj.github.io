@@ -1,251 +1,31 @@
-<!doctype html><html lang=zh dir=ltr>
-<head>
-<meta charset=utf-8>
-<meta name=viewport content="width=device-width,initial-scale=1">
-<meta name=description content="kubernetes 中 pod 的设计是一个伟大的发明, 今天我很有必要去聊一下 pod 和 container, 探究一下它们究竟是什么? kubernetes 官方文档中关于 pod 概念介绍提供了一个完整的解释, 但写的不够详细, 表达过于专业, 但还是很推荐大家阅读一下. 当然这篇文档应该更接地气.">
-<meta name=theme-color content="#FFFFFF">
-<meta name=color-scheme content="light dark"><meta property="og:title" content="kubernetes 中的 pod 究竟是什么">
-<meta property="og:description" content="kubernetes 中 pod 的设计是一个伟大的发明, 今天我很有必要去聊一下 pod 和 container, 探究一下它们究竟是什么? kubernetes 官方文档中关于 pod 概念介绍提供了一个完整的解释, 但写的不够详细, 表达过于专业, 但还是很推荐大家阅读一下. 当然这篇文档应该更接地气.">
-<meta property="og:type" content="article">
-<meta property="og:url" content="https://blog.llaoj.cn/posts/2202/what-are-kubernetes-pods-anyway/"><meta property="article:section" content="posts">
-<meta property="article:published_time" content="2022-02-08T00:00:00+00:00">
-<meta property="article:modified_time" content="2022-02-08T00:00:00+00:00">
-<title>kubernetes 中的 pod 究竟是什么 | 老J的博客</title>
-<link rel=manifest href=/manifest.json>
-<link rel=icon href=/favicon.png type=image/x-icon>
-<link rel=stylesheet href=/book.min.18b5d651e266e5e9cfc7455e2e50eb1b74a62aee16cf204b69de1d9e695276f7.css integrity="sha256-GLXWUeJm5enPx0VeLlDrG3SmKu4WzyBLad4dnmlSdvc=" crossorigin=anonymous>
-<script defer src=/flexsearch.min.js></script>
-<script defer src=/zh.search.min.9a77fc07b0d49aefb16db46397c1d91b50a135eb269a629da4f5c9bf709fa745.js integrity="sha256-mnf8B7DUmu+xbbRjl8HZG1ChNesmmmKdpPXJv3Cfp0U=" crossorigin=anonymous></script>
-<script defer src=/sw.min.6f6f90fcb8eb1c49ec389838e6b801d0de19430b8e516902f8d75c3c8bd98739.js integrity="sha256-b2+Q/LjrHEnsOJg45rgB0N4ZQwuOUWkC+NdcPIvZhzk=" crossorigin=anonymous></script>
-</head>
-<body dir=ltr>
-<input type=checkbox class="hidden toggle" id=menu-control>
-<input type=checkbox class="hidden toggle" id=toc-control>
-<main class="container flex">
-<aside class=book-menu>
-<div class=book-menu-content>
-<nav>
-<h2 class=book-brand>
-<a class="flex align-center" href=/><img src=/j.png alt=Logo><span>老J的博客</span>
-</a>
-</h2>
-<div class=book-search>
-<input type=text id=book-search-input placeholder=搜索 aria-label=搜索 maxlength=64 data-hotkeys=s/>
-<div class="book-search-spinner hidden"></div>
-<ul id=book-search-results></ul>
-</div>
-<img src=/images/avatar.jpg width=150 style=border-radius:8px>
-<p style=display:flex;align-items:center;margin-bottom:2px><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 30 30"><path d="M15 3C8.373 3 3 8.373 3 15c0 5.623 3.872 10.328 9.092 11.63C12.036 26.468 12 26.28 12 26.047v-2.051c-.487.0-1.303.0-1.508.0-.821.0-1.551-.353-1.905-1.009-.393-.729-.461-1.844-1.435-2.526-.289-.227-.069-.486.264-.451.615.174 1.125.596 1.605 1.222.478.627.703.769 1.596.769.433.0 1.081-.025 1.691-.121.328-.833.895-1.6 1.588-1.962-3.996-.411-5.903-2.399-5.903-5.098.0-1.162.495-2.286 1.336-3.233C9.053 10.647 8.706 8.73 9.435 8c1.798.0 2.885 1.166 3.146 1.481C13.477 9.174 14.461 9 15.495 9c1.036.0 2.024.174 2.922.483C18.675 9.17 19.763 8 21.565 8c.732.731.381 2.656.102 3.594.836.945 1.328 2.066 1.328 3.226.0 2.697-1.904 4.684-5.894 5.097C18.199 20.49 19 22.1 19 23.313v2.734c0 .104-.023.179-.035.268C23.641 24.676 27 20.236 27 15 27 8.373 21.627 3 15 3z"/></svg>
-<a href=https://github.com/llaoj target=_blank style=padding-left:5px;padding-top:5px>github.com/llaoj</a>
-</p>
-<p style=display:flex;align-items:center;margin-top:2px><svg width="24" height="24" style="padding-left:4px" enable-background="new 0 0 2499.7 2024.2" viewBox="0 0 2499.7 2024.2" xmlns="http://www.w3.org/2000/svg"><path d="m2499.7 1313.8c0-347.3-335.9-630.6-749.5-630.6S1003 966.5 1003 1313.8s335.9 630.6 749.5 630.6c80 0 155.4-9.1 226.2-29.7 20.6-4.6 43.4-2.3 64 6.9l185.1 100.5c11.4 6.9 27.4-4.6 22.8-18.3l-36.6-148.5c-4.6-22.8 2.3-45.7 22.8-59.4 160.1-116.5 262.9-287.9 262.9-482.1zm-1016.8-82.2c-57.1.0-102.8-45.7-102.8-102.8s45.7-102.8 102.8-102.8 102.8 45.7 102.8 102.8-45.7 102.8-102.8 102.8zm505 0c-57.1.0-102.8-45.7-102.8-102.8s45.7-102.8 102.8-102.8 102.8 45.7 102.8 102.8-48 102.8-102.8 102.8z"/><path d="m941.4 1316.1c0-386.1 365.6-699.2 818-699.2h34.3c-73.2-349.6-443.3-616.9-888.9-616.9-500.4.0-904.8 333.6-904.8 747.2.0 228.5 125.7 434.1 322.2 571.2 13.7 9.1 18.3 25.1 16 41.1l-68.5 242.2c-4.6 16 13.7 32 29.7 22.8l267.3-159.9c18.3-11.4 38.8-13.7 59.4-6.9 89.1 22.8 182.8 36.6 278.8 36.6 20.6.0 41.1.0 64-2.3-18.4-57.1-27.5-116.5-27.5-175.9zm267.3-920.8c66.3.0 121.1 54.8 121.1 121.1s-54.8 121.1-121.1 121.1-121.1-54.8-121.1-121.1 54.9-121.1 121.1-121.1zM600.9 637.5c-66.3.0-121.1-54.8-121.1-121.1s54.8-121.1 121.1-121.1S722 450.1 722 516.4s-52.5 121.1-121.1 121.1z"/></svg>
-<span style=padding-left:5px;padding-top:5px>微信号: holdonwwy</span>
-</p>
-<ul>
-<li>
-<a href=/posts/>
-文章
-</a>
-</li>
-</ul>
-<ul>
-<li>
-<span>我的项目</span>
-<ul>
-<li>
-<a href=/docs/mywork/gcopy/>GCopy</a>
-</li>
-<li>
-<a href=/docs/mywork/oauth2nsso/>OAuth2&SSO</a>
-</li>
-<li>
-<a href=/docs/mywork/kubefinder/>KubeFinder</a>
-</li>
-</ul>
-</li>
-<li>
-<a href=/docs/about/>关于我</a>
-<ul>
-</ul>
-</li>
-</ul>
-<ul>
-<li>
-<a href=https://www.cncf.io/ target=_blank rel=noopener>
-CNCF
-</a>
-</li>
-<li>
-<a href=https://ebpf.io/ target=_blank rel=noopener>
-eBPF
-</a>
-</li>
-</ul>
-<div class=book-menu-after>
-<a href=https://www.rutron.net/ target=_blank>@如创科技</a><br>提供云计算支持</p>
-</div>
-</nav>
-<script>(function(){var a=document.querySelector("aside .book-menu-content");addEventListener("beforeunload",function(b){localStorage.setItem("menu.scrollTop",a.scrollTop)}),a.scrollTop=localStorage.getItem("menu.scrollTop")})()</script>
-</div>
-</aside>
-<div class=book-page>
-<header class=book-header>
-<div class="flex align-center justify-between">
-<label for=menu-control>
-<img src=/svg/menu.svg class=book-icon alt=Menu>
-</label>
-<strong>kubernetes 中的 pod 究竟是什么</strong>
-<label for=toc-control>
-<img src=/svg/toc.svg class=book-icon alt="Table of Contents">
-</label>
-</div>
-<aside class="hidden clearfix">
-<nav id=TableOfContents>
-<ul>
-<li><a href=#前言>前言</a></li>
-<li><a href=#容器真的存在吗>容器真的存在吗?</a></li>
-<li><a href=#组合容器>组合容器</a></li>
-<li><a href=#某种意义上-pod-就是一组容器>某种意义上, pod 就是一组容器</a></li>
-<li><a href=#把容器当作接口>把容器当作接口</a></li>
-<li><a href=#参考>参考</a></li>
-</ul>
-</nav>
-</aside>
-</header>
-<article class=markdown>
-<h1>
-<a href=/posts/2202/what-are-kubernetes-pods-anyway/>kubernetes 中的 pod 究竟是什么</a>
-</h1>
-<h5>2022-2-8</h5>
-<div>
-<a href=/categories/technology/>technology</a>
-</div>
-<div>
-<a href=/tags/pod/>pod</a>,
-<a href=/tags/kubernetes/>kubernetes</a>
-</div>
-<h2 id=前言>
-前言
-<a class=anchor href=#%e5%89%8d%e8%a8%80>#</a>
-</h2>
-<p>kubernetes 中 pod 的设计是一个伟大的发明, 今天我很有必要去聊一下 pod 和 container, 探究一下它们究竟是什么? kubernetes 官方文档中关于
-<a href=https://kubernetes.io/zh/docs/concepts/workloads/pods/#pod-storage>pod 概念介绍</a>提供了一个完整的解释, 但写的不够详细, 表达过于专业, 但还是很推荐大家阅读一下. 当然这篇文档应该更接地气.</p>
-<h2 id=容器真的存在吗>
-容器真的存在吗?
-<a class=anchor href=#%e5%ae%b9%e5%99%a8%e7%9c%9f%e7%9a%84%e5%ad%98%e5%9c%a8%e5%90%97>#</a>
-</h2>
-<p>linux 中是没有容器这个概念的, 容器就是 linux 中的普通进程, 它使用了 linux 内核提供的两个重要的特性: namespace & cgroups.</p>
-<p>namespace 提供了一种隔离的特性, 让它之外的内容隐藏, 给它下面的进程一个不被干扰的运行环境(其实不完全,下面说) .</p>
-<p>namespace 包含:</p>
-<ul>
-<li>hostname</li>
-<li>Process IDs</li>
-<li>File System</li>
-<li>Network Interface</li>
-<li>Inter-Process Communication(IPC)</li>
-</ul>
-<p>接上面, 其实 namespace 内部的进程并不是完全不和外面的进程产生影响的. 进程可以不受限制的使用物理机上的所有资源, 这样就会导致其他进程无资源可用. 所以, 为了限制进程资源使用, linux 提供了另一种特性 cgroups. 进程可以像在 namespace 中运行, 但是 cgroups 限制了进程的可以使用的资源. 这些资源包括:</p>
-<ul>
-<li>CPU</li>
-<li>RAM</li>
-<li>block I/O</li>
-<li>network I/O</li>
-<li>etc.</li>
-</ul>
-<p>CPU 通常按照毫核来限制(单位:m), 1000m=1C; 内存按照RAM的字节数来限制. 进程可以在 cgroups 设置的资源限制范围内运行, 不允许超限使用, 比如, 超过内存限制就会报 OOM(out of memory) 的错误.</p>
-<p>需要特别说明的是, 上面提到的 namespace & cgroup 都是 Linux 独立的特性, 你可以使用上面提到的 namespace 中的一个或者多个. namespace & cgroup 作用到一组或者一个进程上. 你可以把多个进程放在一个 namespace 中, 这样它们就可以彼此交互, 或者 把他们放在一个 cgroups 中, 这样他们就可以共享一个CPU & Mem 资源限制.</p>
-<h2 id=组合容器>
-组合容器
-<a class=anchor href=#%e7%bb%84%e5%90%88%e5%ae%b9%e5%99%a8>#</a>
-</h2>
-<p>我们都用过 docker, 当我们启动一个容器的时候, docker 会帮我们给每一个容器创建它们自己的 namespace & cgroups. 这应该就是我们理解的容器.</p>
-<p>
-<img src=/posts/2202/what-are-kubernetes-pods-anyway.assets/image-20210809102430362.png alt=image-20210809102424781></p>
-<p>如图, 容器本身还是比较独立的, 他们可能会有映射到主机的端口和卷, 这样就可以和外面通信. 但是我们也可以通过一些命令将多个容器组合到一组namespace中, 下面我们举个例子说明:</p>
-<p>首先, 创建一个 nginx 容器:</p>
-<div class=highlight><pre tabindex=0 style=background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-sh data-lang=sh><span style=color:#998;font-style:italic># cat &lt;&lt;EOF &gt;&gt; nginx.conf</span>
-&gt; error_log stderr;
-&gt; events <span style=color:#000;font-weight:700>{</span> worker_connections  1024; <span style=color:#000;font-weight:700>}</span>
-&gt; http <span style=color:#000;font-weight:700>{</span>
-&gt;     access_log /dev/stdout combined;
-&gt;     server <span style=color:#000;font-weight:700>{</span>
-&gt;         listen <span style=color:#099>80</span> default_server;
-&gt;         server_name example.com www.example.com;
-&gt;         location / <span style=color:#000;font-weight:700>{</span>
-&gt;             proxy_pass http://127.0.0.1:2368;
-&gt;         <span style=color:#000;font-weight:700>}</span>
-&gt;     <span style=color:#000;font-weight:700>}</span>
-&gt; <span style=color:#000;font-weight:700>}</span>
-&gt; EOF
-<span style=color:#998;font-style:italic># docker run -d --name nginx -v `pwd`/nginx.conf:/etc/nginx/nginx.conf -p 8080:80 --ipc=shareable nginx </span>
-</code></pre></div><p>接着, 我们再启动一个 ghost 容器, ghost 是一个开源的博客系统, 同时我们添加几个额外的命令到 nginx 容器上.</p>
-<div class=highlight><pre tabindex=0 style=background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-fallback data-lang=fallback># docker run -d --name ghost --net=container:nginx --ipc=container:nginx --pid=container:nginx ghost
-</code></pre></div><p>好了, 现在 nginx 容器可以通过 localhost 将请求代理到 ghost 容器, 访问 <code>http://localhost:8080</code>试试, 你可以通过 nginx 反向代理看到一个 ghost 博客. 上面的命令就把一组容器组合到里同一组 namespace 中, 容器彼此之间可以互相发现/通信.</p>
-<p>就像这样:</p>
-<p>
-<img src=/posts/2202/what-are-kubernetes-pods-anyway.assets/image-20210809134007587.png alt=image-20210809134007587></p>
-<h2 id=某种意义上-pod-就是一组容器>
-某种意义上, pod 就是一组容器
-<a class=anchor href=#%e6%9f%90%e7%a7%8d%e6%84%8f%e4%b9%89%e4%b8%8a-pod-%e5%b0%b1%e6%98%af%e4%b8%80%e7%bb%84%e5%ae%b9%e5%99%a8>#</a>
-</h2>
-<p>现在我们已经知道, 我们可以把一组进程组合到一个 namespace & cgroups 中, 这就是 kubernetes 中的 pod. pod 允许你定义你要运行的容器, 然后 kubernetes 会帮正确的配置 namespace & cgroups. 它稍微复杂的一点是, 网络这块它没用 docker network, 而是用到了 CNI(通用网络接口), 但原理都差不多.</p>
-<p>
-<img src=/posts/2202/what-are-kubernetes-pods-anyway.assets/image-20210809135653975.png alt=image-20210809135653975></p>
-<p>按照上述方式创建的 pod, 更像是运行在同一台机器上, 他们之间可以通过 localhost 通信, 可以共享存储卷. 甚至他们可以使用 IPC 或者互相发送 HUP / TERM 这类信号.</p>
-<p>我们再举个例子, 如下图, 我们运行一个 nginx 反向代理 app, 再运行一个 confd, 当 app 实例增加或减少的时候去动态配置 <code>nginx.conf</code> 并重启 nginx, etcd 中存储了 app 的 ip 地址. 当 ip 列表发生变化, confd 会收到 etcd 发的通知, 并更新 <code>nginx.conf</code> 并给 nginx 发送一个 HUP 信号, nginx 收到 HUP 信号会重启.</p>
-<p>
-<img src=/posts/2202/what-are-kubernetes-pods-anyway.assets/image-20210809141738720.png alt=image-20210809141738720></p>
-<p>如果用 docker, 你大概会把 nginx 和 confd 放在一个容器中. 由于 docker 只有一个 entrypoint, 所以你要启动一个类似 supervisord 一样的进程管理器 来让 nginx 和 confd 都运行起来. 你每启动一个 nginx 副本就要启动一个 supervisord, 这不好吧. 更重要的是, docker 只知道 supervisord 的状态, 因为它只有一个 entrypoint. 它看不到里面的所有进程, 这就意味着, 你用 docker 提供的工具获取不到他们的信息. 一旦 nginx <code>Crash-Restart Loop</code>, docker 一点办法没有.</p>
-<p>
-<img src=/posts/2202/what-are-kubernetes-pods-anyway.assets/image-20210809142718304.png alt=image-20210809142718304></p>
-<p>通过 pod , kubernetes 能管理每一个进程, 看到他们的状态, 它可以通过 api 将进程状态信息暴露给用户, 或者提供进程崩溃时重启/记录日志等服务.</p>
-<p>
-<img src=/posts/2202/what-are-kubernetes-pods-anyway.assets/image-20210809143225671.png alt=image-20210809143225671></p>
-<h2 id=把容器当作接口>
-把容器当作接口
-<a class=anchor href=#%e6%8a%8a%e5%ae%b9%e5%99%a8%e5%bd%93%e4%bd%9c%e6%8e%a5%e5%8f%a3>#</a>
-</h2>
-<p>使用 pod 这种组织容器的方式, 可以把容器当作提供各种功能的 &ldquo;接口&rdquo;. 它不同于传统意义上的 web 接口. 更像是可以被容器所使用的某种抽象意义的接口.</p>
-<p>我们拿上面 nginx+confd 的例子来说, confd 不需要知道任何 nginx 进程的东西, 它就只需要去 watch etcd 然后给 nginx 进程发送 HUP 信号或者执行个命令. 而且你可以把 nginx 替换成其他任何类型的应用, 以这样的模式来使用 confd 的这种能力. 这种模式下, confd 通常被称作 <strong>&ldquo;sidecar container&rdquo;</strong> 边车容器, 下面这图就很形象.</p>
-<p>
-<img src=/posts/2202/what-are-kubernetes-pods-anyway.assets/image-20210809150256978.png alt=image-20210809150256978></p>
-<p>像 istio 这样的服务网格项目, 也是, 给应用程序容器放置一个边车容器来提供服务路由, 遥测, 网络策略等功能, 但是对应用程序并没有做任何侵略性更改. 你也可以使用多个边车容器来组织 pod, 比如在一个 pod 中同时放置 confd & istio 边车容器. 用这样的方式, 可以构建更加复杂可靠的系统, 同时还能保持每个应用的独立性和简单性.</p>
-<h2 id=参考>
-参考
-<a class=anchor href=#%e5%8f%82%e8%80%83>#</a>
-</h2>
-<p>
-<a href=https://www.ianlewis.org/en/what-are-kubernetes-pods-anyway>What are Kubernetes Pods Anyway?</a></p>
-<p>
-<a href=https://jvns.ca/blog/2016/10/10/what-even-is-a-container/>What even is a container: namespaces and cgroups</a></p>
-<p>video:
-<a href="https://www.youtube.com/watch?v=sK5i-N34im8">Cgroups, namespaces, and beyond: what are containers made from?</a></p>
-</article>
-<footer class=book-footer>
-<div class="flex flex-wrap justify-between">
-</div>
-<script>(function(){function a(c){const a=window.getSelection(),b=document.createRange();b.selectNodeContents(c),a.removeAllRanges(),a.addRange(b)}document.querySelectorAll("pre code").forEach(b=>{b.addEventListener("click",function(c){if(window.getSelection().toString())return;a(b.parentElement),navigator.clipboard&&navigator.clipboard.writeText(b.parentElement.textContent)})})})()</script>
-</footer>
-<div class=book-comments><link rel=stylesheet href=https://unpkg.com/gitalk/dist/gitalk.css>
-<script src=https://unpkg.com/gitalk/dist/gitalk.min.js></script>
-<div id=gitalk-container></div>
-<script type=text/javascript>const gitalk=new Gitalk({clientID:'53c7373e7b1554a4abc3',clientSecret:'7c9dcef80ea6bde5d8695d1ab94bcef87063fb3b',repo:'llaoj.github.io',owner:'llaoj',admin:['llaoj'],id:location.pathname,distractionFreeMode:!1});gitalk.render('gitalk-container')</script></div>
-<label for=menu-control class="hidden book-menu-overlay"></label>
-</div>
-<aside class=book-toc>
-<div class=book-toc-content>
-<nav id=TableOfContents>
-<ul>
-<li><a href=#前言>前言</a></li>
-<li><a href=#容器真的存在吗>容器真的存在吗?</a></li>
-<li><a href=#组合容器>组合容器</a></li>
-<li><a href=#某种意义上-pod-就是一组容器>某种意义上, pod 就是一组容器</a></li>
-<li><a href=#把容器当作接口>把容器当作接口</a></li>
-<li><a href=#参考>参考</a></li>
-</ul>
-</nav>
-</div>
-</aside>
-</main>
-</body>
-</html>
+<!doctype html><html lang=zh dir=ltr><head><meta charset=UTF-8><meta name=viewport content="width=device-width,initial-scale=1"><meta name=description content="kubernetes 中 pod 的设计是一个伟大的发明, 今天我很有必要去聊一下 pod 和 container, 探究一下它们究竟是什么? kubernetes 官方文档中关于 pod 概念介绍提供了一个完整的解释, 但写的不够详细, 表达过于专业, 但还是很推荐大家阅读一下. 当然这篇文档应该更接地气."><meta name=theme-color media="(prefers-color-scheme: light)" content="#ffffff"><meta name=theme-color media="(prefers-color-scheme: dark)" content="#343a40"><meta name=color-scheme content="light dark"><meta property="og:url" content="https://blog.llaoj.cn/posts/2202/what-are-kubernetes-pods-anyway/"><meta property="og:site_name" content="老J的博客"><meta property="og:title" content="kubernetes 中的 pod 究竟是什么"><meta property="og:description" content="kubernetes 中 pod 的设计是一个伟大的发明, 今天我很有必要去聊一下 pod 和 container, 探究一下它们究竟是什么? kubernetes 官方文档中关于 pod 概念介绍提供了一个完整的解释, 但写的不够详细, 表达过于专业, 但还是很推荐大家阅读一下. 当然这篇文档应该更接地气."><meta property="og:locale" content="zh"><meta property="og:type" content="article"><meta property="article:section" content="posts"><meta property="article:published_time" content="2022-02-08T00:00:00+00:00"><meta property="article:modified_time" content="2022-02-08T00:00:00+00:00"><meta property="article:tag" content="Pod"><meta property="article:tag" content="Kubernetes"><title>kubernetes 中的 pod 究竟是什么 | 老J的博客</title>
+<link rel=icon href=/favicon.png><link rel=manifest href=/manifest.json><link rel=canonical href=https://blog.llaoj.cn/posts/2202/what-are-kubernetes-pods-anyway/><link rel=stylesheet href=/book.min.64c4ccf49c05f180d3f1d466fb7172e266ad24b2ae0b146863efe5ca5920ce57.css integrity="sha256-ZMTM9JwF8YDT8dRm+3Fy4matJLKuCxRoY+/lylkgzlc=" crossorigin=anonymous><script defer src=/fuse.min.js></script><script defer src=/zh.search.min.9a0c2fbbd9f49c8679c900e51efa0b3d4cd637566f42b994ae894aeb8b4c1652.js integrity="sha256-mgwvu9n0nIZ5yQDlHvoLPUzWN1ZvQrmUrolK64tMFlI=" crossorigin=anonymous></script><script defer src=/sw.min.6f6f90fcb8eb1c49ec389838e6b801d0de19430b8e516902f8d75c3c8bd98739.js integrity="sha256-b2+Q/LjrHEnsOJg45rgB0N4ZQwuOUWkC+NdcPIvZhzk=" crossorigin=anonymous></script></head><body dir=ltr><input type=checkbox class="hidden toggle" id=menu-control>
+<input type=checkbox class="hidden toggle" id=toc-control><main class="container flex"><aside class=book-menu><div class=book-menu-content><nav><h2 class=book-brand><a class="flex align-center" href=/><img src=/j.png alt=Logo class=book-icon><span>老J的博客</span></a></h2><div class="book-search hidden"><input type=text id=book-search-input placeholder=搜索 aria-label=搜索 maxlength=64 data-hotkeys=s/><div class="book-search-spinner hidden"></div><ul id=book-search-results></ul></div><script>document.querySelector(".book-search").classList.remove("hidden")</script><img src=/images/avatar.jpg width=150 style=border-radius:8px><p style=display:flex;align-items:center;margin-bottom:2px><svg width="24" height="24" viewBox="0 0 30 30"><path d="M15 3C8.373 3 3 8.373 3 15c0 5.623 3.872 10.328 9.092 11.63C12.036 26.468 12 26.28 12 26.047v-2.051c-.487.0-1.303.0-1.508.0-.821.0-1.551-.353-1.905-1.009-.393-.729-.461-1.844-1.435-2.526-.289-.227-.069-.486.264-.451.615.174 1.125.596 1.605 1.222.478.627.703.769 1.596.769.433.0 1.081-.025 1.691-.121.328-.833.895-1.6 1.588-1.962-3.996-.411-5.903-2.399-5.903-5.098.0-1.162.495-2.286 1.336-3.233C9.053 10.647 8.706 8.73 9.435 8c1.798.0 2.885 1.166 3.146 1.481C13.477 9.174 14.461 9 15.495 9c1.036.0 2.024.174 2.922.483C18.675 9.17 19.763 8 21.565 8c.732.731.381 2.656.102 3.594.836.945 1.328 2.066 1.328 3.226.0 2.697-1.904 4.684-5.894 5.097C18.199 20.49 19 22.1 19 23.313v2.734c0 .104-.023.179-.035.268C23.641 24.676 27 20.236 27 15 27 8.373 21.627 3 15 3z"/></svg>
+<a href=https://github.com/llaoj target=_blank style=padding-left:5px;padding-top:5px>github.com/llaoj</a></p><p style=display:flex;align-items:center;margin-top:2px><svg width="24" height="24" style="padding-left:4px" enable-background="new 0 0 2499.7 2024.2" viewBox="0 0 2499.7 2024.2"><path d="m2499.7 1313.8c0-347.3-335.9-630.6-749.5-630.6S1003 966.5 1003 1313.8s335.9 630.6 749.5 630.6c80 0 155.4-9.1 226.2-29.7 20.6-4.6 43.4-2.3 64 6.9l185.1 100.5c11.4 6.9 27.4-4.6 22.8-18.3l-36.6-148.5c-4.6-22.8 2.3-45.7 22.8-59.4 160.1-116.5 262.9-287.9 262.9-482.1zm-1016.8-82.2c-57.1.0-102.8-45.7-102.8-102.8s45.7-102.8 102.8-102.8 102.8 45.7 102.8 102.8-45.7 102.8-102.8 102.8zm505 0c-57.1.0-102.8-45.7-102.8-102.8s45.7-102.8 102.8-102.8 102.8 45.7 102.8 102.8-48 102.8-102.8 102.8z"/><path d="m941.4 1316.1c0-386.1 365.6-699.2 818-699.2h34.3c-73.2-349.6-443.3-616.9-888.9-616.9-500.4.0-904.8 333.6-904.8 747.2.0 228.5 125.7 434.1 322.2 571.2 13.7 9.1 18.3 25.1 16 41.1l-68.5 242.2c-4.6 16 13.7 32 29.7 22.8l267.3-159.9c18.3-11.4 38.8-13.7 59.4-6.9 89.1 22.8 182.8 36.6 278.8 36.6 20.6.0 41.1.0 64-2.3-18.4-57.1-27.5-116.5-27.5-175.9zm267.3-920.8c66.3.0 121.1 54.8 121.1 121.1s-54.8 121.1-121.1 121.1-121.1-54.8-121.1-121.1 54.9-121.1 121.1-121.1zM600.9 637.5c-66.3.0-121.1-54.8-121.1-121.1s54.8-121.1 121.1-121.1S722 450.1 722 516.4s-52.5 121.1-121.1 121.1z"/></svg>
+<span style=padding-left:5px;padding-top:5px>微信号: holdonwwy</span></p><ul><li><a href=/posts/>文章</a></li></ul><ul><li><span>我的项目</span><ul><li><a href=/docs/mywork/gcopy/>GCopy</a></li><li><a href=/docs/mywork/oauth2nsso/>OAuth2&amp;SSO</a></li><li><a href=/docs/mywork/kubefinder/>KubeFinder</a></li></ul></li><li><a href=/docs/about/>关于我</a><ul></ul></li></ul><ul><li><a href=https://www.cncf.io/ target=_blank rel=noopener>CNCF</a></li><li><a href=https://ebpf.io/ target=_blank rel=noopener>eBPF</a></li></ul><div class=book-menu-after><a href=https://www.rutron.net/ target=_blank>@如创科技</a><br>提供云计算支持</p></div></nav><script>(function(){var e=document.querySelector("aside .book-menu-content");addEventListener("beforeunload",function(){localStorage.setItem("menu.scrollTop",e.scrollTop)}),e.scrollTop=localStorage.getItem("menu.scrollTop")})()</script></div></aside><div class=book-page><header class=book-header><div class="flex align-center justify-between"><label for=menu-control><img src=/svg/menu.svg class=book-icon alt=Menu></label><h3>kubernetes 中的 pod 究竟是什么</h3><label for=toc-control><img src=/svg/toc.svg class=book-icon alt="Table of Contents"></label></div><aside class="hidden clearfix"><nav id=TableOfContents><ul><li><a href=#前言>前言</a></li><li><a href=#容器真的存在吗>容器真的存在吗?</a></li><li><a href=#组合容器>组合容器</a></li><li><a href=#某种意义上-pod-就是一组容器>某种意义上, pod 就是一组容器</a></li><li><a href=#把容器当作接口>把容器当作接口</a></li><li><a href=#参考>参考</a></li></ul></nav></aside></header><article class="markdown book-post"><h2>kubernetes 中的 pod 究竟是什么</h2><div class="flex align-center text-small book-post-date"><img src=/svg/calendar.svg class=book-icon alt>
+<span>2022-2-8</span></div><div class=text-small><a href=/categories/technology/>Technology</a></div><div class=text-small><a href=/tags/pod/>Pod</a>,
+<a href=/tags/kubernetes/>Kubernetes</a></div><div class=book-post-content><h2 id=前言>前言
+<a class=anchor href=#%e5%89%8d%e8%a8%80>#</a></h2><p>kubernetes 中 pod 的设计是一个伟大的发明, 今天我很有必要去聊一下 pod 和 container, 探究一下它们究竟是什么? kubernetes 官方文档中关于
+<a href=https://kubernetes.io/zh/docs/concepts/workloads/pods/#pod-storage>pod 概念介绍</a>提供了一个完整的解释, 但写的不够详细, 表达过于专业, 但还是很推荐大家阅读一下. 当然这篇文档应该更接地气.</p><h2 id=容器真的存在吗>容器真的存在吗?
+<a class=anchor href=#%e5%ae%b9%e5%99%a8%e7%9c%9f%e7%9a%84%e5%ad%98%e5%9c%a8%e5%90%97>#</a></h2><p>linux 中是没有容器这个概念的, 容器就是 linux 中的普通进程, 它使用了 linux 内核提供的两个重要的特性: namespace & cgroups.</p><p>namespace 提供了一种隔离的特性, 让它之外的内容隐藏, 给它下面的进程一个不被干扰的运行环境(其实不完全,下面说) .</p><p>namespace 包含:</p><ul><li>hostname</li><li>Process IDs</li><li>File System</li><li>Network Interface</li><li>Inter-Process Communication(IPC)</li></ul><p>接上面, 其实 namespace 内部的进程并不是完全不和外面的进程产生影响的. 进程可以不受限制的使用物理机上的所有资源, 这样就会导致其他进程无资源可用. 所以, 为了限制进程资源使用, linux 提供了另一种特性 cgroups. 进程可以像在 namespace 中运行, 但是 cgroups 限制了进程的可以使用的资源. 这些资源包括:</p><ul><li>CPU</li><li>RAM</li><li>block I/O</li><li>network I/O</li><li>etc.</li></ul><p>CPU 通常按照毫核来限制(单位:m), 1000m=1C; 内存按照RAM的字节数来限制. 进程可以在 cgroups 设置的资源限制范围内运行, 不允许超限使用, 比如, 超过内存限制就会报 OOM(out of memory) 的错误.</p><p>需要特别说明的是, 上面提到的 namespace & cgroup 都是 Linux 独立的特性, 你可以使用上面提到的 namespace 中的一个或者多个. namespace & cgroup 作用到一组或者一个进程上. 你可以把多个进程放在一个 namespace 中, 这样它们就可以彼此交互, 或者 把他们放在一个 cgroups 中, 这样他们就可以共享一个CPU & Mem 资源限制.</p><h2 id=组合容器>组合容器
+<a class=anchor href=#%e7%bb%84%e5%90%88%e5%ae%b9%e5%99%a8>#</a></h2><p>我们都用过 docker, 当我们启动一个容器的时候, docker 会帮我们给每一个容器创建它们自己的 namespace & cgroups. 这应该就是我们理解的容器.</p><p><img src=/posts/2202/what-are-kubernetes-pods-anyway.assets/image-20210809102430362.png alt=image-20210809102424781></p><p>如图, 容器本身还是比较独立的, 他们可能会有映射到主机的端口和卷, 这样就可以和外面通信. 但是我们也可以通过一些命令将多个容器组合到一组namespace中, 下面我们举个例子说明:</p><p>首先, 创建一个 nginx 容器:</p><div class=highlight><pre tabindex=0 style=background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-sh data-lang=sh><span style=display:flex><span><span style=color:#998;font-style:italic># cat &lt;&lt;EOF &gt;&gt; nginx.conf</span>
+</span></span><span style=display:flex><span>&gt; error_log stderr;
+</span></span><span style=display:flex><span>&gt; events <span style=color:#000;font-weight:700>{</span> worker_connections  1024; <span style=color:#000;font-weight:700>}</span>
+</span></span><span style=display:flex><span>&gt; http <span style=color:#000;font-weight:700>{</span>
+</span></span><span style=display:flex><span>&gt;     access_log /dev/stdout combined;
+</span></span><span style=display:flex><span>&gt;     server <span style=color:#000;font-weight:700>{</span>
+</span></span><span style=display:flex><span>&gt;         listen <span style=color:#099>80</span> default_server;
+</span></span><span style=display:flex><span>&gt;         server_name example.com www.example.com;
+</span></span><span style=display:flex><span>&gt;         location / <span style=color:#000;font-weight:700>{</span>
+</span></span><span style=display:flex><span>&gt;             proxy_pass http://127.0.0.1:2368;
+</span></span><span style=display:flex><span>&gt;         <span style=color:#000;font-weight:700>}</span>
+</span></span><span style=display:flex><span>&gt;     <span style=color:#000;font-weight:700>}</span>
+</span></span><span style=display:flex><span>&gt; <span style=color:#000;font-weight:700>}</span>
+</span></span><span style=display:flex><span>&gt; EOF
+</span></span><span style=display:flex><span><span style=color:#998;font-style:italic># docker run -d --name nginx -v `pwd`/nginx.conf:/etc/nginx/nginx.conf -p 8080:80 --ipc=shareable nginx </span>
+</span></span></code></pre></div><p>接着, 我们再启动一个 ghost 容器, ghost 是一个开源的博客系统, 同时我们添加几个额外的命令到 nginx 容器上.</p><div class=highlight><pre tabindex=0 style=background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-fallback data-lang=fallback><span style=display:flex><span># docker run -d --name ghost --net=container:nginx --ipc=container:nginx --pid=container:nginx ghost
+</span></span></code></pre></div><p>好了, 现在 nginx 容器可以通过 localhost 将请求代理到 ghost 容器, 访问 <code>http://localhost:8080</code>试试, 你可以通过 nginx 反向代理看到一个 ghost 博客. 上面的命令就把一组容器组合到里同一组 namespace 中, 容器彼此之间可以互相发现/通信.</p><p>就像这样:</p><p><img src=/posts/2202/what-are-kubernetes-pods-anyway.assets/image-20210809134007587.png alt=image-20210809134007587></p><h2 id=某种意义上-pod-就是一组容器>某种意义上, pod 就是一组容器
+<a class=anchor href=#%e6%9f%90%e7%a7%8d%e6%84%8f%e4%b9%89%e4%b8%8a-pod-%e5%b0%b1%e6%98%af%e4%b8%80%e7%bb%84%e5%ae%b9%e5%99%a8>#</a></h2><p>现在我们已经知道, 我们可以把一组进程组合到一个 namespace & cgroups 中, 这就是 kubernetes 中的 pod. pod 允许你定义你要运行的容器, 然后 kubernetes 会帮正确的配置 namespace & cgroups. 它稍微复杂的一点是, 网络这块它没用 docker network, 而是用到了 CNI(通用网络接口), 但原理都差不多.</p><p><img src=/posts/2202/what-are-kubernetes-pods-anyway.assets/image-20210809135653975.png alt=image-20210809135653975></p><p>按照上述方式创建的 pod, 更像是运行在同一台机器上, 他们之间可以通过 localhost 通信, 可以共享存储卷. 甚至他们可以使用 IPC 或者互相发送 HUP / TERM 这类信号.</p><p>我们再举个例子, 如下图, 我们运行一个 nginx 反向代理 app, 再运行一个 confd, 当 app 实例增加或减少的时候去动态配置 <code>nginx.conf</code> 并重启 nginx, etcd 中存储了 app 的 ip 地址. 当 ip 列表发生变化, confd 会收到 etcd 发的通知, 并更新 <code>nginx.conf</code> 并给 nginx 发送一个 HUP 信号, nginx 收到 HUP 信号会重启.</p><p><img src=/posts/2202/what-are-kubernetes-pods-anyway.assets/image-20210809141738720.png alt=image-20210809141738720></p><p>如果用 docker, 你大概会把 nginx 和 confd 放在一个容器中. 由于 docker 只有一个 entrypoint, 所以你要启动一个类似 supervisord 一样的进程管理器 来让 nginx 和 confd 都运行起来. 你每启动一个 nginx 副本就要启动一个 supervisord, 这不好吧. 更重要的是, docker 只知道 supervisord 的状态, 因为它只有一个 entrypoint. 它看不到里面的所有进程, 这就意味着, 你用 docker 提供的工具获取不到他们的信息. 一旦 nginx <code>Crash-Restart Loop</code>, docker 一点办法没有.</p><p><img src=/posts/2202/what-are-kubernetes-pods-anyway.assets/image-20210809142718304.png alt=image-20210809142718304></p><p>通过 pod , kubernetes 能管理每一个进程, 看到他们的状态, 它可以通过 api 将进程状态信息暴露给用户, 或者提供进程崩溃时重启/记录日志等服务.</p><p><img src=/posts/2202/what-are-kubernetes-pods-anyway.assets/image-20210809143225671.png alt=image-20210809143225671></p><h2 id=把容器当作接口>把容器当作接口
+<a class=anchor href=#%e6%8a%8a%e5%ae%b9%e5%99%a8%e5%bd%93%e4%bd%9c%e6%8e%a5%e5%8f%a3>#</a></h2><p>使用 pod 这种组织容器的方式, 可以把容器当作提供各种功能的 &ldquo;接口&rdquo;. 它不同于传统意义上的 web 接口. 更像是可以被容器所使用的某种抽象意义的接口.</p><p>我们拿上面 nginx+confd 的例子来说, confd 不需要知道任何 nginx 进程的东西, 它就只需要去 watch etcd 然后给 nginx 进程发送 HUP 信号或者执行个命令. 而且你可以把 nginx 替换成其他任何类型的应用, 以这样的模式来使用 confd 的这种能力. 这种模式下, confd 通常被称作 <strong>&ldquo;sidecar container&rdquo;</strong> 边车容器, 下面这图就很形象.</p><p><img src=/posts/2202/what-are-kubernetes-pods-anyway.assets/image-20210809150256978.png alt=image-20210809150256978></p><p>像 istio 这样的服务网格项目, 也是, 给应用程序容器放置一个边车容器来提供服务路由, 遥测, 网络策略等功能, 但是对应用程序并没有做任何侵略性更改. 你也可以使用多个边车容器来组织 pod, 比如在一个 pod 中同时放置 confd & istio 边车容器. 用这样的方式, 可以构建更加复杂可靠的系统, 同时还能保持每个应用的独立性和简单性.</p><h2 id=参考>参考
+<a class=anchor href=#%e5%8f%82%e8%80%83>#</a></h2><p><a href=https://www.ianlewis.org/en/what-are-kubernetes-pods-anyway>What are Kubernetes Pods Anyway?</a></p><p><a href=https://jvns.ca/blog/2016/10/10/what-even-is-a-container/>What even is a container: namespaces and cgroups</a></p><p>video:
+<a href="https://www.youtube.com/watch?v=sK5i-N34im8">Cgroups, namespaces, and beyond: what are containers made from?</a></p></div></article><footer class=book-footer><div class="flex flex-wrap justify-between"></div><script>(function(){function e(e){const t=window.getSelection(),n=document.createRange();n.selectNodeContents(e),t.removeAllRanges(),t.addRange(n)}document.querySelectorAll("pre code").forEach(t=>{t.addEventListener("click",function(){if(window.getSelection().toString())return;e(t.parentElement),navigator.clipboard&&navigator.clipboard.writeText(t.parentElement.textContent)})})})()</script></footer><div class=book-comments><link rel=stylesheet href=https://unpkg.com/gitalk/dist/gitalk.css><script src=https://unpkg.com/gitalk/dist/gitalk.min.js></script><div id=gitalk-container></div><script type=text/javascript>const gitalk=new Gitalk({clientID:"53c7373e7b1554a4abc3",clientSecret:"7c9dcef80ea6bde5d8695d1ab94bcef87063fb3b",repo:"llaoj.github.io",owner:"llaoj",admin:["llaoj"],id:location.pathname,distractionFreeMode:!1});gitalk.render("gitalk-container")</script></div><label for=menu-control class="hidden book-menu-overlay"></label></div><aside class=book-toc><div class=book-toc-content><nav id=TableOfContents><ul><li><a href=#前言>前言</a></li><li><a href=#容器真的存在吗>容器真的存在吗?</a></li><li><a href=#组合容器>组合容器</a></li><li><a href=#某种意义上-pod-就是一组容器>某种意义上, pod 就是一组容器</a></li><li><a href=#把容器当作接口>把容器当作接口</a></li><li><a href=#参考>参考</a></li></ul></nav></div></aside></main></body></html>

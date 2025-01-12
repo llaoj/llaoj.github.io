@@ -1,261 +1,118 @@
-<!doctype html><html lang=zh dir=ltr>
-<head>
-<meta charset=utf-8>
-<meta name=viewport content="width=device-width,initial-scale=1">
-<meta name=description content="分析 kubernetes 节点 load 过高的问题，并自研程序找出问题 pod 发出告警">
-<meta name=theme-color content="#FFFFFF">
-<meta name=color-scheme content="light dark"><meta property="og:title" content="分析告警 kubernetes 节点 load 过高问题">
-<meta property="og:description" content="分析 kubernetes 节点 load 过高的问题，并自研程序找出问题 pod 发出告警">
-<meta property="og:type" content="article">
-<meta property="og:url" content="https://blog.llaoj.cn/posts/2204/kubernetes-node-load/"><meta property="article:section" content="posts">
-<meta property="article:published_time" content="2022-04-27T00:00:00+00:00">
-<meta property="article:modified_time" content="2022-04-27T00:00:00+00:00">
-<title>分析告警 kubernetes 节点 load 过高问题 | 老J的博客</title>
-<link rel=manifest href=/manifest.json>
-<link rel=icon href=/favicon.png type=image/x-icon>
-<link rel=stylesheet href=/book.min.18b5d651e266e5e9cfc7455e2e50eb1b74a62aee16cf204b69de1d9e695276f7.css integrity="sha256-GLXWUeJm5enPx0VeLlDrG3SmKu4WzyBLad4dnmlSdvc=" crossorigin=anonymous>
-<script defer src=/flexsearch.min.js></script>
-<script defer src=/zh.search.min.9a77fc07b0d49aefb16db46397c1d91b50a135eb269a629da4f5c9bf709fa745.js integrity="sha256-mnf8B7DUmu+xbbRjl8HZG1ChNesmmmKdpPXJv3Cfp0U=" crossorigin=anonymous></script>
-<script defer src=/sw.min.6f6f90fcb8eb1c49ec389838e6b801d0de19430b8e516902f8d75c3c8bd98739.js integrity="sha256-b2+Q/LjrHEnsOJg45rgB0N4ZQwuOUWkC+NdcPIvZhzk=" crossorigin=anonymous></script>
-</head>
-<body dir=ltr>
-<input type=checkbox class="hidden toggle" id=menu-control>
-<input type=checkbox class="hidden toggle" id=toc-control>
-<main class="container flex">
-<aside class=book-menu>
-<div class=book-menu-content>
-<nav>
-<h2 class=book-brand>
-<a class="flex align-center" href=/><img src=/j.png alt=Logo><span>老J的博客</span>
-</a>
-</h2>
-<div class=book-search>
-<input type=text id=book-search-input placeholder=搜索 aria-label=搜索 maxlength=64 data-hotkeys=s/>
-<div class="book-search-spinner hidden"></div>
-<ul id=book-search-results></ul>
-</div>
-<img src=/images/avatar.jpg width=150 style=border-radius:8px>
-<p style=display:flex;align-items:center;margin-bottom:2px><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 30 30"><path d="M15 3C8.373 3 3 8.373 3 15c0 5.623 3.872 10.328 9.092 11.63C12.036 26.468 12 26.28 12 26.047v-2.051c-.487.0-1.303.0-1.508.0-.821.0-1.551-.353-1.905-1.009-.393-.729-.461-1.844-1.435-2.526-.289-.227-.069-.486.264-.451.615.174 1.125.596 1.605 1.222.478.627.703.769 1.596.769.433.0 1.081-.025 1.691-.121.328-.833.895-1.6 1.588-1.962-3.996-.411-5.903-2.399-5.903-5.098.0-1.162.495-2.286 1.336-3.233C9.053 10.647 8.706 8.73 9.435 8c1.798.0 2.885 1.166 3.146 1.481C13.477 9.174 14.461 9 15.495 9c1.036.0 2.024.174 2.922.483C18.675 9.17 19.763 8 21.565 8c.732.731.381 2.656.102 3.594.836.945 1.328 2.066 1.328 3.226.0 2.697-1.904 4.684-5.894 5.097C18.199 20.49 19 22.1 19 23.313v2.734c0 .104-.023.179-.035.268C23.641 24.676 27 20.236 27 15 27 8.373 21.627 3 15 3z"/></svg>
-<a href=https://github.com/llaoj target=_blank style=padding-left:5px;padding-top:5px>github.com/llaoj</a>
-</p>
-<p style=display:flex;align-items:center;margin-top:2px><svg width="24" height="24" style="padding-left:4px" enable-background="new 0 0 2499.7 2024.2" viewBox="0 0 2499.7 2024.2" xmlns="http://www.w3.org/2000/svg"><path d="m2499.7 1313.8c0-347.3-335.9-630.6-749.5-630.6S1003 966.5 1003 1313.8s335.9 630.6 749.5 630.6c80 0 155.4-9.1 226.2-29.7 20.6-4.6 43.4-2.3 64 6.9l185.1 100.5c11.4 6.9 27.4-4.6 22.8-18.3l-36.6-148.5c-4.6-22.8 2.3-45.7 22.8-59.4 160.1-116.5 262.9-287.9 262.9-482.1zm-1016.8-82.2c-57.1.0-102.8-45.7-102.8-102.8s45.7-102.8 102.8-102.8 102.8 45.7 102.8 102.8-45.7 102.8-102.8 102.8zm505 0c-57.1.0-102.8-45.7-102.8-102.8s45.7-102.8 102.8-102.8 102.8 45.7 102.8 102.8-48 102.8-102.8 102.8z"/><path d="m941.4 1316.1c0-386.1 365.6-699.2 818-699.2h34.3c-73.2-349.6-443.3-616.9-888.9-616.9-500.4.0-904.8 333.6-904.8 747.2.0 228.5 125.7 434.1 322.2 571.2 13.7 9.1 18.3 25.1 16 41.1l-68.5 242.2c-4.6 16 13.7 32 29.7 22.8l267.3-159.9c18.3-11.4 38.8-13.7 59.4-6.9 89.1 22.8 182.8 36.6 278.8 36.6 20.6.0 41.1.0 64-2.3-18.4-57.1-27.5-116.5-27.5-175.9zm267.3-920.8c66.3.0 121.1 54.8 121.1 121.1s-54.8 121.1-121.1 121.1-121.1-54.8-121.1-121.1 54.9-121.1 121.1-121.1zM600.9 637.5c-66.3.0-121.1-54.8-121.1-121.1s54.8-121.1 121.1-121.1S722 450.1 722 516.4s-52.5 121.1-121.1 121.1z"/></svg>
-<span style=padding-left:5px;padding-top:5px>微信号: holdonwwy</span>
-</p>
-<ul>
-<li>
-<a href=/posts/>
-文章
-</a>
-</li>
-</ul>
-<ul>
-<li>
-<span>我的项目</span>
-<ul>
-<li>
-<a href=/docs/mywork/gcopy/>GCopy</a>
-</li>
-<li>
-<a href=/docs/mywork/oauth2nsso/>OAuth2&SSO</a>
-</li>
-<li>
-<a href=/docs/mywork/kubefinder/>KubeFinder</a>
-</li>
-</ul>
-</li>
-<li>
-<a href=/docs/about/>关于我</a>
-<ul>
-</ul>
-</li>
-</ul>
-<ul>
-<li>
-<a href=https://www.cncf.io/ target=_blank rel=noopener>
-CNCF
-</a>
-</li>
-<li>
-<a href=https://ebpf.io/ target=_blank rel=noopener>
-eBPF
-</a>
-</li>
-</ul>
-<div class=book-menu-after>
-<a href=https://www.rutron.net/ target=_blank>@如创科技</a><br>提供云计算支持</p>
-</div>
-</nav>
-<script>(function(){var a=document.querySelector("aside .book-menu-content");addEventListener("beforeunload",function(b){localStorage.setItem("menu.scrollTop",a.scrollTop)}),a.scrollTop=localStorage.getItem("menu.scrollTop")})()</script>
-</div>
-</aside>
-<div class=book-page>
-<header class=book-header>
-<div class="flex align-center justify-between">
-<label for=menu-control>
-<img src=/svg/menu.svg class=book-icon alt=Menu>
-</label>
-<strong>分析告警 kubernetes 节点 load 过高问题</strong>
-<label for=toc-control>
-</label>
-</div>
-</header>
-<article class=markdown>
-<h1>
-<a href=/posts/2204/kubernetes-node-load/>分析告警 kubernetes 节点 load 过高问题</a>
-</h1>
-<h5>2022-4-27</h5>
-<div>
-<a href=/categories/technology/>technology</a>
-</div>
-<div>
-<a href=/tags/kubernetes/>kubernetes</a>
-</div>
-<h2 id=负载过高分析>
-负载过高分析
-<a class=anchor href=#%e8%b4%9f%e8%bd%bd%e8%bf%87%e9%ab%98%e5%88%86%e6%9e%90>#</a>
-</h2>
-<p>通过 linux 提供的几个命令可以从不同的纬度分析系统负载。</p>
-<h3 id=vmstat>
-vmstat
-<a class=anchor href=#vmstat>#</a>
-</h3>
-<p>这命令能从一个系统的角度反应出服务器情况，报告虚拟内存统计信息，报告有关进程、内存、分页、块的信息 IO、陷阱、磁盘和 CPU 活动。看个例子：</p>
-<div class=highlight><pre tabindex=0 style=background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-shell data-lang=shell>$ vmstat --wide --unit M <span style=color:#099>5</span>
-procs ----------------memory---------------- ---swap--- -----io---- ---system--- ---------cpu--------
- r  b     swpd      free      buff     cache   si   so    bi    bo     in   cs     us sy  id  wa  st
- <span style=color:#099>1</span>  <span style=color:#099>1</span>        <span style=color:#099>0</span>    <span style=color:#099>127691</span>      <span style=color:#099>1535</span>     <span style=color:#099>73572</span>    <span style=color:#099>0</span>    <span style=color:#099>0</span>     <span style=color:#099>0</span>     <span style=color:#099>3</span>      <span style=color:#099>0</span>    <span style=color:#099>0</span>     <span style=color:#099>2</span>   <span style=color:#099>1</span>  <span style=color:#099>97</span>   <span style=color:#099>0</span>   <span style=color:#099>0</span>
-<span style=color:#099>93</span>  <span style=color:#099>0</span>        <span style=color:#099>0</span>    <span style=color:#099>127674</span>      <span style=color:#099>1535</span>     <span style=color:#099>73573</span>    <span style=color:#099>0</span>    <span style=color:#099>0</span>     <span style=color:#099>0</span>    <span style=color:#099>80</span>   <span style=color:#099>49267</span> <span style=color:#099>67634</span>   <span style=color:#099>5</span>   <span style=color:#099>1</span>  <span style=color:#099>94</span>   <span style=color:#099>1</span>   <span style=color:#099>0</span>
- <span style=color:#099>0</span>  <span style=color:#099>2</span>        <span style=color:#099>0</span>    <span style=color:#099>127679</span>      <span style=color:#099>1535</span>     <span style=color:#099>73573</span>    <span style=color:#099>0</span>    <span style=color:#099>0</span>     <span style=color:#099>0</span>    <span style=color:#099>66</span>   <span style=color:#099>38537</span> <span style=color:#099>56283</span>   <span style=color:#099>3</span>   <span style=color:#099>1</span>  <span style=color:#099>95</span>   <span style=color:#099>1</span>   <span style=color:#099>0</span>
- <span style=color:#099>2</span>  <span style=color:#099>2</span>        <span style=color:#099>0</span>    <span style=color:#099>127738</span>      <span style=color:#099>1535</span>     <span style=color:#099>73574</span>    <span style=color:#099>0</span>    <span style=color:#099>0</span>     <span style=color:#099>6</span>    <span style=color:#099>86</span>   <span style=color:#099>41769</span> <span style=color:#099>61823</span>   <span style=color:#099>5</span>   <span style=color:#099>1</span>  <span style=color:#099>93</span>   <span style=color:#099>2</span>   <span style=color:#099>0</span>
- <span style=color:#099>2</span>  <span style=color:#099>0</span>        <span style=color:#099>0</span>    <span style=color:#099>127729</span>      <span style=color:#099>1535</span>     <span style=color:#099>73574</span>    <span style=color:#099>0</span>    <span style=color:#099>0</span>    <span style=color:#099>18</span>    <span style=color:#099>18</span>   <span style=color:#099>41002</span> <span style=color:#099>59214</span>   <span style=color:#099>4</span>   <span style=color:#099>1</span>  <span style=color:#099>95</span>   <span style=color:#099>0</span>   <span style=color:#099>0</span>
-</code></pre></div><p>命令以及输出解释：</p>
-<div class=highlight><pre tabindex=0 style=background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-fallback data-lang=fallback>vmstat
-- --wide 宽幅展示 比较易读  
-- --unit 输出单位，可以是 1000(k)、1024(K)、1000000(m) 或 1048576(M) 个字节
-
-procs
-- r: 可运行 runnable 进程数量（包括运行中 running 或者等待中 waiting 的进程）  
-- b: 等待 i/o 完成的阻塞 blocked 进程数
-
-memory
-显示单位受 --unit 影响
-- swpd: 交换 swap 内存使用量
-- free: 空闲 idle 内存数
-- buff: 用作缓冲区 buffers 的内存量
-- cache: 用作缓存 cache 的内存量
-
-swap
-显示单位受 --unit 影响
-- si: 每秒从磁盘换入 swapped 的内存量
-- so: 每秒交换 swapped 到磁盘的内存量
-
-io
-- bi: 从块设备接收的块 block (blocks/s)
-- bo: 发送到块设备到块 block (blocks/s)
-
-system
-- in：每秒的中断数，包括时钟 clock
-- cs：每秒上下文 context 切换的次数。
-
-cpu
-以下都是 cpu 总时间的百分比
-- us: 非内核代码运行耗时 (user time &amp; nice time)
-- sy: 内核代码运行耗时 (系统耗时)
-- id: 空闲 idle 时间，从 Linux 2.5.41开始它包含 i/o 等待时间
-- *wa: io 等待时间，从 Linux 2.5.41开始它包含在 idle 中
-- *st: 从虚拟机中窃取时间，未知
-</code></pre></div><p>这个例子中，可见 cpu 空闲 idle 时间占比 90% 以上，说明 i/o 等待时间很高。</p>
-<h3 id=iostat>
-iostat
-<a class=anchor href=#iostat>#</a>
-</h3>
-<p>cpu 统计报告 & 设备/分区 input/output 统计报告。</p>
-<div class=highlight><pre tabindex=0 style=background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-shell data-lang=shell>$ iostat -m <span style=color:#099>2</span> <span style=color:#099>3</span>
-Linux 5.4.108-1.el7.elrepo.x86_64 <span style=color:#000;font-weight:700>(</span>node27<span style=color:#000;font-weight:700>)</span>  04/28/2022   _x86_64_   <span style=color:#000;font-weight:700>(</span><span style=color:#099>80</span> CPU<span style=color:#000;font-weight:700>)</span>
-
-avg-cpu:  %user   %nice %system %iowait  %steal   %idle
-           2.35    0.05    0.64    0.21    0.00   96.75
-
-Device:            tps    MB_read/s    MB_wrtn/s    MB_read    MB_wrtn
-sdb               5.13         0.00         0.19       <span style=color:#099>3477</span>    <span style=color:#099>5627354</span>
-sda               3.10         0.00         0.03       <span style=color:#099>1890</span>     <span style=color:#099>738773</span>
-
-avg-cpu:  %user   %nice %system %iowait  %steal   %idle
-           1.78    0.00    0.57    1.30    0.00   96.34
-
-Device:            tps    MB_read/s    MB_wrtn/s    MB_read    MB_wrtn
-sdb               0.00         0.00         0.00          <span style=color:#099>0</span>          <span style=color:#099>0</span>
-sda               0.50         0.00         0.00          <span style=color:#099>0</span>          <span style=color:#099>0</span>
-
-avg-cpu:  %user   %nice %system %iowait  %steal   %idle
-           1.71    0.01    0.61    0.94    0.00   96.72
-
-Device:            tps    MB_read/s    MB_wrtn/s    MB_read    MB_wrtn
-sdb               0.00         0.00         0.00          <span style=color:#099>0</span>          <span style=color:#099>0</span>
-sda               0.00         0.00         0.00          <span style=color:#099>0</span>          <span style=color:#099>0</span>
-</code></pre></div><p>报告解读：</p>
-<div class=highlight><pre tabindex=0 style=background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-fallback data-lang=fallback>iostat -m 2 3
-- -m: 以兆为单位显示
-- -x: 展示扩展信息 
-- 每隔2秒输出一次报告，总共输出3次。
-- 第一份报告是系统自启动以来的统计信息，每个后续报告都是上次报告以来的统计信息。
-
-avg-cpu
-cpu 使用率报告，对于多核心系统，这里的值是全局平均值。下面每一项都是对比 cpu 总时间的使用率。
-- %user: 执行用户级别应用所用的时间
-- %nice: 执行具有 nice 优先级的用户级别程序所用的时间
-- %system: 执行系统级别（内核）程序所用时间
-- %iowait:  cpu/cpus 空闲等待磁盘 i/o 请求所用的时间
-- %steal: 当虚拟机管理器正服务另一个虚拟处理器时，虚拟 cpu/cpus 的被迫等待时间（被偷走的时间）
-- %idle: 系统没有 i/o 请求时的 cpu/cpus 空闲时间
-
-下面是设备使用率报告
-展示每一个物理设备/分区的统计信息
-- tps: 每秒向设备发出的传输次数。一次传输就是一个 i/o 请求，多个逻辑请求可以合并成一次 i/o 请求。
-- MB_read/s, MB_wrtn/s: 每秒读取/写入设备的数据量，单位 M
-- MB_read, MB_wrtn: 读取/写入设备的总数据量
-</code></pre></div><p>从例子中，可见 cpu %idle 占比 90% 以上，说明 cpu 花了绝大多数时间在等待 i/o。设备的读写数据几乎没有，说明这些 i/o 并不是来自系统物理设备/分区。有可能来自挂载的网络文件存储设备。</p>
-<h3 id=ps>
-ps
-<a class=anchor href=#ps>#</a>
-</h3>
-<p>当前进程信息快照，通过下面的命令找出存在大量 io 的进程</p>
-<div class=highlight><pre tabindex=0 style=background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-shell data-lang=shell>$ ps -e -L o state,pid,cmd | grep <span style=color:#d14>&#34;^[R|D]&#34;</span> | sort | uniq -c | sort -k 1nr
-<span style=color:#099>41</span> R <span style=color:#099>75319</span> /bin/node_exporter...
-</code></pre></div><p>命令解释：</p>
-<div class=highlight><pre tabindex=0 style=background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-shell data-lang=shell>-e every 输出所有进程
-o 自定义输出列 逗号分割
--L 展示线程
-
-进程状态码介绍
-- R 在执行队列中的，正在运行中或者可以运行的 running or runnable
-- D 不可中断的睡眠 <span style=color:#000;font-weight:700>(</span>通常是 i/o<span style=color:#000;font-weight:700>)</span>
-- S 可以中断的睡眠 <span style=color:#000;font-weight:700>(</span>正在等待某个事件完成<span style=color:#000;font-weight:700>)</span>
-- I 空闲 Idle 的内核线程
-- s session leader
-- &lt; 高优先级
-- + 在前台进程组中
-- l 是多线程的
-</code></pre></div><p>使用下面的命令找出占用 io 的 pod uid</p>
-<div class=highlight><pre tabindex=0 style=background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-shell data-lang=shell>$ cat /proc/75319/cgroup | awk -F <span style=color:#d14>&#34;/&#34;</span> <span style=color:#d14>&#39;{print $4}&#39;</span>
-pode0c67fad-9fab-4f35-87b3-d918b5f09882
-...
-
-$ kubectl get pods --all-namespaces <span style=color:#d14>\
-</span><span style=color:#d14></span>  -ocustom-columns<span style=color:#000;font-weight:700>=</span>NS:metadata.namespace,Name:metadata.name,UID:metadata.uid <span style=color:#d14>\
-</span><span style=color:#d14></span>  | grep e0c67fad-9fab-4f35-87b3-d918b5f09882
-</code></pre></div></article>
-<footer class=book-footer>
-<div class="flex flex-wrap justify-between">
-</div>
-<script>(function(){function a(c){const a=window.getSelection(),b=document.createRange();b.selectNodeContents(c),a.removeAllRanges(),a.addRange(b)}document.querySelectorAll("pre code").forEach(b=>{b.addEventListener("click",function(c){if(window.getSelection().toString())return;a(b.parentElement),navigator.clipboard&&navigator.clipboard.writeText(b.parentElement.textContent)})})})()</script>
-</footer>
-<div class=book-comments><link rel=stylesheet href=https://unpkg.com/gitalk/dist/gitalk.css>
-<script src=https://unpkg.com/gitalk/dist/gitalk.min.js></script>
-<div id=gitalk-container></div>
-<script type=text/javascript>const gitalk=new Gitalk({clientID:'53c7373e7b1554a4abc3',clientSecret:'7c9dcef80ea6bde5d8695d1ab94bcef87063fb3b',repo:'llaoj.github.io',owner:'llaoj',admin:['llaoj'],id:location.pathname,distractionFreeMode:!1});gitalk.render('gitalk-container')</script></div>
-<label for=menu-control class="hidden book-menu-overlay"></label>
-</div>
-</main>
-</body>
-</html>
+<!doctype html><html lang=zh dir=ltr><head><meta charset=UTF-8><meta name=viewport content="width=device-width,initial-scale=1"><meta name=description content="分析 kubernetes 节点 load 过高的问题，并自研程序找出问题 pod 发出告警"><meta name=theme-color media="(prefers-color-scheme: light)" content="#ffffff"><meta name=theme-color media="(prefers-color-scheme: dark)" content="#343a40"><meta name=color-scheme content="light dark"><meta property="og:url" content="https://blog.llaoj.cn/posts/2204/kubernetes-node-load/"><meta property="og:site_name" content="老J的博客"><meta property="og:title" content="分析告警 kubernetes 节点 load 过高问题"><meta property="og:description" content="分析 kubernetes 节点 load 过高的问题，并自研程序找出问题 pod 发出告警"><meta property="og:locale" content="zh"><meta property="og:type" content="article"><meta property="article:section" content="posts"><meta property="article:published_time" content="2022-04-27T00:00:00+00:00"><meta property="article:modified_time" content="2022-04-27T00:00:00+00:00"><meta property="article:tag" content="Kubernetes"><title>分析告警 kubernetes 节点 load 过高问题 | 老J的博客</title>
+<link rel=icon href=/favicon.png><link rel=manifest href=/manifest.json><link rel=canonical href=https://blog.llaoj.cn/posts/2204/kubernetes-node-load/><link rel=stylesheet href=/book.min.64c4ccf49c05f180d3f1d466fb7172e266ad24b2ae0b146863efe5ca5920ce57.css integrity="sha256-ZMTM9JwF8YDT8dRm+3Fy4matJLKuCxRoY+/lylkgzlc=" crossorigin=anonymous><script defer src=/fuse.min.js></script><script defer src=/zh.search.min.9a0c2fbbd9f49c8679c900e51efa0b3d4cd637566f42b994ae894aeb8b4c1652.js integrity="sha256-mgwvu9n0nIZ5yQDlHvoLPUzWN1ZvQrmUrolK64tMFlI=" crossorigin=anonymous></script><script defer src=/sw.min.6f6f90fcb8eb1c49ec389838e6b801d0de19430b8e516902f8d75c3c8bd98739.js integrity="sha256-b2+Q/LjrHEnsOJg45rgB0N4ZQwuOUWkC+NdcPIvZhzk=" crossorigin=anonymous></script></head><body dir=ltr><input type=checkbox class="hidden toggle" id=menu-control>
+<input type=checkbox class="hidden toggle" id=toc-control><main class="container flex"><aside class=book-menu><div class=book-menu-content><nav><h2 class=book-brand><a class="flex align-center" href=/><img src=/j.png alt=Logo class=book-icon><span>老J的博客</span></a></h2><div class="book-search hidden"><input type=text id=book-search-input placeholder=搜索 aria-label=搜索 maxlength=64 data-hotkeys=s/><div class="book-search-spinner hidden"></div><ul id=book-search-results></ul></div><script>document.querySelector(".book-search").classList.remove("hidden")</script><img src=/images/avatar.jpg width=150 style=border-radius:8px><p style=display:flex;align-items:center;margin-bottom:2px><svg width="24" height="24" viewBox="0 0 30 30"><path d="M15 3C8.373 3 3 8.373 3 15c0 5.623 3.872 10.328 9.092 11.63C12.036 26.468 12 26.28 12 26.047v-2.051c-.487.0-1.303.0-1.508.0-.821.0-1.551-.353-1.905-1.009-.393-.729-.461-1.844-1.435-2.526-.289-.227-.069-.486.264-.451.615.174 1.125.596 1.605 1.222.478.627.703.769 1.596.769.433.0 1.081-.025 1.691-.121.328-.833.895-1.6 1.588-1.962-3.996-.411-5.903-2.399-5.903-5.098.0-1.162.495-2.286 1.336-3.233C9.053 10.647 8.706 8.73 9.435 8c1.798.0 2.885 1.166 3.146 1.481C13.477 9.174 14.461 9 15.495 9c1.036.0 2.024.174 2.922.483C18.675 9.17 19.763 8 21.565 8c.732.731.381 2.656.102 3.594.836.945 1.328 2.066 1.328 3.226.0 2.697-1.904 4.684-5.894 5.097C18.199 20.49 19 22.1 19 23.313v2.734c0 .104-.023.179-.035.268C23.641 24.676 27 20.236 27 15 27 8.373 21.627 3 15 3z"/></svg>
+<a href=https://github.com/llaoj target=_blank style=padding-left:5px;padding-top:5px>github.com/llaoj</a></p><p style=display:flex;align-items:center;margin-top:2px><svg width="24" height="24" style="padding-left:4px" enable-background="new 0 0 2499.7 2024.2" viewBox="0 0 2499.7 2024.2"><path d="m2499.7 1313.8c0-347.3-335.9-630.6-749.5-630.6S1003 966.5 1003 1313.8s335.9 630.6 749.5 630.6c80 0 155.4-9.1 226.2-29.7 20.6-4.6 43.4-2.3 64 6.9l185.1 100.5c11.4 6.9 27.4-4.6 22.8-18.3l-36.6-148.5c-4.6-22.8 2.3-45.7 22.8-59.4 160.1-116.5 262.9-287.9 262.9-482.1zm-1016.8-82.2c-57.1.0-102.8-45.7-102.8-102.8s45.7-102.8 102.8-102.8 102.8 45.7 102.8 102.8-45.7 102.8-102.8 102.8zm505 0c-57.1.0-102.8-45.7-102.8-102.8s45.7-102.8 102.8-102.8 102.8 45.7 102.8 102.8-48 102.8-102.8 102.8z"/><path d="m941.4 1316.1c0-386.1 365.6-699.2 818-699.2h34.3c-73.2-349.6-443.3-616.9-888.9-616.9-500.4.0-904.8 333.6-904.8 747.2.0 228.5 125.7 434.1 322.2 571.2 13.7 9.1 18.3 25.1 16 41.1l-68.5 242.2c-4.6 16 13.7 32 29.7 22.8l267.3-159.9c18.3-11.4 38.8-13.7 59.4-6.9 89.1 22.8 182.8 36.6 278.8 36.6 20.6.0 41.1.0 64-2.3-18.4-57.1-27.5-116.5-27.5-175.9zm267.3-920.8c66.3.0 121.1 54.8 121.1 121.1s-54.8 121.1-121.1 121.1-121.1-54.8-121.1-121.1 54.9-121.1 121.1-121.1zM600.9 637.5c-66.3.0-121.1-54.8-121.1-121.1s54.8-121.1 121.1-121.1S722 450.1 722 516.4s-52.5 121.1-121.1 121.1z"/></svg>
+<span style=padding-left:5px;padding-top:5px>微信号: holdonwwy</span></p><ul><li><a href=/posts/>文章</a></li></ul><ul><li><span>我的项目</span><ul><li><a href=/docs/mywork/gcopy/>GCopy</a></li><li><a href=/docs/mywork/oauth2nsso/>OAuth2&amp;SSO</a></li><li><a href=/docs/mywork/kubefinder/>KubeFinder</a></li></ul></li><li><a href=/docs/about/>关于我</a><ul></ul></li></ul><ul><li><a href=https://www.cncf.io/ target=_blank rel=noopener>CNCF</a></li><li><a href=https://ebpf.io/ target=_blank rel=noopener>eBPF</a></li></ul><div class=book-menu-after><a href=https://www.rutron.net/ target=_blank>@如创科技</a><br>提供云计算支持</p></div></nav><script>(function(){var e=document.querySelector("aside .book-menu-content");addEventListener("beforeunload",function(){localStorage.setItem("menu.scrollTop",e.scrollTop)}),e.scrollTop=localStorage.getItem("menu.scrollTop")})()</script></div></aside><div class=book-page><header class=book-header><div class="flex align-center justify-between"><label for=menu-control><img src=/svg/menu.svg class=book-icon alt=Menu></label><h3>分析告警 kubernetes 节点 load 过高问题</h3><label for=toc-control></label></div></header><article class="markdown book-post"><h2>分析告警 kubernetes 节点 load 过高问题</h2><div class="flex align-center text-small book-post-date"><img src=/svg/calendar.svg class=book-icon alt>
+<span>2022-4-27</span></div><div class=text-small><a href=/categories/technology/>Technology</a></div><div class=text-small><a href=/tags/kubernetes/>Kubernetes</a></div><div class=book-post-content><h2 id=负载过高分析>负载过高分析
+<a class=anchor href=#%e8%b4%9f%e8%bd%bd%e8%bf%87%e9%ab%98%e5%88%86%e6%9e%90>#</a></h2><p>通过 linux 提供的几个命令可以从不同的纬度分析系统负载。</p><h3 id=vmstat>vmstat
+<a class=anchor href=#vmstat>#</a></h3><p>这命令能从一个系统的角度反应出服务器情况，报告虚拟内存统计信息，报告有关进程、内存、分页、块的信息 IO、陷阱、磁盘和 CPU 活动。看个例子：</p><div class=highlight><pre tabindex=0 style=background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-shell data-lang=shell><span style=display:flex><span>$ vmstat --wide --unit M <span style=color:#099>5</span>
+</span></span><span style=display:flex><span>procs ----------------memory---------------- ---swap--- -----io---- ---system--- ---------cpu--------
+</span></span><span style=display:flex><span> r  b     swpd      free      buff     cache   si   so    bi    bo     in   cs     us sy  id  wa  st
+</span></span><span style=display:flex><span> <span style=color:#099>1</span>  <span style=color:#099>1</span>        <span style=color:#099>0</span>    <span style=color:#099>127691</span>      <span style=color:#099>1535</span>     <span style=color:#099>73572</span>    <span style=color:#099>0</span>    <span style=color:#099>0</span>     <span style=color:#099>0</span>     <span style=color:#099>3</span>      <span style=color:#099>0</span>    <span style=color:#099>0</span>     <span style=color:#099>2</span>   <span style=color:#099>1</span>  <span style=color:#099>97</span>   <span style=color:#099>0</span>   <span style=color:#099>0</span>
+</span></span><span style=display:flex><span><span style=color:#099>93</span>  <span style=color:#099>0</span>        <span style=color:#099>0</span>    <span style=color:#099>127674</span>      <span style=color:#099>1535</span>     <span style=color:#099>73573</span>    <span style=color:#099>0</span>    <span style=color:#099>0</span>     <span style=color:#099>0</span>    <span style=color:#099>80</span>   <span style=color:#099>49267</span> <span style=color:#099>67634</span>   <span style=color:#099>5</span>   <span style=color:#099>1</span>  <span style=color:#099>94</span>   <span style=color:#099>1</span>   <span style=color:#099>0</span>
+</span></span><span style=display:flex><span> <span style=color:#099>0</span>  <span style=color:#099>2</span>        <span style=color:#099>0</span>    <span style=color:#099>127679</span>      <span style=color:#099>1535</span>     <span style=color:#099>73573</span>    <span style=color:#099>0</span>    <span style=color:#099>0</span>     <span style=color:#099>0</span>    <span style=color:#099>66</span>   <span style=color:#099>38537</span> <span style=color:#099>56283</span>   <span style=color:#099>3</span>   <span style=color:#099>1</span>  <span style=color:#099>95</span>   <span style=color:#099>1</span>   <span style=color:#099>0</span>
+</span></span><span style=display:flex><span> <span style=color:#099>2</span>  <span style=color:#099>2</span>        <span style=color:#099>0</span>    <span style=color:#099>127738</span>      <span style=color:#099>1535</span>     <span style=color:#099>73574</span>    <span style=color:#099>0</span>    <span style=color:#099>0</span>     <span style=color:#099>6</span>    <span style=color:#099>86</span>   <span style=color:#099>41769</span> <span style=color:#099>61823</span>   <span style=color:#099>5</span>   <span style=color:#099>1</span>  <span style=color:#099>93</span>   <span style=color:#099>2</span>   <span style=color:#099>0</span>
+</span></span><span style=display:flex><span> <span style=color:#099>2</span>  <span style=color:#099>0</span>        <span style=color:#099>0</span>    <span style=color:#099>127729</span>      <span style=color:#099>1535</span>     <span style=color:#099>73574</span>    <span style=color:#099>0</span>    <span style=color:#099>0</span>    <span style=color:#099>18</span>    <span style=color:#099>18</span>   <span style=color:#099>41002</span> <span style=color:#099>59214</span>   <span style=color:#099>4</span>   <span style=color:#099>1</span>  <span style=color:#099>95</span>   <span style=color:#099>0</span>   <span style=color:#099>0</span>
+</span></span></code></pre></div><p>命令以及输出解释：</p><div class=highlight><pre tabindex=0 style=background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-fallback data-lang=fallback><span style=display:flex><span>vmstat
+</span></span><span style=display:flex><span>- --wide 宽幅展示 比较易读  
+</span></span><span style=display:flex><span>- --unit 输出单位，可以是 1000(k)、1024(K)、1000000(m) 或 1048576(M) 个字节
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span>procs
+</span></span><span style=display:flex><span>- r: 可运行 runnable 进程数量（包括运行中 running 或者等待中 waiting 的进程）  
+</span></span><span style=display:flex><span>- b: 等待 i/o 完成的阻塞 blocked 进程数
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span>memory
+</span></span><span style=display:flex><span>显示单位受 --unit 影响
+</span></span><span style=display:flex><span>- swpd: 交换 swap 内存使用量
+</span></span><span style=display:flex><span>- free: 空闲 idle 内存数
+</span></span><span style=display:flex><span>- buff: 用作缓冲区 buffers 的内存量
+</span></span><span style=display:flex><span>- cache: 用作缓存 cache 的内存量
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span>swap
+</span></span><span style=display:flex><span>显示单位受 --unit 影响
+</span></span><span style=display:flex><span>- si: 每秒从磁盘换入 swapped 的内存量
+</span></span><span style=display:flex><span>- so: 每秒交换 swapped 到磁盘的内存量
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span>io
+</span></span><span style=display:flex><span>- bi: 从块设备接收的块 block (blocks/s)
+</span></span><span style=display:flex><span>- bo: 发送到块设备到块 block (blocks/s)
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span>system
+</span></span><span style=display:flex><span>- in：每秒的中断数，包括时钟 clock
+</span></span><span style=display:flex><span>- cs：每秒上下文 context 切换的次数。
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span>cpu
+</span></span><span style=display:flex><span>以下都是 cpu 总时间的百分比
+</span></span><span style=display:flex><span>- us: 非内核代码运行耗时 (user time &amp; nice time)
+</span></span><span style=display:flex><span>- sy: 内核代码运行耗时 (系统耗时)
+</span></span><span style=display:flex><span>- id: 空闲 idle 时间，从 Linux 2.5.41开始它包含 i/o 等待时间
+</span></span><span style=display:flex><span>- *wa: io 等待时间，从 Linux 2.5.41开始它包含在 idle 中
+</span></span><span style=display:flex><span>- *st: 从虚拟机中窃取时间，未知
+</span></span></code></pre></div><p>这个例子中，可见 cpu 空闲 idle 时间占比 90% 以上，说明 i/o 等待时间很高。</p><h3 id=iostat>iostat
+<a class=anchor href=#iostat>#</a></h3><p>cpu 统计报告 & 设备/分区 input/output 统计报告。</p><div class=highlight><pre tabindex=0 style=background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-shell data-lang=shell><span style=display:flex><span>$ iostat -m <span style=color:#099>2</span> <span style=color:#099>3</span>
+</span></span><span style=display:flex><span>Linux 5.4.108-1.el7.elrepo.x86_64 <span style=color:#000;font-weight:700>(</span>node27<span style=color:#000;font-weight:700>)</span>  04/28/2022   _x86_64_   <span style=color:#000;font-weight:700>(</span><span style=color:#099>80</span> CPU<span style=color:#000;font-weight:700>)</span>
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span>avg-cpu:  %user   %nice %system %iowait  %steal   %idle
+</span></span><span style=display:flex><span>           2.35    0.05    0.64    0.21    0.00   96.75
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span>Device:            tps    MB_read/s    MB_wrtn/s    MB_read    MB_wrtn
+</span></span><span style=display:flex><span>sdb               5.13         0.00         0.19       <span style=color:#099>3477</span>    <span style=color:#099>5627354</span>
+</span></span><span style=display:flex><span>sda               3.10         0.00         0.03       <span style=color:#099>1890</span>     <span style=color:#099>738773</span>
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span>avg-cpu:  %user   %nice %system %iowait  %steal   %idle
+</span></span><span style=display:flex><span>           1.78    0.00    0.57    1.30    0.00   96.34
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span>Device:            tps    MB_read/s    MB_wrtn/s    MB_read    MB_wrtn
+</span></span><span style=display:flex><span>sdb               0.00         0.00         0.00          <span style=color:#099>0</span>          <span style=color:#099>0</span>
+</span></span><span style=display:flex><span>sda               0.50         0.00         0.00          <span style=color:#099>0</span>          <span style=color:#099>0</span>
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span>avg-cpu:  %user   %nice %system %iowait  %steal   %idle
+</span></span><span style=display:flex><span>           1.71    0.01    0.61    0.94    0.00   96.72
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span>Device:            tps    MB_read/s    MB_wrtn/s    MB_read    MB_wrtn
+</span></span><span style=display:flex><span>sdb               0.00         0.00         0.00          <span style=color:#099>0</span>          <span style=color:#099>0</span>
+</span></span><span style=display:flex><span>sda               0.00         0.00         0.00          <span style=color:#099>0</span>          <span style=color:#099>0</span>
+</span></span></code></pre></div><p>报告解读：</p><div class=highlight><pre tabindex=0 style=background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-fallback data-lang=fallback><span style=display:flex><span>iostat -m 2 3
+</span></span><span style=display:flex><span>- -m: 以兆为单位显示
+</span></span><span style=display:flex><span>- -x: 展示扩展信息 
+</span></span><span style=display:flex><span>- 每隔2秒输出一次报告，总共输出3次。
+</span></span><span style=display:flex><span>- 第一份报告是系统自启动以来的统计信息，每个后续报告都是上次报告以来的统计信息。
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span>avg-cpu
+</span></span><span style=display:flex><span>cpu 使用率报告，对于多核心系统，这里的值是全局平均值。下面每一项都是对比 cpu 总时间的使用率。
+</span></span><span style=display:flex><span>- %user: 执行用户级别应用所用的时间
+</span></span><span style=display:flex><span>- %nice: 执行具有 nice 优先级的用户级别程序所用的时间
+</span></span><span style=display:flex><span>- %system: 执行系统级别（内核）程序所用时间
+</span></span><span style=display:flex><span>- %iowait:  cpu/cpus 空闲等待磁盘 i/o 请求所用的时间
+</span></span><span style=display:flex><span>- %steal: 当虚拟机管理器正服务另一个虚拟处理器时，虚拟 cpu/cpus 的被迫等待时间（被偷走的时间）
+</span></span><span style=display:flex><span>- %idle: 系统没有 i/o 请求时的 cpu/cpus 空闲时间
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span>下面是设备使用率报告
+</span></span><span style=display:flex><span>展示每一个物理设备/分区的统计信息
+</span></span><span style=display:flex><span>- tps: 每秒向设备发出的传输次数。一次传输就是一个 i/o 请求，多个逻辑请求可以合并成一次 i/o 请求。
+</span></span><span style=display:flex><span>- MB_read/s, MB_wrtn/s: 每秒读取/写入设备的数据量，单位 M
+</span></span><span style=display:flex><span>- MB_read, MB_wrtn: 读取/写入设备的总数据量
+</span></span></code></pre></div><p>从例子中，可见 cpu %idle 占比 90% 以上，说明 cpu 花了绝大多数时间在等待 i/o。设备的读写数据几乎没有，说明这些 i/o 并不是来自系统物理设备/分区。有可能来自挂载的网络文件存储设备。</p><h3 id=ps>ps
+<a class=anchor href=#ps>#</a></h3><p>当前进程信息快照，通过下面的命令找出存在大量 io 的进程</p><div class=highlight><pre tabindex=0 style=background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-shell data-lang=shell><span style=display:flex><span>$ ps -e -L o state,pid,cmd | grep <span style=color:#d14>&#34;^[R|D]&#34;</span> | sort | uniq -c | sort -k 1nr
+</span></span><span style=display:flex><span><span style=color:#099>41</span> R <span style=color:#099>75319</span> /bin/node_exporter...
+</span></span></code></pre></div><p>命令解释：</p><div class=highlight><pre tabindex=0 style=background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-shell data-lang=shell><span style=display:flex><span>-e every 输出所有进程
+</span></span><span style=display:flex><span>o 自定义输出列 逗号分割
+</span></span><span style=display:flex><span>-L 展示线程
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span>进程状态码介绍
+</span></span><span style=display:flex><span>- R 在执行队列中的，正在运行中或者可以运行的 running or runnable
+</span></span><span style=display:flex><span>- D 不可中断的睡眠 <span style=color:#000;font-weight:700>(</span>通常是 i/o<span style=color:#000;font-weight:700>)</span>
+</span></span><span style=display:flex><span>- S 可以中断的睡眠 <span style=color:#000;font-weight:700>(</span>正在等待某个事件完成<span style=color:#000;font-weight:700>)</span>
+</span></span><span style=display:flex><span>- I 空闲 Idle 的内核线程
+</span></span><span style=display:flex><span>- s session leader
+</span></span><span style=display:flex><span>- &lt; 高优先级
+</span></span><span style=display:flex><span>- + 在前台进程组中
+</span></span><span style=display:flex><span>- l 是多线程的
+</span></span></code></pre></div><p>使用下面的命令找出占用 io 的 pod uid</p><div class=highlight><pre tabindex=0 style=background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-shell data-lang=shell><span style=display:flex><span>$ cat /proc/75319/cgroup | awk -F <span style=color:#d14>&#34;/&#34;</span> <span style=color:#d14>&#39;{print $4}&#39;</span>
+</span></span><span style=display:flex><span>pode0c67fad-9fab-4f35-87b3-d918b5f09882
+</span></span><span style=display:flex><span>...
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span>$ kubectl get pods --all-namespaces <span style=color:#d14>\
+</span></span></span><span style=display:flex><span><span style=color:#d14></span>  -ocustom-columns<span style=color:#000;font-weight:700>=</span>NS:metadata.namespace,Name:metadata.name,UID:metadata.uid <span style=color:#d14>\
+</span></span></span><span style=display:flex><span><span style=color:#d14></span>  | grep e0c67fad-9fab-4f35-87b3-d918b5f09882
+</span></span></code></pre></div></div></article><footer class=book-footer><div class="flex flex-wrap justify-between"></div><script>(function(){function e(e){const t=window.getSelection(),n=document.createRange();n.selectNodeContents(e),t.removeAllRanges(),t.addRange(n)}document.querySelectorAll("pre code").forEach(t=>{t.addEventListener("click",function(){if(window.getSelection().toString())return;e(t.parentElement),navigator.clipboard&&navigator.clipboard.writeText(t.parentElement.textContent)})})})()</script></footer><div class=book-comments><link rel=stylesheet href=https://unpkg.com/gitalk/dist/gitalk.css><script src=https://unpkg.com/gitalk/dist/gitalk.min.js></script><div id=gitalk-container></div><script type=text/javascript>const gitalk=new Gitalk({clientID:"53c7373e7b1554a4abc3",clientSecret:"7c9dcef80ea6bde5d8695d1ab94bcef87063fb3b",repo:"llaoj.github.io",owner:"llaoj",admin:["llaoj"],id:location.pathname,distractionFreeMode:!1});gitalk.render("gitalk-container")</script></div><label for=menu-control class="hidden book-menu-overlay"></label></div></main></body></html>

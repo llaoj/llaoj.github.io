@@ -1,2 +1,11 @@
-<?xml version="1.0" encoding="utf-8" standalone="yes"?><rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom"><channel><title>kubespray on 老J的博客</title><link>https://blog.llaoj.cn/tags/kubespray/</link><description>Recent content in kubespray on 老J的博客</description><generator>Hugo -- gohugo.io</generator><lastBuildDate>Mon, 14 Feb 2022 00:00:00 +0000</lastBuildDate><atom:link href="https://blog.llaoj.cn/tags/kubespray/index.xml" rel="self" type="application/rss+xml"/><item><title>使用Kubespray安装kubernetes的教程</title><link>https://blog.llaoj.cn/posts/2202/Kubespray-kubernetes-setup/</link><pubDate>Mon, 14 Feb 2022 00:00:00 +0000</pubDate><guid>https://blog.llaoj.cn/posts/2202/Kubespray-kubernetes-setup/</guid><description>本文使用 kubespray 容器部署 kubernetes v1.22, 提供了从国外搬运的离线软件包/容器镜像. 仅需要几步即可部署高可用集群. 所有离线文件都来自官方下载 kubespray 安装过程会进行软件包验证, 放心使用.
-前提 # 禁用防火墙 重要: 本文使用 kubespray 的容器环境部署, 为避免影响节点部署(特别是 Runtime 部署), 所以需要一台独立于集群外的服务器执行下面的命令, 这台服务器安装 docker 19.</description></item></channel></rss>
+<?xml version="1.0" encoding="utf-8" standalone="yes"?><rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom"><channel><title>Kubespray on 老J的博客</title><link>https://blog.llaoj.cn/tags/kubespray/</link><description>Recent content in Kubespray on 老J的博客</description><generator>Hugo</generator><language>zh</language><lastBuildDate>Mon, 14 Feb 2022 00:00:00 +0000</lastBuildDate><atom:link href="https://blog.llaoj.cn/tags/kubespray/index.xml" rel="self" type="application/rss+xml"/><item><title>使用Kubespray安装kubernetes的教程</title><link>https://blog.llaoj.cn/posts/2202/Kubespray-kubernetes-setup/</link><pubDate>Mon, 14 Feb 2022 00:00:00 +0000</pubDate><guid>https://blog.llaoj.cn/posts/2202/Kubespray-kubernetes-setup/</guid><description>&lt;p>本文使用 kubespray 容器部署 kubernetes v1.22, 提供了从国外搬运的离线软件包/容器镜像. 仅需要几步即可部署高可用集群. 所有离线文件都来自官方下载 kubespray 安装过程会进行软件包验证, 放心使用.&lt;/p>
+&lt;h2 id="前提">
+ 前提
+ &lt;a class="anchor" href="#%e5%89%8d%e6%8f%90">#&lt;/a>
+&lt;/h2>
+&lt;ul>
+&lt;li>禁用防火墙&lt;/li>
+&lt;li>&lt;strong>重要:&lt;/strong> 本文使用 kubespray 的容器环境部署, 为避免影响节点部署(特别是 Runtime 部署), 所以需要一台&lt;strong>独立于集群外的服务器&lt;/strong>执行下面的命令, 这台服务器安装 docker 19.03+ 并到所有节点SSH免密进入.&lt;/li>
+&lt;li>目标服务器要允许 IPv4 转发, 如果要给 pods 和 services 用 IPv6, 目标服务器要允许 IPv6 转发.&lt;/li>
+&lt;/ul>
+&lt;p>注意: 下面配置是适合 kubespray 的配置, 实际配置取决于集群规模.&lt;/p></description></item></channel></rss>

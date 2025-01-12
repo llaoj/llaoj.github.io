@@ -1,3 +1,15 @@
-<?xml version="1.0" encoding="utf-8" standalone="yes"?><rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom"><channel><title>nfs on 老J的博客</title><link>https://blog.llaoj.cn/tags/nfs/</link><description>Recent content in nfs on 老J的博客</description><generator>Hugo -- gohugo.io</generator><lastBuildDate>Mon, 14 Mar 2022 00:00:00 +0000</lastBuildDate><atom:link href="https://blog.llaoj.cn/tags/nfs/index.xml" rel="self" type="application/rss+xml"/><item><title>load average 过高, mount nfs 问题处理</title><link>https://blog.llaoj.cn/posts/2203/nfs-options/</link><pubDate>Mon, 14 Mar 2022 00:00:00 +0000</pubDate><guid>https://blog.llaoj.cn/posts/2203/nfs-options/</guid><description>周末, 有一台服务器告警: 系统负载过高, 最高的时候都已经到 100 +, 以下是排查&amp;amp;处理的具体过程.
-发现的问题/现象 # uptime 显示 load average 都在70+ # 因为服务器是40核心, 原则上负载40是满负荷, 现在明显存在大量等待的任务. 继续往下分析进程, 看具体那个进程一直在堵塞.
-ps -ef 执行到某一个进程就卡住了 # 命令执行如下:</description></item></channel></rss>
+<?xml version="1.0" encoding="utf-8" standalone="yes"?><rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom"><channel><title>Nfs on 老J的博客</title><link>https://blog.llaoj.cn/tags/nfs/</link><description>Recent content in Nfs on 老J的博客</description><generator>Hugo</generator><language>zh</language><lastBuildDate>Mon, 14 Mar 2022 00:00:00 +0000</lastBuildDate><atom:link href="https://blog.llaoj.cn/tags/nfs/index.xml" rel="self" type="application/rss+xml"/><item><title>load average 过高, mount nfs 问题处理</title><link>https://blog.llaoj.cn/posts/2203/nfs-options/</link><pubDate>Mon, 14 Mar 2022 00:00:00 +0000</pubDate><guid>https://blog.llaoj.cn/posts/2203/nfs-options/</guid><description>&lt;p>周末, 有一台服务器告警: 系统负载过高, 最高的时候都已经到 100 +, 以下是排查&amp;amp;处理的具体过程.&lt;/p>
+&lt;h2 id="发现的问题现象">
+ 发现的问题/现象
+ &lt;a class="anchor" href="#%e5%8f%91%e7%8e%b0%e7%9a%84%e9%97%ae%e9%a2%98%e7%8e%b0%e8%b1%a1">#&lt;/a>
+&lt;/h2>
+&lt;h3 id="uptime-显示-load-average-都在70">
+ &lt;code>uptime&lt;/code> 显示 load average 都在70+
+ &lt;a class="anchor" href="#uptime-%e6%98%be%e7%a4%ba-load-average-%e9%83%bd%e5%9c%a870">#&lt;/a>
+&lt;/h3>
+&lt;p>因为服务器是40核心, 原则上负载40是满负荷, 现在明显存在大量等待的任务. 继续往下分析进程, 看具体那个进程一直在堵塞.&lt;/p>
+&lt;h3 id="ps--ef-执行到某一个进程就卡住了">
+ &lt;code>ps -ef&lt;/code> 执行到某一个进程就卡住了
+ &lt;a class="anchor" href="#ps--ef-%e6%89%a7%e8%a1%8c%e5%88%b0%e6%9f%90%e4%b8%80%e4%b8%aa%e8%bf%9b%e7%a8%8b%e5%b0%b1%e5%8d%a1%e4%bd%8f%e4%ba%86">#&lt;/a>
+&lt;/h3>
+&lt;p>命令执行如下:&lt;/p></description></item></channel></rss>

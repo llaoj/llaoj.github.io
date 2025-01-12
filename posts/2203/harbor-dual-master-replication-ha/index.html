@@ -1,966 +1,588 @@
-<!doctype html><html lang=zh dir=ltr>
-<head>
-<meta charset=utf-8>
-<meta name=viewport content="width=device-width,initial-scale=1">
-<meta name=description content="一步步部署 Harbor 双主复制解决方案">
-<meta name=theme-color content="#FFFFFF">
-<meta name=color-scheme content="light dark"><meta property="og:title" content="Harbor 双主复制解决方案实践">
-<meta property="og:description" content="一步步部署 Harbor 双主复制解决方案">
-<meta property="og:type" content="article">
-<meta property="og:url" content="https://blog.llaoj.cn/posts/2203/harbor-dual-master-replication-ha/"><meta property="article:section" content="posts">
-<meta property="article:published_time" content="2022-03-29T00:00:00+00:00">
-<meta property="article:modified_time" content="2022-03-29T00:00:00+00:00">
-<title>Harbor 双主复制解决方案实践 | 老J的博客</title>
-<link rel=manifest href=/manifest.json>
-<link rel=icon href=/favicon.png type=image/x-icon>
-<link rel=stylesheet href=/book.min.18b5d651e266e5e9cfc7455e2e50eb1b74a62aee16cf204b69de1d9e695276f7.css integrity="sha256-GLXWUeJm5enPx0VeLlDrG3SmKu4WzyBLad4dnmlSdvc=" crossorigin=anonymous>
-<script defer src=/flexsearch.min.js></script>
-<script defer src=/zh.search.min.9a77fc07b0d49aefb16db46397c1d91b50a135eb269a629da4f5c9bf709fa745.js integrity="sha256-mnf8B7DUmu+xbbRjl8HZG1ChNesmmmKdpPXJv3Cfp0U=" crossorigin=anonymous></script>
-<script defer src=/sw.min.6f6f90fcb8eb1c49ec389838e6b801d0de19430b8e516902f8d75c3c8bd98739.js integrity="sha256-b2+Q/LjrHEnsOJg45rgB0N4ZQwuOUWkC+NdcPIvZhzk=" crossorigin=anonymous></script>
-</head>
-<body dir=ltr>
-<input type=checkbox class="hidden toggle" id=menu-control>
-<input type=checkbox class="hidden toggle" id=toc-control>
-<main class="container flex">
-<aside class=book-menu>
-<div class=book-menu-content>
-<nav>
-<h2 class=book-brand>
-<a class="flex align-center" href=/><img src=/j.png alt=Logo><span>老J的博客</span>
-</a>
-</h2>
-<div class=book-search>
-<input type=text id=book-search-input placeholder=搜索 aria-label=搜索 maxlength=64 data-hotkeys=s/>
-<div class="book-search-spinner hidden"></div>
-<ul id=book-search-results></ul>
-</div>
-<img src=/images/avatar.jpg width=150 style=border-radius:8px>
-<p style=display:flex;align-items:center;margin-bottom:2px><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 30 30"><path d="M15 3C8.373 3 3 8.373 3 15c0 5.623 3.872 10.328 9.092 11.63C12.036 26.468 12 26.28 12 26.047v-2.051c-.487.0-1.303.0-1.508.0-.821.0-1.551-.353-1.905-1.009-.393-.729-.461-1.844-1.435-2.526-.289-.227-.069-.486.264-.451.615.174 1.125.596 1.605 1.222.478.627.703.769 1.596.769.433.0 1.081-.025 1.691-.121.328-.833.895-1.6 1.588-1.962-3.996-.411-5.903-2.399-5.903-5.098.0-1.162.495-2.286 1.336-3.233C9.053 10.647 8.706 8.73 9.435 8c1.798.0 2.885 1.166 3.146 1.481C13.477 9.174 14.461 9 15.495 9c1.036.0 2.024.174 2.922.483C18.675 9.17 19.763 8 21.565 8c.732.731.381 2.656.102 3.594.836.945 1.328 2.066 1.328 3.226.0 2.697-1.904 4.684-5.894 5.097C18.199 20.49 19 22.1 19 23.313v2.734c0 .104-.023.179-.035.268C23.641 24.676 27 20.236 27 15 27 8.373 21.627 3 15 3z"/></svg>
-<a href=https://github.com/llaoj target=_blank style=padding-left:5px;padding-top:5px>github.com/llaoj</a>
-</p>
-<p style=display:flex;align-items:center;margin-top:2px><svg width="24" height="24" style="padding-left:4px" enable-background="new 0 0 2499.7 2024.2" viewBox="0 0 2499.7 2024.2" xmlns="http://www.w3.org/2000/svg"><path d="m2499.7 1313.8c0-347.3-335.9-630.6-749.5-630.6S1003 966.5 1003 1313.8s335.9 630.6 749.5 630.6c80 0 155.4-9.1 226.2-29.7 20.6-4.6 43.4-2.3 64 6.9l185.1 100.5c11.4 6.9 27.4-4.6 22.8-18.3l-36.6-148.5c-4.6-22.8 2.3-45.7 22.8-59.4 160.1-116.5 262.9-287.9 262.9-482.1zm-1016.8-82.2c-57.1.0-102.8-45.7-102.8-102.8s45.7-102.8 102.8-102.8 102.8 45.7 102.8 102.8-45.7 102.8-102.8 102.8zm505 0c-57.1.0-102.8-45.7-102.8-102.8s45.7-102.8 102.8-102.8 102.8 45.7 102.8 102.8-48 102.8-102.8 102.8z"/><path d="m941.4 1316.1c0-386.1 365.6-699.2 818-699.2h34.3c-73.2-349.6-443.3-616.9-888.9-616.9-500.4.0-904.8 333.6-904.8 747.2.0 228.5 125.7 434.1 322.2 571.2 13.7 9.1 18.3 25.1 16 41.1l-68.5 242.2c-4.6 16 13.7 32 29.7 22.8l267.3-159.9c18.3-11.4 38.8-13.7 59.4-6.9 89.1 22.8 182.8 36.6 278.8 36.6 20.6.0 41.1.0 64-2.3-18.4-57.1-27.5-116.5-27.5-175.9zm267.3-920.8c66.3.0 121.1 54.8 121.1 121.1s-54.8 121.1-121.1 121.1-121.1-54.8-121.1-121.1 54.9-121.1 121.1-121.1zM600.9 637.5c-66.3.0-121.1-54.8-121.1-121.1s54.8-121.1 121.1-121.1S722 450.1 722 516.4s-52.5 121.1-121.1 121.1z"/></svg>
-<span style=padding-left:5px;padding-top:5px>微信号: holdonwwy</span>
-</p>
-<ul>
-<li>
-<a href=/posts/>
-文章
-</a>
-</li>
-</ul>
-<ul>
-<li>
-<span>我的项目</span>
-<ul>
-<li>
-<a href=/docs/mywork/gcopy/>GCopy</a>
-</li>
-<li>
-<a href=/docs/mywork/oauth2nsso/>OAuth2&SSO</a>
-</li>
-<li>
-<a href=/docs/mywork/kubefinder/>KubeFinder</a>
-</li>
-</ul>
-</li>
-<li>
-<a href=/docs/about/>关于我</a>
-<ul>
-</ul>
-</li>
-</ul>
-<ul>
-<li>
-<a href=https://www.cncf.io/ target=_blank rel=noopener>
-CNCF
-</a>
-</li>
-<li>
-<a href=https://ebpf.io/ target=_blank rel=noopener>
-eBPF
-</a>
-</li>
-</ul>
-<div class=book-menu-after>
-<a href=https://www.rutron.net/ target=_blank>@如创科技</a><br>提供云计算支持</p>
-</div>
-</nav>
-<script>(function(){var a=document.querySelector("aside .book-menu-content");addEventListener("beforeunload",function(b){localStorage.setItem("menu.scrollTop",a.scrollTop)}),a.scrollTop=localStorage.getItem("menu.scrollTop")})()</script>
-</div>
-</aside>
-<div class=book-page>
-<header class=book-header>
-<div class="flex align-center justify-between">
-<label for=menu-control>
-<img src=/svg/menu.svg class=book-icon alt=Menu>
-</label>
-<strong>Harbor 双主复制解决方案实践</strong>
-<label for=toc-control>
-<img src=/svg/toc.svg class=book-icon alt="Table of Contents">
-</label>
-</div>
-<aside class="hidden clearfix">
-<nav id=TableOfContents>
-<ul>
-<li><a href=#方案的选择>方案的选择</a></li>
-<li><a href=#环境>环境</a></li>
-<li><a href=#安装-docker>安装 docker</a>
-<ul>
-<li><a href=#安装-yum-仓库>安装 yum 仓库</a></li>
-<li><a href=#安装-docker-引擎>安装 docker 引擎</a></li>
-<li><a href=#优化-docker-配置>优化 docker 配置</a></li>
-<li><a href=#安装-docker-compose>安装 docker-compose</a></li>
-</ul>
-</li>
-<li><a href=#安装-harbor-实例>安装 Harbor 实例</a>
-<ul>
-<li><a href=#配置文件>配置文件</a></li>
-<li><a href=#默认安装>默认安装</a></li>
-<li><a href=#更改配置>更改配置</a></li>
-</ul>
-</li>
-<li><a href=#配置双主复制>配置双主复制</a></li>
-<li><a href=#增加反向代理>增加反向代理</a></li>
-<li><a href=#总结>总结</a></li>
-</ul>
-</nav>
-</aside>
-</header>
-<article class=markdown>
-<h1>
-<a href=/posts/2203/harbor-dual-master-replication-ha/>Harbor 双主复制解决方案实践</a>
-</h1>
-<h5>2022-3-29</h5>
-<div>
-<a href=/categories/technology/>technology</a>
-</div>
-<div>
-<a href=/tags/harbor/>harbor</a>
-</div>
-<blockquote>
-<p>本文已参与「开源摘星计划」，欢迎正在阅读的你加入。活动链接：https://github.com/weopenprojects/WeOpen-Star</p>
-</blockquote>
-<h2 id=方案的选择>
-方案的选择
-<a class=anchor href=#%e6%96%b9%e6%a1%88%e7%9a%84%e9%80%89%e6%8b%a9>#</a>
-</h2>
-<p>分析了
-<a href=https://github.com/goharbor/harbor/issues/3582>官方 Github: Harbor 高可用方案讨论</a>, 一开始我们选择了 Solution 1 (双激活共享存储方案), 在公司内部大概运行了一年多的时间, 架构图如下:</p>
-<p>
-<img src=/posts/2203/harbor-dual-master-replication-ha/solution-1.png alt="Active-Active with scale out ability"></p>
-<p>从图中可以看到, 这种方案基于外部共享存储、外部数据库和 Redis 服务, 构建其两个/以上的 harbor 实例. 既然使用了外部的服务, 那么高可用的压力自然而然的转移到了外部服务上. 我们一开始采用的外部的 NFS 共享存储服务, 由于我们团队实际情况, 我们暂时还不能保证外部存储的高可用. 同时, 鉴于我们对镜像服务高可用的迫切需求, 决定调研新的 Harbor 的高可用方案.</p>
-<p>选择了 Solution 4 (双主复制方案), 这个解决方案, 使用复制来实现高可用, 它不需要共享存储、外部数据库服务、外部 Redis 服务. 这种方案可以有效的解决镜像服务的单点故障. 架构图如下:</p>
-<p>
-<img src=/posts/2203/harbor-dual-master-replication-ha/solution-4.png alt=harbor-dual-master-replication-ha-solution></p>
-<p>从图中可以看到, 这种方案仅需要在两个 harbor 实例之间建立全量复制机制. 这种方案特别适合异地办公的团队.</p>
-<h2 id=环境>
-环境
-<a class=anchor href=#%e7%8e%af%e5%a2%83>#</a>
-</h2>
-<p>以下是服务器和各组件的详细情况:</p>
-<table>
-<thead>
-<tr>
-<th style=text-align:left>服务器配置</th>
-<th style=text-align:left>值</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td style=text-align:left>虚拟机</td>
-<td style=text-align:left>2台</td>
-</tr>
-<tr>
-<td style=text-align:left>IP/内网</td>
-<td style=text-align:left>10.206.99.57, 10.206.99.58</td>
-</tr>
-<tr>
-<td style=text-align:left>配置</td>
-<td style=text-align:left>4核8G, 系统盘160G, 数据盘5T挂载到/data目录</td>
-</tr>
-<tr>
-<td style=text-align:left>操作系统</td>
-<td style=text-align:left>CentOS 7.9</td>
-</tr>
-<tr>
-<td style=text-align:left>用户</td>
-<td style=text-align:left>root</td>
-</tr>
-</tbody>
-</table>
-<blockquote>
-<p>这里把数据磁盘挂到 <code>/data</code> 目录, 是因为 harbor 的数据卷配置默认就是它, 后面就不需要修改 harbor 这块的配置了.</p>
-</blockquote>
-<table>
-<thead>
-<tr>
-<th style=text-align:left>组件</th>
-<th style=text-align:left>配置/版本</th>
-<th style=text-align:left>说明</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td style=text-align:left>docker-ce</td>
-<td style=text-align:left>20.10.14</td>
-<td></td>
-</tr>
-<tr>
-<td style=text-align:left>docker-compose</td>
-<td style=text-align:left>1.29.2</td>
-<td style=text-align:left>最新稳定版</td>
-</tr>
-<tr>
-<td style=text-align:left>harbor</td>
-<td style=text-align:left>v2.2.4</td>
-<td style=text-align:left>离线版</td>
-</tr>
-</tbody>
-</table>
-<h2 id=安装-docker>
-安装 docker
-<a class=anchor href=#%e5%ae%89%e8%a3%85-docker>#</a>
-</h2>
-<p>参考
-<a href=https://docs.docker.com/engine/install/centos/>Install Docker Engine on CentOS</a> 来安装, 因为我是全新的系统, 直接安装:</p>
-<h3 id=安装-yum-仓库>
-安装 yum 仓库
-<a class=anchor href=#%e5%ae%89%e8%a3%85-yum-%e4%bb%93%e5%ba%93>#</a>
-</h3>
-<p>安装 <code>yum-utils</code> 包, 它能提供 <code>yum-config-manager</code> 配置工具, 然后用工具来配置安装稳定的 yum 仓库.</p>
-<div class=highlight><pre tabindex=0 style=background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-shell data-lang=shell>yum install -y yum-utils
-yum-config-manager <span style=color:#d14>\
-</span><span style=color:#d14></span>    --add-repo <span style=color:#d14>\
-</span><span style=color:#d14></span>    http://mirrors.aliyun.com/docker-ce/linux/centos/docker-ce.repo
-</code></pre></div><blockquote>
-<p>这里使用阿里云镜像替换
-<a href=https://download.docker.com/linux/centos/docker-ce.repo>https://download.docker.com/linux/centos/docker-ce.repo</a></p>
-</blockquote>
-<h3 id=安装-docker-引擎>
-安装 docker 引擎
-<a class=anchor href=#%e5%ae%89%e8%a3%85-docker-%e5%bc%95%e6%93%8e>#</a>
-</h3>
-<p>安装最新稳定版 Docker 引擎和 containerd</p>
-<div class=highlight><pre tabindex=0 style=background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-shell data-lang=shell>yum install -y docker-ce docker-ce-cli containerd.io
-</code></pre></div><p>启动 docker 实例并配置开机自动启动</p>
-<div class=highlight><pre tabindex=0 style=background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-shell data-lang=shell>systemctl start docker
-systemctl <span style=color:#0086b3>enable</span> docker
-</code></pre></div><h3 id=优化-docker-配置>
-优化 docker 配置
-<a class=anchor href=#%e4%bc%98%e5%8c%96-docker-%e9%85%8d%e7%bd%ae>#</a>
-</h3>
-<p>做一些 docker 相关的配置优化:</p>
-<div class=highlight><pre tabindex=0 style=background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-shell data-lang=shell>cat <span style=color:#d14>&lt;&lt;EOF | tee /etc/docker/daemon.json
-</span><span style=color:#d14>{
-</span><span style=color:#d14>  &#34;exec-opts&#34;: [&#34;native.cgroupdriver=systemd&#34;],
-</span><span style=color:#d14>  &#34;log-driver&#34;: &#34;json-file&#34;,
-</span><span style=color:#d14>  &#34;log-opts&#34;: {
-</span><span style=color:#d14>    &#34;max-size&#34;: &#34;100m&#34;
-</span><span style=color:#d14>  },
-</span><span style=color:#d14>  &#34;storage-driver&#34;: &#34;overlay2&#34;,
-</span><span style=color:#d14>  &#34;storage-opts&#34;: [
-</span><span style=color:#d14>    &#34;overlay2.override_kernel_check=true&#34;
-</span><span style=color:#d14>  ]
-</span><span style=color:#d14>}
-</span><span style=color:#d14>EOF</span>
-</code></pre></div><p>重启启动 docker 实例</p>
-<div class=highlight><pre tabindex=0 style=background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-shell data-lang=shell>systemctl daemon-reload
-systemctl restart docker
-</code></pre></div><h3 id=安装-docker-compose>
-安装 docker-compose
-<a class=anchor href=#%e5%ae%89%e8%a3%85-docker-compose>#</a>
-</h3>
-<p>harbor 使用 docker-compose 进行部署, 当前最新稳定版本是 1.29.2, 使用下面命令进行安装:</p>
-<div class=highlight><pre tabindex=0 style=background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-shell data-lang=shell>curl -L <span style=color:#d14>&#34;https://github.com/docker/compose/releases/download/1.29.2/docker-compose-</span><span style=color:#000;font-weight:700>$(</span>uname -s<span style=color:#000;font-weight:700>)</span><span style=color:#d14>-</span><span style=color:#000;font-weight:700>$(</span>uname -m<span style=color:#000;font-weight:700>)</span><span style=color:#d14>&#34;</span> -o /usr/local/bin/docker-compose
-<span style=color:#998;font-style:italic># 如果你的服务器也是 Linux-x86_64, 可以用这个国内的地址下载</span>
-curl -L <span style=color:#d14>&#34;https://rutron.oss-cn-beijing.aliyuncs.com/tools/docker-compose-Linux-x86_64&#34;</span> -o /usr/local/bin/docker-compose
-chmod +x /usr/local/bin/docker-compose
-</code></pre></div><h2 id=安装-harbor-实例>
-安装 Harbor 实例
-<a class=anchor href=#%e5%ae%89%e8%a3%85-harbor-%e5%ae%9e%e4%be%8b>#</a>
-</h2>
-<p>打开
-<a href=https://github.com/goharbor/harbor/releases>Harbor 下载页面</a>, 下载离线安装器. 因为之前使用的是 <code>v2.2.0</code> 版本, 有不少应用已经对接了 harbor 的 api, 为了兼容性, 我选择了 <code>v2.2.4</code>.</p>
-<div class=highlight><pre tabindex=0 style=background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-shell data-lang=shell><span style=color:#998;font-style:italic># 使用 root 用户 ~ 目录</span>
-<span style=color:#0086b3>cd</span> /root
-curl -O https://rutron.oss-cn-beijing.aliyuncs.com/harbor/harbor-offline-installer-v2.2.4.tgz
-tar xzvf harbor-offline-installer-v2.2.4.tgz
-<span style=color:#0086b3>cd</span> harbor
-</code></pre></div><blockquote>
-<p>由于 github-releases 下载页面速度很慢, 我将下载好的包放在了 aliyun-oss 上</p>
-</blockquote>
-<h3 id=配置文件>
-配置文件
-<a class=anchor href=#%e9%85%8d%e7%bd%ae%e6%96%87%e4%bb%b6>#</a>
-</h3>
-<p>拷贝示例配置文件, 进行修改:</p>
-<div class=highlight><pre tabindex=0 style=background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-shell data-lang=shell>cp harbor.yml.tmpl harbor.yml
-vi harbor.yml
-</code></pre></div><p>因为我打算采用默认安装, 所以需要修改的配置项不多, 仅有几个地方需要修改:</p>
-<ul>
-<li><strong>hostname:</strong> 访问 harbor admin ui 和镜像服务的 hostname 或者 ip</li>
-<li><strong>https:</strong>
-<ul>
-<li><strong>certificate:</strong> 线上服务基本都需要要开通 https, 为 https 配置证书路径</li>
-<li><strong>private_key:</strong> 为 https 配置私钥路径</li>
-</ul>
-</li>
-<li><strong>external_url:</strong> 如果要把 harbor 放在代理的后面, 比如请求会通过 nginx/f5 的代理转发才会到 harbor, 就需要配置该项. 如配置了该项, 上面的 <code>hostname</code> 配置就会失效.</li>
-<li><strong>database.paasword:</strong> 数据库密码, 线上环境必须修改</li>
-<li><strong>data_volume:</strong> 这是 harbor 的数据目录, 默认是 <code>/data</code>, 因为我服务器的数据盘就挂的 <code>/data</code> 目录, 这里就不需要修改了.</li>
-</ul>
-<p>下面是默认配置文件, 重点配置我都做了翻译。别看配置文件这么长，重要的都在前 50 行:</p>
-<div class=highlight><div style=background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4>
-<table style=border-spacing:0;padding:0;margin:0;border:0;width:auto;overflow:auto;display:block><tr><td style=vertical-align:top;padding:0;margin:0;border:0>
-<pre tabindex=0 style=background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code><span style="margin-right:.4em;padding:0 .4em;color:#7f7f7f">  1
-</span><span style="margin-right:.4em;padding:0 .4em;color:#7f7f7f">  2
-</span><span style="margin-right:.4em;padding:0 .4em;color:#7f7f7f">  3
-</span><span style="margin-right:.4em;padding:0 .4em;color:#7f7f7f">  4
-</span><span style="margin-right:.4em;padding:0 .4em;color:#7f7f7f">  5
-</span><span style="margin-right:.4em;padding:0 .4em;color:#7f7f7f">  6
-</span><span style="margin-right:.4em;padding:0 .4em;color:#7f7f7f">  7
-</span><span style="margin-right:.4em;padding:0 .4em;color:#7f7f7f">  8
-</span><span style="margin-right:.4em;padding:0 .4em;color:#7f7f7f">  9
-</span><span style="margin-right:.4em;padding:0 .4em;color:#7f7f7f"> 10
-</span><span style="margin-right:.4em;padding:0 .4em;color:#7f7f7f"> 11
-</span><span style="margin-right:.4em;padding:0 .4em;color:#7f7f7f"> 12
-</span><span style="margin-right:.4em;padding:0 .4em;color:#7f7f7f"> 13
-</span><span style="margin-right:.4em;padding:0 .4em;color:#7f7f7f"> 14
-</span><span style="margin-right:.4em;padding:0 .4em;color:#7f7f7f"> 15
-</span><span style="margin-right:.4em;padding:0 .4em;color:#7f7f7f"> 16
-</span><span style="margin-right:.4em;padding:0 .4em;color:#7f7f7f"> 17
-</span><span style="margin-right:.4em;padding:0 .4em;color:#7f7f7f"> 18
-</span><span style="margin-right:.4em;padding:0 .4em;color:#7f7f7f"> 19
-</span><span style="margin-right:.4em;padding:0 .4em;color:#7f7f7f"> 20
-</span><span style="margin-right:.4em;padding:0 .4em;color:#7f7f7f"> 21
-</span><span style="margin-right:.4em;padding:0 .4em;color:#7f7f7f"> 22
-</span><span style="margin-right:.4em;padding:0 .4em;color:#7f7f7f"> 23
-</span><span style="margin-right:.4em;padding:0 .4em;color:#7f7f7f"> 24
-</span><span style="margin-right:.4em;padding:0 .4em;color:#7f7f7f"> 25
-</span><span style="margin-right:.4em;padding:0 .4em;color:#7f7f7f"> 26
-</span><span style="margin-right:.4em;padding:0 .4em;color:#7f7f7f"> 27
-</span><span style="margin-right:.4em;padding:0 .4em;color:#7f7f7f"> 28
-</span><span style="margin-right:.4em;padding:0 .4em;color:#7f7f7f"> 29
-</span><span style="margin-right:.4em;padding:0 .4em;color:#7f7f7f"> 30
-</span><span style="margin-right:.4em;padding:0 .4em;color:#7f7f7f"> 31
-</span><span style="margin-right:.4em;padding:0 .4em;color:#7f7f7f"> 32
-</span><span style="margin-right:.4em;padding:0 .4em;color:#7f7f7f"> 33
-</span><span style="margin-right:.4em;padding:0 .4em;color:#7f7f7f"> 34
-</span><span style="margin-right:.4em;padding:0 .4em;color:#7f7f7f"> 35
-</span><span style="margin-right:.4em;padding:0 .4em;color:#7f7f7f"> 36
-</span><span style="margin-right:.4em;padding:0 .4em;color:#7f7f7f"> 37
-</span><span style="margin-right:.4em;padding:0 .4em;color:#7f7f7f"> 38
-</span><span style="margin-right:.4em;padding:0 .4em;color:#7f7f7f"> 39
-</span><span style="margin-right:.4em;padding:0 .4em;color:#7f7f7f"> 40
-</span><span style="margin-right:.4em;padding:0 .4em;color:#7f7f7f"> 41
-</span><span style="margin-right:.4em;padding:0 .4em;color:#7f7f7f"> 42
-</span><span style="margin-right:.4em;padding:0 .4em;color:#7f7f7f"> 43
-</span><span style="margin-right:.4em;padding:0 .4em;color:#7f7f7f"> 44
-</span><span style="margin-right:.4em;padding:0 .4em;color:#7f7f7f"> 45
-</span><span style="margin-right:.4em;padding:0 .4em;color:#7f7f7f"> 46
-</span><span style="margin-right:.4em;padding:0 .4em;color:#7f7f7f"> 47
-</span><span style="margin-right:.4em;padding:0 .4em;color:#7f7f7f"> 48
-</span><span style="margin-right:.4em;padding:0 .4em;color:#7f7f7f"> 49
-</span><span style="margin-right:.4em;padding:0 .4em;color:#7f7f7f"> 50
-</span><span style="margin-right:.4em;padding:0 .4em;color:#7f7f7f"> 51
-</span><span style="margin-right:.4em;padding:0 .4em;color:#7f7f7f"> 52
-</span><span style="margin-right:.4em;padding:0 .4em;color:#7f7f7f"> 53
-</span><span style="margin-right:.4em;padding:0 .4em;color:#7f7f7f"> 54
-</span><span style="margin-right:.4em;padding:0 .4em;color:#7f7f7f"> 55
-</span><span style="margin-right:.4em;padding:0 .4em;color:#7f7f7f"> 56
-</span><span style="margin-right:.4em;padding:0 .4em;color:#7f7f7f"> 57
-</span><span style="margin-right:.4em;padding:0 .4em;color:#7f7f7f"> 58
-</span><span style="margin-right:.4em;padding:0 .4em;color:#7f7f7f"> 59
-</span><span style="margin-right:.4em;padding:0 .4em;color:#7f7f7f"> 60
-</span><span style="margin-right:.4em;padding:0 .4em;color:#7f7f7f"> 61
-</span><span style="margin-right:.4em;padding:0 .4em;color:#7f7f7f"> 62
-</span><span style="margin-right:.4em;padding:0 .4em;color:#7f7f7f"> 63
-</span><span style="margin-right:.4em;padding:0 .4em;color:#7f7f7f"> 64
-</span><span style="margin-right:.4em;padding:0 .4em;color:#7f7f7f"> 65
-</span><span style="margin-right:.4em;padding:0 .4em;color:#7f7f7f"> 66
-</span><span style="margin-right:.4em;padding:0 .4em;color:#7f7f7f"> 67
-</span><span style="margin-right:.4em;padding:0 .4em;color:#7f7f7f"> 68
-</span><span style="margin-right:.4em;padding:0 .4em;color:#7f7f7f"> 69
-</span><span style="margin-right:.4em;padding:0 .4em;color:#7f7f7f"> 70
-</span><span style="margin-right:.4em;padding:0 .4em;color:#7f7f7f"> 71
-</span><span style="margin-right:.4em;padding:0 .4em;color:#7f7f7f"> 72
-</span><span style="margin-right:.4em;padding:0 .4em;color:#7f7f7f"> 73
-</span><span style="margin-right:.4em;padding:0 .4em;color:#7f7f7f"> 74
-</span><span style="margin-right:.4em;padding:0 .4em;color:#7f7f7f"> 75
-</span><span style="margin-right:.4em;padding:0 .4em;color:#7f7f7f"> 76
-</span><span style="margin-right:.4em;padding:0 .4em;color:#7f7f7f"> 77
-</span><span style="margin-right:.4em;padding:0 .4em;color:#7f7f7f"> 78
-</span><span style="margin-right:.4em;padding:0 .4em;color:#7f7f7f"> 79
-</span><span style="margin-right:.4em;padding:0 .4em;color:#7f7f7f"> 80
-</span><span style="margin-right:.4em;padding:0 .4em;color:#7f7f7f"> 81
-</span><span style="margin-right:.4em;padding:0 .4em;color:#7f7f7f"> 82
-</span><span style="margin-right:.4em;padding:0 .4em;color:#7f7f7f"> 83
-</span><span style="margin-right:.4em;padding:0 .4em;color:#7f7f7f"> 84
-</span><span style="margin-right:.4em;padding:0 .4em;color:#7f7f7f"> 85
-</span><span style="margin-right:.4em;padding:0 .4em;color:#7f7f7f"> 86
-</span><span style="margin-right:.4em;padding:0 .4em;color:#7f7f7f"> 87
-</span><span style="margin-right:.4em;padding:0 .4em;color:#7f7f7f"> 88
-</span><span style="margin-right:.4em;padding:0 .4em;color:#7f7f7f"> 89
-</span><span style="margin-right:.4em;padding:0 .4em;color:#7f7f7f"> 90
-</span><span style="margin-right:.4em;padding:0 .4em;color:#7f7f7f"> 91
-</span><span style="margin-right:.4em;padding:0 .4em;color:#7f7f7f"> 92
-</span><span style="margin-right:.4em;padding:0 .4em;color:#7f7f7f"> 93
-</span><span style="margin-right:.4em;padding:0 .4em;color:#7f7f7f"> 94
-</span><span style="margin-right:.4em;padding:0 .4em;color:#7f7f7f"> 95
-</span><span style="margin-right:.4em;padding:0 .4em;color:#7f7f7f"> 96
-</span><span style="margin-right:.4em;padding:0 .4em;color:#7f7f7f"> 97
-</span><span style="margin-right:.4em;padding:0 .4em;color:#7f7f7f"> 98
-</span><span style="margin-right:.4em;padding:0 .4em;color:#7f7f7f"> 99
-</span><span style="margin-right:.4em;padding:0 .4em;color:#7f7f7f">100
-</span><span style="margin-right:.4em;padding:0 .4em;color:#7f7f7f">101
-</span><span style="margin-right:.4em;padding:0 .4em;color:#7f7f7f">102
-</span><span style="margin-right:.4em;padding:0 .4em;color:#7f7f7f">103
-</span><span style="margin-right:.4em;padding:0 .4em;color:#7f7f7f">104
-</span><span style="margin-right:.4em;padding:0 .4em;color:#7f7f7f">105
-</span><span style="margin-right:.4em;padding:0 .4em;color:#7f7f7f">106
-</span><span style="margin-right:.4em;padding:0 .4em;color:#7f7f7f">107
-</span><span style="margin-right:.4em;padding:0 .4em;color:#7f7f7f">108
-</span><span style="margin-right:.4em;padding:0 .4em;color:#7f7f7f">109
-</span><span style="margin-right:.4em;padding:0 .4em;color:#7f7f7f">110
-</span><span style="margin-right:.4em;padding:0 .4em;color:#7f7f7f">111
-</span><span style="margin-right:.4em;padding:0 .4em;color:#7f7f7f">112
-</span><span style="margin-right:.4em;padding:0 .4em;color:#7f7f7f">113
-</span><span style="margin-right:.4em;padding:0 .4em;color:#7f7f7f">114
-</span><span style="margin-right:.4em;padding:0 .4em;color:#7f7f7f">115
-</span><span style="margin-right:.4em;padding:0 .4em;color:#7f7f7f">116
-</span><span style="margin-right:.4em;padding:0 .4em;color:#7f7f7f">117
-</span><span style="margin-right:.4em;padding:0 .4em;color:#7f7f7f">118
-</span><span style="margin-right:.4em;padding:0 .4em;color:#7f7f7f">119
-</span><span style="margin-right:.4em;padding:0 .4em;color:#7f7f7f">120
-</span><span style="margin-right:.4em;padding:0 .4em;color:#7f7f7f">121
-</span><span style="margin-right:.4em;padding:0 .4em;color:#7f7f7f">122
-</span><span style="margin-right:.4em;padding:0 .4em;color:#7f7f7f">123
-</span><span style="margin-right:.4em;padding:0 .4em;color:#7f7f7f">124
-</span><span style="margin-right:.4em;padding:0 .4em;color:#7f7f7f">125
-</span><span style="margin-right:.4em;padding:0 .4em;color:#7f7f7f">126
-</span><span style="margin-right:.4em;padding:0 .4em;color:#7f7f7f">127
-</span><span style="margin-right:.4em;padding:0 .4em;color:#7f7f7f">128
-</span><span style="margin-right:.4em;padding:0 .4em;color:#7f7f7f">129
-</span><span style="margin-right:.4em;padding:0 .4em;color:#7f7f7f">130
-</span><span style="margin-right:.4em;padding:0 .4em;color:#7f7f7f">131
-</span><span style="margin-right:.4em;padding:0 .4em;color:#7f7f7f">132
-</span><span style="margin-right:.4em;padding:0 .4em;color:#7f7f7f">133
-</span><span style="margin-right:.4em;padding:0 .4em;color:#7f7f7f">134
-</span><span style="margin-right:.4em;padding:0 .4em;color:#7f7f7f">135
-</span><span style="margin-right:.4em;padding:0 .4em;color:#7f7f7f">136
-</span><span style="margin-right:.4em;padding:0 .4em;color:#7f7f7f">137
-</span><span style="margin-right:.4em;padding:0 .4em;color:#7f7f7f">138
-</span><span style="margin-right:.4em;padding:0 .4em;color:#7f7f7f">139
-</span><span style="margin-right:.4em;padding:0 .4em;color:#7f7f7f">140
-</span><span style="margin-right:.4em;padding:0 .4em;color:#7f7f7f">141
-</span><span style="margin-right:.4em;padding:0 .4em;color:#7f7f7f">142
-</span><span style="margin-right:.4em;padding:0 .4em;color:#7f7f7f">143
-</span><span style="margin-right:.4em;padding:0 .4em;color:#7f7f7f">144
-</span><span style="margin-right:.4em;padding:0 .4em;color:#7f7f7f">145
-</span><span style="margin-right:.4em;padding:0 .4em;color:#7f7f7f">146
-</span><span style="margin-right:.4em;padding:0 .4em;color:#7f7f7f">147
-</span><span style="margin-right:.4em;padding:0 .4em;color:#7f7f7f">148
-</span><span style="margin-right:.4em;padding:0 .4em;color:#7f7f7f">149
-</span><span style="margin-right:.4em;padding:0 .4em;color:#7f7f7f">150
-</span><span style="margin-right:.4em;padding:0 .4em;color:#7f7f7f">151
-</span><span style="margin-right:.4em;padding:0 .4em;color:#7f7f7f">152
-</span><span style="margin-right:.4em;padding:0 .4em;color:#7f7f7f">153
-</span><span style="margin-right:.4em;padding:0 .4em;color:#7f7f7f">154
-</span><span style="margin-right:.4em;padding:0 .4em;color:#7f7f7f">155
-</span><span style="margin-right:.4em;padding:0 .4em;color:#7f7f7f">156
-</span><span style="margin-right:.4em;padding:0 .4em;color:#7f7f7f">157
-</span><span style="margin-right:.4em;padding:0 .4em;color:#7f7f7f">158
-</span><span style="margin-right:.4em;padding:0 .4em;color:#7f7f7f">159
-</span><span style="margin-right:.4em;padding:0 .4em;color:#7f7f7f">160
-</span><span style="margin-right:.4em;padding:0 .4em;color:#7f7f7f">161
-</span><span style="margin-right:.4em;padding:0 .4em;color:#7f7f7f">162
-</span><span style="margin-right:.4em;padding:0 .4em;color:#7f7f7f">163
-</span><span style="margin-right:.4em;padding:0 .4em;color:#7f7f7f">164
-</span><span style="margin-right:.4em;padding:0 .4em;color:#7f7f7f">165
-</span><span style="margin-right:.4em;padding:0 .4em;color:#7f7f7f">166
-</span><span style="margin-right:.4em;padding:0 .4em;color:#7f7f7f">167
-</span><span style="margin-right:.4em;padding:0 .4em;color:#7f7f7f">168
-</span><span style="margin-right:.4em;padding:0 .4em;color:#7f7f7f">169
-</span><span style="margin-right:.4em;padding:0 .4em;color:#7f7f7f">170
-</span><span style="margin-right:.4em;padding:0 .4em;color:#7f7f7f">171
-</span><span style="margin-right:.4em;padding:0 .4em;color:#7f7f7f">172
-</span><span style="margin-right:.4em;padding:0 .4em;color:#7f7f7f">173
-</span><span style="margin-right:.4em;padding:0 .4em;color:#7f7f7f">174
-</span><span style="margin-right:.4em;padding:0 .4em;color:#7f7f7f">175
-</span><span style="margin-right:.4em;padding:0 .4em;color:#7f7f7f">176
-</span><span style="margin-right:.4em;padding:0 .4em;color:#7f7f7f">177
-</span><span style="margin-right:.4em;padding:0 .4em;color:#7f7f7f">178
-</span><span style="margin-right:.4em;padding:0 .4em;color:#7f7f7f">179
-</span><span style="margin-right:.4em;padding:0 .4em;color:#7f7f7f">180
-</span><span style="margin-right:.4em;padding:0 .4em;color:#7f7f7f">181
-</span><span style="margin-right:.4em;padding:0 .4em;color:#7f7f7f">182
-</span><span style="margin-right:.4em;padding:0 .4em;color:#7f7f7f">183
-</span><span style="margin-right:.4em;padding:0 .4em;color:#7f7f7f">184
-</span><span style="margin-right:.4em;padding:0 .4em;color:#7f7f7f">185
-</span><span style="margin-right:.4em;padding:0 .4em;color:#7f7f7f">186
-</span><span style="margin-right:.4em;padding:0 .4em;color:#7f7f7f">187
-</span><span style="margin-right:.4em;padding:0 .4em;color:#7f7f7f">188
-</span><span style="margin-right:.4em;padding:0 .4em;color:#7f7f7f">189
-</span><span style="margin-right:.4em;padding:0 .4em;color:#7f7f7f">190
-</span><span style="margin-right:.4em;padding:0 .4em;color:#7f7f7f">191
-</span><span style="margin-right:.4em;padding:0 .4em;color:#7f7f7f">192
-</span><span style="margin-right:.4em;padding:0 .4em;color:#7f7f7f">193
-</span><span style="margin-right:.4em;padding:0 .4em;color:#7f7f7f">194
-</span><span style="margin-right:.4em;padding:0 .4em;color:#7f7f7f">195
-</span><span style="margin-right:.4em;padding:0 .4em;color:#7f7f7f">196
-</span><span style="margin-right:.4em;padding:0 .4em;color:#7f7f7f">197
-</span><span style="margin-right:.4em;padding:0 .4em;color:#7f7f7f">198
-</span><span style="margin-right:.4em;padding:0 .4em;color:#7f7f7f">199
-</span><span style="margin-right:.4em;padding:0 .4em;color:#7f7f7f">200
-</span><span style="margin-right:.4em;padding:0 .4em;color:#7f7f7f">201
-</span><span style="margin-right:.4em;padding:0 .4em;color:#7f7f7f">202
-</span><span style="margin-right:.4em;padding:0 .4em;color:#7f7f7f">203
-</span><span style="margin-right:.4em;padding:0 .4em;color:#7f7f7f">204
-</span><span style="margin-right:.4em;padding:0 .4em;color:#7f7f7f">205
-</span><span style="margin-right:.4em;padding:0 .4em;color:#7f7f7f">206
-</span></code></pre></td>
-<td style=vertical-align:top;padding:0;margin:0;border:0;width:100%>
-<pre tabindex=0 style=background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-yaml data-lang=yaml><span style=color:#998;font-style:italic># Harbor 配置文件</span><span style=color:#bbb>
-</span><span style=color:#bbb>
-</span><span style=color:#bbb></span><span style=color:#998;font-style:italic># 访问管理端 UI 和容器镜像服务使用的 IP 地址或者 hostname</span><span style=color:#bbb>
-</span><span style=color:#bbb></span><span style=color:#998;font-style:italic># 禁止使用 localhost 或 127.0.0.1, 因为 Harbor 需要被外部客户端访问</span><span style=color:#bbb>
-</span><span style=color:#bbb></span><span style=color:navy>hostname</span>:<span style=color:#bbb> </span>reg.mydomain.com<span style=color:#bbb>
-</span><span style=color:#bbb>
-</span><span style=color:#bbb></span><span style=color:#998;font-style:italic># http related config</span><span style=color:#bbb>
-</span><span style=color:#bbb></span><span style=color:navy>http</span>:<span style=color:#bbb>
-</span><span style=color:#bbb>  </span><span style=color:#998;font-style:italic># port for http, default is 80. If https enabled, this port will redirect to https port</span><span style=color:#bbb>
-</span><span style=color:#bbb>  </span><span style=color:navy>port</span>:<span style=color:#bbb> </span><span style=color:#099>80</span><span style=color:#bbb>
-</span><span style=color:#bbb>
-</span><span style=color:#bbb></span><span style=color:#998;font-style:italic># https 相关配置</span><span style=color:#bbb>
-</span><span style=color:#bbb></span><span style=color:navy>https</span>:<span style=color:#bbb>
-</span><span style=color:#bbb>  </span><span style=color:#998;font-style:italic># harbor https 端口, 默认 443</span><span style=color:#bbb>
-</span><span style=color:#bbb>  </span><span style=color:navy>port</span>:<span style=color:#bbb> </span><span style=color:#099>443</span><span style=color:#bbb>
-</span><span style=color:#bbb>  </span><span style=color:#998;font-style:italic># nginx 证书和私钥路径</span><span style=color:#bbb>
-</span><span style=color:#bbb>  </span><span style=color:navy>certificate</span>:<span style=color:#bbb> </span>/your/certificate/path<span style=color:#bbb>
-</span><span style=color:#bbb>  </span><span style=color:navy>private_key</span>:<span style=color:#bbb> </span>/your/private/key/path<span style=color:#bbb>
-</span><span style=color:#bbb>
-</span><span style=color:#bbb></span><span style=color:#998;font-style:italic># # Uncomment following will enable tls communication between all harbor components</span><span style=color:#bbb>
-</span><span style=color:#bbb></span><span style=color:#998;font-style:italic># internal_tls:</span><span style=color:#bbb>
-</span><span style=color:#bbb></span><span style=color:#998;font-style:italic>#   # set enabled to true means internal tls is enabled</span><span style=color:#bbb>
-</span><span style=color:#bbb></span><span style=color:#998;font-style:italic>#   enabled: true</span><span style=color:#bbb>
-</span><span style=color:#bbb></span><span style=color:#998;font-style:italic>#   # put your cert and key files on dir</span><span style=color:#bbb>
-</span><span style=color:#bbb></span><span style=color:#998;font-style:italic>#   dir: /etc/harbor/tls/internal</span><span style=color:#bbb>
-</span><span style=color:#bbb>
-</span><span style=color:#bbb></span><span style=color:#998;font-style:italic># 取消注释会开启外部代理</span><span style=color:#bbb>
-</span><span style=color:#bbb></span><span style=color:#998;font-style:italic># 如开启了该配置, 就不会使用 hostname 了</span><span style=color:#bbb>
-</span><span style=color:#bbb></span><span style=color:#998;font-style:italic># external_url: https://reg.mydomain.com:8433</span><span style=color:#bbb>
-</span><span style=color:#bbb>
-</span><span style=color:#bbb></span><span style=color:#998;font-style:italic># Harbor 管理后台初始密码</span><span style=color:#bbb>
-</span><span style=color:#bbb></span><span style=color:#998;font-style:italic># 仅第一次安装 harbor 时有用</span><span style=color:#bbb>
-</span><span style=color:#bbb></span><span style=color:#998;font-style:italic># 登录 harbor 管理后台之后, 记得修改 admin 密码</span><span style=color:#bbb>
-</span><span style=color:#bbb></span><span style=color:navy>harbor_admin_password</span>:<span style=color:#bbb> </span>Harbor12345<span style=color:#bbb>
-</span><span style=color:#bbb>
-</span><span style=color:#bbb></span><span style=color:#998;font-style:italic># Harbor 数据库配置</span><span style=color:#bbb>
-</span><span style=color:#bbb></span><span style=color:navy>database</span>:<span style=color:#bbb>
-</span><span style=color:#bbb>  </span><span style=color:#998;font-style:italic># Harbor 数据库 root 用户的密码</span><span style=color:#bbb>
-</span><span style=color:#bbb>  </span><span style=color:#998;font-style:italic># 上生产环境, 必须要修改</span><span style=color:#bbb>
-</span><span style=color:#bbb>  </span><span style=color:navy>password</span>:<span style=color:#bbb> </span>root123<span style=color:#bbb>
-</span><span style=color:#bbb>  </span><span style=color:#998;font-style:italic># 空闲连接池中的最大连接数量</span><span style=color:#bbb>
-</span><span style=color:#bbb>  </span><span style=color:#998;font-style:italic># 如果 &lt;=0 表示不保留任何空闲连接</span><span style=color:#bbb>
-</span><span style=color:#bbb>  </span><span style=color:navy>max_idle_conns</span>:<span style=color:#bbb> </span><span style=color:#099>50</span><span style=color:#bbb>
-</span><span style=color:#bbb>  </span><span style=color:#998;font-style:italic># 数据库开启的最大连接数</span><span style=color:#bbb>
-</span><span style=color:#bbb>  </span><span style=color:#998;font-style:italic># 如果 &lt;=0, 表示不限制打开连接数</span><span style=color:#bbb>
-</span><span style=color:#bbb>  </span><span style=color:#998;font-style:italic># 注意: harbor 使用的 postgres 该配置默认是 1024</span><span style=color:#bbb>
-</span><span style=color:#bbb>  </span><span style=color:navy>max_open_conns</span>:<span style=color:#bbb> </span><span style=color:#099>1000</span><span style=color:#bbb>
-</span><span style=color:#bbb>
-</span><span style=color:#bbb></span><span style=color:#998;font-style:italic># 默认数据卷</span><span style=color:#bbb>
-</span><span style=color:#bbb></span><span style=color:navy>data_volume</span>:<span style=color:#bbb> </span>/data<span style=color:#bbb>
-</span><span style=color:#bbb>
-</span><span style=color:#bbb></span><span style=color:#998;font-style:italic># Harbor Storage settings by default is using /data dir on local filesystem</span><span style=color:#bbb>
-</span><span style=color:#bbb></span><span style=color:#998;font-style:italic># Uncomment storage_service setting If you want to using external storage</span><span style=color:#bbb>
-</span><span style=color:#bbb></span><span style=color:#998;font-style:italic># storage_service:</span><span style=color:#bbb>
-</span><span style=color:#bbb></span><span style=color:#998;font-style:italic>#   # ca_bundle is the path to the custom root ca certificate, which will be injected into the truststore</span><span style=color:#bbb>
-</span><span style=color:#bbb></span><span style=color:#998;font-style:italic>#   # of registry&#39;s and chart repository&#39;s containers.  This is usually needed when the user hosts a internal storage with self signed certificate.</span><span style=color:#bbb>
-</span><span style=color:#bbb></span><span style=color:#998;font-style:italic>#   ca_bundle:</span><span style=color:#bbb>
-</span><span style=color:#bbb>
-</span><span style=color:#bbb></span><span style=color:#998;font-style:italic>#   # storage backend, default is filesystem, options include filesystem, azure, gcs, s3, swift and oss</span><span style=color:#bbb>
-</span><span style=color:#bbb></span><span style=color:#998;font-style:italic>#   # for more info about this configuration please refer https://docs.docker.com/registry/configuration/</span><span style=color:#bbb>
-</span><span style=color:#bbb></span><span style=color:#998;font-style:italic>#   filesystem:</span><span style=color:#bbb>
-</span><span style=color:#bbb></span><span style=color:#998;font-style:italic>#     maxthreads: 100</span><span style=color:#bbb>
-</span><span style=color:#bbb></span><span style=color:#998;font-style:italic>#   # set disable to true when you want to disable registry redirect</span><span style=color:#bbb>
-</span><span style=color:#bbb></span><span style=color:#998;font-style:italic>#   redirect:</span><span style=color:#bbb>
-</span><span style=color:#bbb></span><span style=color:#998;font-style:italic>#     disabled: false</span><span style=color:#bbb>
-</span><span style=color:#bbb>
-</span><span style=color:#bbb></span><span style=color:#998;font-style:italic># Trivy configuration</span><span style=color:#bbb>
-</span><span style=color:#bbb></span><span style=color:#998;font-style:italic>#</span><span style=color:#bbb>
-</span><span style=color:#bbb></span><span style=color:#998;font-style:italic># Trivy DB contains vulnerability information from NVD, Red Hat, and many other upstream vulnerability databases.</span><span style=color:#bbb>
-</span><span style=color:#bbb></span><span style=color:#998;font-style:italic># It is downloaded by Trivy from the GitHub release page https://github.com/aquasecurity/trivy-db/releases and cached</span><span style=color:#bbb>
-</span><span style=color:#bbb></span><span style=color:#998;font-style:italic># in the local file system. In addition, the database contains the update timestamp so Trivy can detect whether it</span><span style=color:#bbb>
-</span><span style=color:#bbb></span><span style=color:#998;font-style:italic># should download a newer version from the Internet or use the cached one. Currently, the database is updated every</span><span style=color:#bbb>
-</span><span style=color:#bbb></span><span style=color:#998;font-style:italic># 12 hours and published as a new release to GitHub.</span><span style=color:#bbb>
-</span><span style=color:#bbb></span><span style=color:navy>trivy</span>:<span style=color:#bbb>
-</span><span style=color:#bbb>  </span><span style=color:#998;font-style:italic># ignoreUnfixed The flag to display only fixed vulnerabilities</span><span style=color:#bbb>
-</span><span style=color:#bbb>  </span><span style=color:navy>ignore_unfixed</span>:<span style=color:#bbb> </span><span style=color:#000;font-weight:700>false</span><span style=color:#bbb>
-</span><span style=color:#bbb>  </span><span style=color:#998;font-style:italic># skipUpdate The flag to enable or disable Trivy DB downloads from GitHub</span><span style=color:#bbb>
-</span><span style=color:#bbb>  </span><span style=color:#998;font-style:italic>#</span><span style=color:#bbb>
-</span><span style=color:#bbb>  </span><span style=color:#998;font-style:italic># You might want to enable this flag in test or CI/CD environments to avoid GitHub rate limiting issues.</span><span style=color:#bbb>
-</span><span style=color:#bbb>  </span><span style=color:#998;font-style:italic># If the flag is enabled you have to download the `trivy-offline.tar.gz` archive manually, extract `trivy.db` and</span><span style=color:#bbb>
-</span><span style=color:#bbb>  </span><span style=color:#998;font-style:italic># `metadata.json` files and mount them in the `/home/scanner/.cache/trivy/db` path.</span><span style=color:#bbb>
-</span><span style=color:#bbb>  </span><span style=color:navy>skip_update</span>:<span style=color:#bbb> </span><span style=color:#000;font-weight:700>false</span><span style=color:#bbb>
-</span><span style=color:#bbb>  </span><span style=color:#998;font-style:italic>#</span><span style=color:#bbb>
-</span><span style=color:#bbb>  </span><span style=color:#998;font-style:italic># insecure The flag to skip verifying registry certificate</span><span style=color:#bbb>
-</span><span style=color:#bbb>  </span><span style=color:navy>insecure</span>:<span style=color:#bbb> </span><span style=color:#000;font-weight:700>false</span><span style=color:#bbb>
-</span><span style=color:#bbb>  </span><span style=color:#998;font-style:italic># github_token The GitHub access token to download Trivy DB</span><span style=color:#bbb>
-</span><span style=color:#bbb>  </span><span style=color:#998;font-style:italic>#</span><span style=color:#bbb>
-</span><span style=color:#bbb>  </span><span style=color:#998;font-style:italic># Anonymous downloads from GitHub are subject to the limit of 60 requests per hour. Normally such rate limit is enough</span><span style=color:#bbb>
-</span><span style=color:#bbb>  </span><span style=color:#998;font-style:italic># for production operations. If, for any reason, it&#39;s not enough, you could increase the rate limit to 5000</span><span style=color:#bbb>
-</span><span style=color:#bbb>  </span><span style=color:#998;font-style:italic># requests per hour by specifying the GitHub access token. For more details on GitHub rate limiting please consult</span><span style=color:#bbb>
-</span><span style=color:#bbb>  </span><span style=color:#998;font-style:italic># https://developer.github.com/v3/#rate-limiting</span><span style=color:#bbb>
-</span><span style=color:#bbb>  </span><span style=color:#998;font-style:italic>#</span><span style=color:#bbb>
-</span><span style=color:#bbb>  </span><span style=color:#998;font-style:italic># You can create a GitHub token by following the instructions in</span><span style=color:#bbb>
-</span><span style=color:#bbb>  </span><span style=color:#998;font-style:italic># https://help.github.com/en/github/authenticating-to-github/creating-a-personal-access-token-for-the-command-line</span><span style=color:#bbb>
-</span><span style=color:#bbb>  </span><span style=color:#998;font-style:italic>#</span><span style=color:#bbb>
-</span><span style=color:#bbb>  </span><span style=color:#998;font-style:italic># github_token: xxx</span><span style=color:#bbb>
-</span><span style=color:#bbb>
-</span><span style=color:#bbb></span><span style=color:navy>jobservice</span>:<span style=color:#bbb>
-</span><span style=color:#bbb>  </span><span style=color:#998;font-style:italic># Maximum number of job workers in job service</span><span style=color:#bbb>
-</span><span style=color:#bbb>  </span><span style=color:navy>max_job_workers</span>:<span style=color:#bbb> </span><span style=color:#099>10</span><span style=color:#bbb>
-</span><span style=color:#bbb>
-</span><span style=color:#bbb></span><span style=color:navy>notification</span>:<span style=color:#bbb>
-</span><span style=color:#bbb>  </span><span style=color:#998;font-style:italic># Maximum retry count for webhook job</span><span style=color:#bbb>
-</span><span style=color:#bbb>  </span><span style=color:navy>webhook_job_max_retry</span>:<span style=color:#bbb> </span><span style=color:#099>10</span><span style=color:#bbb>
-</span><span style=color:#bbb>
-</span><span style=color:#bbb></span><span style=color:navy>chart</span>:<span style=color:#bbb>
-</span><span style=color:#bbb>  </span><span style=color:#998;font-style:italic># Change the value of absolute_url to enabled can enable absolute url in chart</span><span style=color:#bbb>
-</span><span style=color:#bbb>  </span><span style=color:navy>absolute_url</span>:<span style=color:#bbb> </span>disabled<span style=color:#bbb>
-</span><span style=color:#bbb>
-</span><span style=color:#bbb></span><span style=color:#998;font-style:italic># 日志配置</span><span style=color:#bbb>
-</span><span style=color:#bbb></span><span style=color:navy>log</span>:<span style=color:#bbb>
-</span><span style=color:#bbb>  </span><span style=color:#998;font-style:italic># 可选项 debug, info, warning, error, fatal</span><span style=color:#bbb>
-</span><span style=color:#bbb>  </span><span style=color:navy>level</span>:<span style=color:#bbb> </span>info<span style=color:#bbb>
-</span><span style=color:#bbb>  </span><span style=color:#998;font-style:italic># 使用 local 存储的日志相关配置</span><span style=color:#bbb>
-</span><span style=color:#bbb>  </span><span style=color:navy>local</span>:<span style=color:#bbb>
-</span><span style=color:#bbb>    </span><span style=color:#998;font-style:italic># 日志轮转文件数量</span><span style=color:#bbb>
-</span><span style=color:#bbb>    </span><span style=color:#998;font-style:italic># 日志文件在被删除之前会轮转 rotate_count 次</span><span style=color:#bbb>
-</span><span style=color:#bbb>    </span><span style=color:#998;font-style:italic># 如果 0 则删除旧版本而不是轮换。</span><span style=color:#bbb>
-</span><span style=color:#bbb>    </span><span style=color:navy>rotate_count</span>:<span style=color:#bbb> </span><span style=color:#099>50</span><span style=color:#bbb>
-</span><span style=color:#bbb>    </span><span style=color:#998;font-style:italic># 当日志文件大于 rotate_size 个字节 bytes 时会轮换</span><span style=color:#bbb>
-</span><span style=color:#bbb>    </span><span style=color:#998;font-style:italic># 如果 size 后跟 k 则表示以 kb 为单位, 也可以跟 M/G</span><span style=color:#bbb>
-</span><span style=color:#bbb>    </span><span style=color:#998;font-style:italic># 所以 100/100k/100M/200G 都是合法的</span><span style=color:#bbb>
-</span><span style=color:#bbb>    </span><span style=color:navy>rotate_size</span>:<span style=color:#bbb> </span>200M<span style=color:#bbb>
-</span><span style=color:#bbb>    </span><span style=color:#998;font-style:italic># 存储日志的主机目录</span><span style=color:#bbb>
-</span><span style=color:#bbb>    </span><span style=color:navy>location</span>:<span style=color:#bbb> </span>/var/log/harbor<span style=color:#bbb>
-</span><span style=color:#bbb>
-</span><span style=color:#bbb>  </span><span style=color:#998;font-style:italic># Uncomment following lines to enable external syslog endpoint.</span><span style=color:#bbb>
-</span><span style=color:#bbb>  </span><span style=color:#998;font-style:italic># external_endpoint:</span><span style=color:#bbb>
-</span><span style=color:#bbb>  </span><span style=color:#998;font-style:italic>#   # protocol used to transmit log to external endpoint, options is tcp or udp</span><span style=color:#bbb>
-</span><span style=color:#bbb>  </span><span style=color:#998;font-style:italic>#   protocol: tcp</span><span style=color:#bbb>
-</span><span style=color:#bbb>  </span><span style=color:#998;font-style:italic>#   # The host of external endpoint</span><span style=color:#bbb>
-</span><span style=color:#bbb>  </span><span style=color:#998;font-style:italic>#   host: localhost</span><span style=color:#bbb>
-</span><span style=color:#bbb>  </span><span style=color:#998;font-style:italic>#   # Port of external endpoint</span><span style=color:#bbb>
-</span><span style=color:#bbb>  </span><span style=color:#998;font-style:italic>#   port: 5140</span><span style=color:#bbb>
-</span><span style=color:#bbb>
-</span><span style=color:#bbb></span><span style=color:#998;font-style:italic>#This attribute is for migrator to detect the version of the .cfg file, DO NOT MODIFY!</span><span style=color:#bbb>
-</span><span style=color:#bbb></span><span style=color:navy>_version</span>:<span style=color:#bbb> </span><span style=color:#099>2.2.0</span><span style=color:#bbb>
-</span><span style=color:#bbb>
-</span><span style=color:#bbb></span><span style=color:#998;font-style:italic># Uncomment external_database if using external database.</span><span style=color:#bbb>
-</span><span style=color:#bbb></span><span style=color:#998;font-style:italic># external_database:</span><span style=color:#bbb>
-</span><span style=color:#bbb></span><span style=color:#998;font-style:italic>#   harbor:</span><span style=color:#bbb>
-</span><span style=color:#bbb></span><span style=color:#998;font-style:italic>#     host: harbor_db_host</span><span style=color:#bbb>
-</span><span style=color:#bbb></span><span style=color:#998;font-style:italic>#     port: harbor_db_port</span><span style=color:#bbb>
-</span><span style=color:#bbb></span><span style=color:#998;font-style:italic>#     db_name: harbor_db_name</span><span style=color:#bbb>
-</span><span style=color:#bbb></span><span style=color:#998;font-style:italic>#     username: harbor_db_username</span><span style=color:#bbb>
-</span><span style=color:#bbb></span><span style=color:#998;font-style:italic>#     password: harbor_db_password</span><span style=color:#bbb>
-</span><span style=color:#bbb></span><span style=color:#998;font-style:italic>#     ssl_mode: disable</span><span style=color:#bbb>
-</span><span style=color:#bbb></span><span style=color:#998;font-style:italic>#     max_idle_conns: 2</span><span style=color:#bbb>
-</span><span style=color:#bbb></span><span style=color:#998;font-style:italic>#     max_open_conns: 0</span><span style=color:#bbb>
-</span><span style=color:#bbb></span><span style=color:#998;font-style:italic>#   notary_signer:</span><span style=color:#bbb>
-</span><span style=color:#bbb></span><span style=color:#998;font-style:italic>#     host: notary_signer_db_host</span><span style=color:#bbb>
-</span><span style=color:#bbb></span><span style=color:#998;font-style:italic>#     port: notary_signer_db_port</span><span style=color:#bbb>
-</span><span style=color:#bbb></span><span style=color:#998;font-style:italic>#     db_name: notary_signer_db_name</span><span style=color:#bbb>
-</span><span style=color:#bbb></span><span style=color:#998;font-style:italic>#     username: notary_signer_db_username</span><span style=color:#bbb>
-</span><span style=color:#bbb></span><span style=color:#998;font-style:italic>#     password: notary_signer_db_password</span><span style=color:#bbb>
-</span><span style=color:#bbb></span><span style=color:#998;font-style:italic>#     ssl_mode: disable</span><span style=color:#bbb>
-</span><span style=color:#bbb></span><span style=color:#998;font-style:italic>#   notary_server:</span><span style=color:#bbb>
-</span><span style=color:#bbb></span><span style=color:#998;font-style:italic>#     host: notary_server_db_host</span><span style=color:#bbb>
-</span><span style=color:#bbb></span><span style=color:#998;font-style:italic>#     port: notary_server_db_port</span><span style=color:#bbb>
-</span><span style=color:#bbb></span><span style=color:#998;font-style:italic>#     db_name: notary_server_db_name</span><span style=color:#bbb>
-</span><span style=color:#bbb></span><span style=color:#998;font-style:italic>#     username: notary_server_db_username</span><span style=color:#bbb>
-</span><span style=color:#bbb></span><span style=color:#998;font-style:italic>#     password: notary_server_db_password</span><span style=color:#bbb>
-</span><span style=color:#bbb></span><span style=color:#998;font-style:italic>#     ssl_mode: disable</span><span style=color:#bbb>
-</span><span style=color:#bbb>
-</span><span style=color:#bbb></span><span style=color:#998;font-style:italic># Uncomment external_redis if using external Redis server</span><span style=color:#bbb>
-</span><span style=color:#bbb></span><span style=color:#998;font-style:italic># external_redis:</span><span style=color:#bbb>
-</span><span style=color:#bbb></span><span style=color:#998;font-style:italic>#   # support redis, redis+sentinel</span><span style=color:#bbb>
-</span><span style=color:#bbb></span><span style=color:#998;font-style:italic>#   # host for redis: &lt;host_redis&gt;:&lt;port_redis&gt;</span><span style=color:#bbb>
-</span><span style=color:#bbb></span><span style=color:#998;font-style:italic>#   # host for redis+sentinel:</span><span style=color:#bbb>
-</span><span style=color:#bbb></span><span style=color:#998;font-style:italic>#   #  &lt;host_sentinel1&gt;:&lt;port_sentinel1&gt;,&lt;host_sentinel2&gt;:&lt;port_sentinel2&gt;,&lt;host_sentinel3&gt;:&lt;port_sentinel3&gt;</span><span style=color:#bbb>
-</span><span style=color:#bbb></span><span style=color:#998;font-style:italic>#   host: redis:6379</span><span style=color:#bbb>
-</span><span style=color:#bbb></span><span style=color:#998;font-style:italic>#   password:</span><span style=color:#bbb>
-</span><span style=color:#bbb></span><span style=color:#998;font-style:italic>#   # sentinel_master_set must be set to support redis+sentinel</span><span style=color:#bbb>
-</span><span style=color:#bbb></span><span style=color:#998;font-style:italic>#   #sentinel_master_set:</span><span style=color:#bbb>
-</span><span style=color:#bbb></span><span style=color:#998;font-style:italic>#   # db_index 0 is for core, it&#39;s unchangeable</span><span style=color:#bbb>
-</span><span style=color:#bbb></span><span style=color:#998;font-style:italic>#   registry_db_index: 1</span><span style=color:#bbb>
-</span><span style=color:#bbb></span><span style=color:#998;font-style:italic>#   jobservice_db_index: 2</span><span style=color:#bbb>
-</span><span style=color:#bbb></span><span style=color:#998;font-style:italic>#   chartmuseum_db_index: 3</span><span style=color:#bbb>
-</span><span style=color:#bbb></span><span style=color:#998;font-style:italic>#   trivy_db_index: 5</span><span style=color:#bbb>
-</span><span style=color:#bbb></span><span style=color:#998;font-style:italic>#   idle_timeout_seconds: 30</span><span style=color:#bbb>
-</span><span style=color:#bbb>
-</span><span style=color:#bbb></span><span style=color:#998;font-style:italic># Uncomment uaa for trusting the certificate of uaa instance that is hosted via self-signed cert.</span><span style=color:#bbb>
-</span><span style=color:#bbb></span><span style=color:#998;font-style:italic># uaa:</span><span style=color:#bbb>
-</span><span style=color:#bbb></span><span style=color:#998;font-style:italic>#   ca_file: /path/to/ca</span><span style=color:#bbb>
-</span><span style=color:#bbb>
-</span><span style=color:#bbb></span><span style=color:#998;font-style:italic># Global proxy</span><span style=color:#bbb>
-</span><span style=color:#bbb></span><span style=color:#998;font-style:italic># Config http proxy for components, e.g. http://my.proxy.com:3128</span><span style=color:#bbb>
-</span><span style=color:#bbb></span><span style=color:#998;font-style:italic># Components doesn&#39;t need to connect to each others via http proxy.</span><span style=color:#bbb>
-</span><span style=color:#bbb></span><span style=color:#998;font-style:italic># Remove component from `components` array if want disable proxy</span><span style=color:#bbb>
-</span><span style=color:#bbb></span><span style=color:#998;font-style:italic># for it. If you want use proxy for replication, MUST enable proxy</span><span style=color:#bbb>
-</span><span style=color:#bbb></span><span style=color:#998;font-style:italic># for core and jobservice, and set `http_proxy` and `https_proxy`.</span><span style=color:#bbb>
-</span><span style=color:#bbb></span><span style=color:#998;font-style:italic># Add domain to the `no_proxy` field, when you want disable proxy</span><span style=color:#bbb>
-</span><span style=color:#bbb></span><span style=color:#998;font-style:italic># for some special registry.</span><span style=color:#bbb>
-</span><span style=color:#bbb></span><span style=color:navy>proxy</span>:<span style=color:#bbb>
-</span><span style=color:#bbb>  </span><span style=color:navy>http_proxy</span>:<span style=color:#bbb>
-</span><span style=color:#bbb>  </span><span style=color:navy>https_proxy</span>:<span style=color:#bbb>
-</span><span style=color:#bbb>  </span><span style=color:navy>no_proxy</span>:<span style=color:#bbb>
-</span><span style=color:#bbb>  </span><span style=color:navy>components</span>:<span style=color:#bbb>
-</span><span style=color:#bbb>    </span>- core<span style=color:#bbb>
-</span><span style=color:#bbb>    </span>- jobservice<span style=color:#bbb>
-</span><span style=color:#bbb>    </span>- trivy<span style=color:#bbb>
-</span><span style=color:#bbb>
-</span><span style=color:#bbb></span><span style=color:#998;font-style:italic># metric:</span><span style=color:#bbb>
-</span><span style=color:#bbb></span><span style=color:#998;font-style:italic>#   enabled: false</span><span style=color:#bbb>
-</span><span style=color:#bbb></span><span style=color:#998;font-style:italic>#   port: 9090</span><span style=color:#bbb>
-</span><span style=color:#bbb></span><span style=color:#998;font-style:italic>#   path: /metrics</span><span style=color:#bbb>
-</span></code></pre></td></tr></table>
-</div>
-</div><h3 id=默认安装>
-默认安装
-<a class=anchor href=#%e9%bb%98%e8%ae%a4%e5%ae%89%e8%a3%85>#</a>
-</h3>
-<p>默认安装不含 Notary, Trivy, 或者 Chart 仓库服务, 执行下面的命令:</p>
-<div class=highlight><pre tabindex=0 style=background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-shell data-lang=shell>./install.sh
-</code></pre></div><p>查看安装状态:</p>
-<div class=highlight><pre tabindex=0 style=background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-shell data-lang=shell>docker ps
-</code></pre></div><p>如果所有的容器的状态 STATUS 都为 <code>Up About a minute (healthy)</code> 说明安装成功~<br>
-打开 harbor admin ui 验证下吧! 别忘了修改 admin 的密码. 使用同样的方式将两台虚拟机的 docker、docker-compose 和 harbor 都安装好.</p>
-<h3 id=更改配置>
-更改配置
-<a class=anchor href=#%e6%9b%b4%e6%94%b9%e9%85%8d%e7%bd%ae>#</a>
-</h3>
-<p>如果需要更改 harbor 的配置, 请按照如下步骤操作:</p>
-<ol>
-<li>停止 harbor</li>
-</ol>
-<div class=highlight><pre tabindex=0 style=background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-shell data-lang=shell><span style=color:#998;font-style:italic># 首先进入工作目录</span>
-<span style=color:#0086b3>cd</span> ~/harbor/
-docker-compose down -v
-</code></pre></div><ol start=2>
-<li>更新配置文件</li>
-</ol>
-<div class=highlight><pre tabindex=0 style=background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-shell data-lang=shell>vim harbor.yml
-</code></pre></div><ol start=3>
-<li>运行脚本生成最终配置</li>
-</ol>
-<div class=highlight><pre tabindex=0 style=background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-shell data-lang=shell>./prepare
-</code></pre></div><ol start=4>
-<li>重新启动 harbor 实例</li>
-</ol>
-<div class=highlight><pre tabindex=0 style=background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-shell data-lang=shell>docker-compose up -d
-</code></pre></div><ol start=5>
-<li>其他命令</li>
-</ol>
-<div class=highlight><pre tabindex=0 style=background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-shell data-lang=shell><span style=color:#998;font-style:italic># 重装前清理历史数据</span>
-rm -rf /data/database
-rm -rf /data/registry
-rm -rf /data/redis
-</code></pre></div><h2 id=配置双主复制>
-配置双主复制
-<a class=anchor href=#%e9%85%8d%e7%bd%ae%e5%8f%8c%e4%b8%bb%e5%a4%8d%e5%88%b6>#</a>
-</h2>
-<p>在其中一台 harbor 实例上配置，我以 10.206.99.58 为例，另一实例同理，首先需要创建仓库，点击<code>系统管理>仓库管理>新建目标</code>，按照如下填写：</p>
-<p>
-<img src=/posts/2203/harbor-dual-master-replication-ha/add-harbor-instance.png alt=add-harbor-instance></p>
-<p>然后，创建复制规则，点击<code>系统管理>复制管理>新建规则</code>，按照如下填写：</p>
-<p>
-<img src=/posts/2203/harbor-dual-master-replication-ha/add-replication-rule.png alt=add-replication-rule></p>
-<p>这样，当用户往 10.206.99.58 中推送/删除镜像时，10.206.99.57 也会同步发生变化。</p>
-<h2 id=增加反向代理>
-增加反向代理
-<a class=anchor href=#%e5%a2%9e%e5%8a%a0%e5%8f%8d%e5%90%91%e4%bb%a3%e7%90%86>#</a>
-</h2>
-<p>现在两个 harbor 实例都已经配置好了。用户看到的是两个完全独立的 harbor，他们的用户独立，访问地址不同。当然有些场景下这样已经可以满足需求了，比如异地办公的团队（可以按照地域区分使用访问地址）。如果我们想统一访问地址，可以在前面增加一个反向代理。而且可以将 ssl 证书部署在代理上。还是比较推荐的。所以我希望这个代理能实现：</p>
-<ol>
-<li><strong>统一的访问入口：</strong> 将两个 harbor 地址统一为一个。</li>
-<li><strong>卸载 ssl 证书：</strong> 这将简化 harbor 实例的配置，更易于证书的管理。</li>
-<li><strong>会话保持：</strong> 因为 harbor 之间复制是有时间差的，用户往一个实例中推送镜像之后不可能立即在另一实例中拉取到，所以要将客户端的请求固定到一个实例上。</li>
-</ol>
-<blockquote>
-<p>但是很遗憾，harbor 实例之间用户和相关权限是无法同步的。这可能需要需要一些外在的机制实现了。</p>
-</blockquote>
-<p>我假设提供给用户的域名是：registry.example.com，我使用 nginx 作为这个反向代理，它的配置文件<code>/etc/nginx/conf.d/registry.example.com.conf</code>是这样的。</p>
-<div class=highlight><div style=background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4>
-<table style=border-spacing:0;padding:0;margin:0;border:0;width:auto;overflow:auto;display:block><tr><td style=vertical-align:top;padding:0;margin:0;border:0>
-<pre tabindex=0 style=background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code><span style="margin-right:.4em;padding:0 .4em;color:#7f7f7f"> 1
-</span><span style="margin-right:.4em;padding:0 .4em;color:#7f7f7f"> 2
-</span><span style="margin-right:.4em;padding:0 .4em;color:#7f7f7f"> 3
-</span><span style="margin-right:.4em;padding:0 .4em;color:#7f7f7f"> 4
-</span><span style="margin-right:.4em;padding:0 .4em;color:#7f7f7f"> 5
-</span><span style="margin-right:.4em;padding:0 .4em;color:#7f7f7f"> 6
-</span><span style="margin-right:.4em;padding:0 .4em;color:#7f7f7f"> 7
-</span><span style="margin-right:.4em;padding:0 .4em;color:#7f7f7f"> 8
-</span><span style="margin-right:.4em;padding:0 .4em;color:#7f7f7f"> 9
-</span><span style="margin-right:.4em;padding:0 .4em;color:#7f7f7f">10
-</span><span style="margin-right:.4em;padding:0 .4em;color:#7f7f7f">11
-</span><span style="margin-right:.4em;padding:0 .4em;color:#7f7f7f">12
-</span><span style="margin-right:.4em;padding:0 .4em;color:#7f7f7f">13
-</span><span style="margin-right:.4em;padding:0 .4em;color:#7f7f7f">14
-</span><span style="margin-right:.4em;padding:0 .4em;color:#7f7f7f">15
-</span><span style="margin-right:.4em;padding:0 .4em;color:#7f7f7f">16
-</span><span style="margin-right:.4em;padding:0 .4em;color:#7f7f7f">17
-</span><span style="margin-right:.4em;padding:0 .4em;color:#7f7f7f">18
-</span><span style="margin-right:.4em;padding:0 .4em;color:#7f7f7f">19
-</span><span style="margin-right:.4em;padding:0 .4em;color:#7f7f7f">20
-</span><span style="margin-right:.4em;padding:0 .4em;color:#7f7f7f">21
-</span><span style="margin-right:.4em;padding:0 .4em;color:#7f7f7f">22
-</span><span style="margin-right:.4em;padding:0 .4em;color:#7f7f7f">23
-</span><span style="margin-right:.4em;padding:0 .4em;color:#7f7f7f">24
-</span><span style="margin-right:.4em;padding:0 .4em;color:#7f7f7f">25
-</span><span style="margin-right:.4em;padding:0 .4em;color:#7f7f7f">26
-</span><span style="margin-right:.4em;padding:0 .4em;color:#7f7f7f">27
-</span><span style="margin-right:.4em;padding:0 .4em;color:#7f7f7f">28
-</span><span style="margin-right:.4em;padding:0 .4em;color:#7f7f7f">29
-</span><span style="margin-right:.4em;padding:0 .4em;color:#7f7f7f">30
-</span><span style="margin-right:.4em;padding:0 .4em;color:#7f7f7f">31
-</span><span style="margin-right:.4em;padding:0 .4em;color:#7f7f7f">32
-</span><span style="margin-right:.4em;padding:0 .4em;color:#7f7f7f">33
-</span><span style="margin-right:.4em;padding:0 .4em;color:#7f7f7f">34
-</span><span style="margin-right:.4em;padding:0 .4em;color:#7f7f7f">35
-</span><span style="margin-right:.4em;padding:0 .4em;color:#7f7f7f">36
-</span><span style="margin-right:.4em;padding:0 .4em;color:#7f7f7f">37
-</span><span style="margin-right:.4em;padding:0 .4em;color:#7f7f7f">38
-</span><span style="margin-right:.4em;padding:0 .4em;color:#7f7f7f">39
-</span><span style="margin-right:.4em;padding:0 .4em;color:#7f7f7f">40
-</span><span style="margin-right:.4em;padding:0 .4em;color:#7f7f7f">41
-</span><span style="margin-right:.4em;padding:0 .4em;color:#7f7f7f">42
-</span><span style="margin-right:.4em;padding:0 .4em;color:#7f7f7f">43
-</span><span style="margin-right:.4em;padding:0 .4em;color:#7f7f7f">44
-</span><span style="margin-right:.4em;padding:0 .4em;color:#7f7f7f">45
-</span><span style="margin-right:.4em;padding:0 .4em;color:#7f7f7f">46
-</span><span style="margin-right:.4em;padding:0 .4em;color:#7f7f7f">47
-</span><span style="margin-right:.4em;padding:0 .4em;color:#7f7f7f">48
-</span><span style="margin-right:.4em;padding:0 .4em;color:#7f7f7f">49
-</span><span style="margin-right:.4em;padding:0 .4em;color:#7f7f7f">50
-</span></code></pre></td>
-<td style=vertical-align:top;padding:0;margin:0;border:0;width:100%>
-<pre tabindex=0 style=background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-nginx data-lang=nginx><span style=color:#000;font-weight:700>upstream</span> <span style=color:#d14>harbor</span>{
-    <span style=color:#000;font-weight:700>ip_hash</span>;
-    <span style=color:#000;font-weight:700>server</span> <span style=color:#099>10</span><span style=color:#d14>.206.99.57</span>;
-    <span style=color:#000;font-weight:700>server</span> <span style=color:#099>10</span><span style=color:#d14>.206.99.58</span>;
-}
-
-<span style=color:#000;font-weight:700>server</span> {
-    <span style=color:#000;font-weight:700>listen</span> <span style=color:#099>80</span>;
-    <span style=color:#000;font-weight:700>server_name</span> <span style=color:#d14>registry.example.com</span>;
-    <span style=color:#000;font-weight:700>rewrite</span> <span style=color:#d14>^(.*)</span>$ <span style=color:#d14>https://</span><span style=color:teal>$host$1</span>;
-}
-
-<span style=color:#000;font-weight:700>server</span> {
-    <span style=color:#000;font-weight:700>listen</span> <span style=color:#099>443</span> <span style=color:#d14>ssl</span>;
-    <span style=color:#000;font-weight:700>server_name</span> <span style=color:#d14>registry.example.com</span>;
-
-    <span style=color:#000;font-weight:700>charset</span> <span style=color:#d14>utf-8</span>;
-    <span style=color:#000;font-weight:700>client_max_body_size</span> <span style=color:#099>0</span>;
-    <span style=color:#000;font-weight:700>client_header_timeout</span> <span style=color:#099>180</span>;
-    <span style=color:#000;font-weight:700>client_body_timeout</span> <span style=color:#099>180</span>;
-    <span style=color:#000;font-weight:700>send_timeout</span> <span style=color:#099>180</span>;
-    
-    <span style=color:#000;font-weight:700>ssl_certificate</span> <span style=color:#d14>/etc/nginx/conf.d/cert/registry_example_com.pem</span>;
-    <span style=color:#000;font-weight:700>ssl_certificate_key</span> <span style=color:#d14>/etc/nginx/conf.d/cert/registry_example_com.key</span>;
-    <span style=color:#000;font-weight:700>ssl_session_timeout</span> <span style=color:#099>5m</span>;
-    <span style=color:#000;font-weight:700>ssl_ciphers</span> <span style=color:#d14>ECDHE-RSA-AES128-GCM-SHA256:ECDHE:ECDH:AES:HIGH:!NULL:!aNULL:!MD5:!ADH:!RC4:!DH:!DHE</span>;
-    <span style=color:#000;font-weight:700>ssl_protocols</span> <span style=color:#d14>TLSv1</span> <span style=color:#d14>TLSv1.1</span> <span style=color:#d14>TLSv1.2</span> <span style=color:#d14>TLSv1.3</span>;
-    <span style=color:#000;font-weight:700>ssl_prefer_server_ciphers</span> <span style=color:teal>on</span>;
-
-    <span style=color:#000;font-weight:700>proxy_http_version</span> <span style=color:#099>1</span><span style=color:#d14>.1</span>;
-    <span style=color:#000;font-weight:700>proxy_connect_timeout</span> <span style=color:#099>900</span>;
-    <span style=color:#000;font-weight:700>proxy_send_timeout</span> <span style=color:#099>900</span>;
-    <span style=color:#000;font-weight:700>proxy_read_timeout</span> <span style=color:#099>900</span>;
-    <span style=color:#000;font-weight:700>proxy_buffering</span> <span style=color:teal>off</span>;
-    <span style=color:#000;font-weight:700>proxy_request_buffering</span> <span style=color:teal>off</span>;
-    <span style=color:#000;font-weight:700>proxy_set_header</span> <span style=color:#d14>X-Real-IP</span> <span style=color:teal>$remote_addr</span>;
-    <span style=color:#000;font-weight:700>proxy_set_header</span> <span style=color:#d14>X-Forwarded-For</span> <span style=color:teal>$proxy_add_x_forwarded_for</span>;
-
-    <span style=color:#998;font-style:italic># 如果harbor实例仅配置了ip类型的hostname这里就不用配置了
-</span><span style=color:#998;font-style:italic></span>    <span style=color:#998;font-style:italic># 如果配置了可解析的hostname/external_url需要打开注释
-</span><span style=color:#998;font-style:italic></span>    <span style=color:#998;font-style:italic># proxy_set_header Host $host;
-</span><span style=color:#998;font-style:italic></span>
-    <span style=color:#998;font-style:italic># 如果external_url中使用https但是代理访问harbor使用http需要打开注释
-</span><span style=color:#998;font-style:italic></span>    <span style=color:#998;font-style:italic># 同时去掉harbor实例内部的nginx相关的$scheme配置
-</span><span style=color:#998;font-style:italic></span>    <span style=color:#998;font-style:italic># proxy_set_header X-Forwarded-Proto $scheme;
-</span><span style=color:#998;font-style:italic></span>
-    <span style=color:#000;font-weight:700>location</span> <span style=color:#d14>/</span> {
-        <span style=color:#000;font-weight:700>proxy_pass</span> <span style=color:#d14>http://harbor</span>;
-    }
-}
-</code></pre></td></tr></table>
-</div>
-</div><p>运行 nginx 反向代理：</p>
-<div class=highlight><pre tabindex=0 style=background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-shell data-lang=shell><span style=color:#998;font-style:italic># 将证书和配置文件都放在 /etc/nginx/conf.d 路径下</span>
-docker run -d --restart<span style=color:#000;font-weight:700>=</span>always <span style=color:#d14>\
-</span><span style=color:#d14></span>    --name<span style=color:#000;font-weight:700>=</span>nginx <span style=color:#d14>\
-</span><span style=color:#d14></span>    -p 80:80 -p 443:443 <span style=color:#d14>\
-</span><span style=color:#d14></span>    -v /etc/nginx/conf.d:/etc/nginx/conf.d <span style=color:#d14>\
-</span><span style=color:#d14></span>    nginx
-</code></pre></div><p>测试对 registry.example.com 进行<code>login/push/pull</code>镜像均正常，检查两个 harbor 实例也同步正常。至此，完成～</p>
-<h2 id=总结>
-总结
-<a class=anchor href=#%e6%80%bb%e7%bb%93>#</a>
-</h2>
-<p>至此，所有的安装/配置就结束了，通过体验测试我发现：</p>
-<ol>
-<li><strong>用户是独立的</strong><br>
-两个实例之间的项目、镜像、标签相关资源是可以同步的，但是用户不可以。如果用户要在两个实例直接切换使用的话，需要分别登录两个 harbor admin ui 为用户创建两个相同的账号。所以说该方案比较适合异地办公团队，仅做镜像数据的同步。</li>
-<li><strong>镜像同步有一定的时间差</strong><br>
-我的两个实例是所在虚拟机在一个网段内的，测试了一个约 900M 的镜像，从开始同步到结束大概是10秒种。如果用户在一台实例上推送之后，立马去另一台实例上拉去是不行的。所以如果两个实例前面要增加 http 代理的话，需要使用 ip_hash 负载均衡策略，将用户请求固定到其中一台实例上。</li>
-<li><strong>实例 url 地址不一致</strong><br>
-这个问题不严重，因为是两个实例，如果我们在他们前面再部署 http 代理的话，就是三个地址。所以，两个实例对应 admin ui 上的 url 地址和用户使用的（如果有代理）url 地址都不一样。 比如：
-<img src=/posts/2203/harbor-dual-master-replication-ha/harbor-url.jpg alt=harbor-url.jpg></li>
-</ol>
-</article>
-<footer class=book-footer>
-<div class="flex flex-wrap justify-between">
-</div>
-<script>(function(){function a(c){const a=window.getSelection(),b=document.createRange();b.selectNodeContents(c),a.removeAllRanges(),a.addRange(b)}document.querySelectorAll("pre code").forEach(b=>{b.addEventListener("click",function(c){if(window.getSelection().toString())return;a(b.parentElement),navigator.clipboard&&navigator.clipboard.writeText(b.parentElement.textContent)})})})()</script>
-</footer>
-<div class=book-comments><link rel=stylesheet href=https://unpkg.com/gitalk/dist/gitalk.css>
-<script src=https://unpkg.com/gitalk/dist/gitalk.min.js></script>
-<div id=gitalk-container></div>
-<script type=text/javascript>const gitalk=new Gitalk({clientID:'53c7373e7b1554a4abc3',clientSecret:'7c9dcef80ea6bde5d8695d1ab94bcef87063fb3b',repo:'llaoj.github.io',owner:'llaoj',admin:['llaoj'],id:location.pathname,distractionFreeMode:!1});gitalk.render('gitalk-container')</script></div>
-<label for=menu-control class="hidden book-menu-overlay"></label>
-</div>
-<aside class=book-toc>
-<div class=book-toc-content>
-<nav id=TableOfContents>
-<ul>
-<li><a href=#方案的选择>方案的选择</a></li>
-<li><a href=#环境>环境</a></li>
-<li><a href=#安装-docker>安装 docker</a>
-<ul>
-<li><a href=#安装-yum-仓库>安装 yum 仓库</a></li>
-<li><a href=#安装-docker-引擎>安装 docker 引擎</a></li>
-<li><a href=#优化-docker-配置>优化 docker 配置</a></li>
-<li><a href=#安装-docker-compose>安装 docker-compose</a></li>
-</ul>
-</li>
-<li><a href=#安装-harbor-实例>安装 Harbor 实例</a>
-<ul>
-<li><a href=#配置文件>配置文件</a></li>
-<li><a href=#默认安装>默认安装</a></li>
-<li><a href=#更改配置>更改配置</a></li>
-</ul>
-</li>
-<li><a href=#配置双主复制>配置双主复制</a></li>
-<li><a href=#增加反向代理>增加反向代理</a></li>
-<li><a href=#总结>总结</a></li>
-</ul>
-</nav>
-</div>
-</aside>
-</main>
-</body>
-</html>
+<!doctype html><html lang=zh dir=ltr><head><meta charset=UTF-8><meta name=viewport content="width=device-width,initial-scale=1"><meta name=description content="一步步部署 Harbor 双主复制解决方案"><meta name=theme-color media="(prefers-color-scheme: light)" content="#ffffff"><meta name=theme-color media="(prefers-color-scheme: dark)" content="#343a40"><meta name=color-scheme content="light dark"><meta property="og:url" content="https://blog.llaoj.cn/posts/2203/harbor-dual-master-replication-ha/"><meta property="og:site_name" content="老J的博客"><meta property="og:title" content="Harbor 双主复制解决方案实践"><meta property="og:description" content="一步步部署 Harbor 双主复制解决方案"><meta property="og:locale" content="zh"><meta property="og:type" content="article"><meta property="article:section" content="posts"><meta property="article:published_time" content="2022-03-29T00:00:00+00:00"><meta property="article:modified_time" content="2022-03-29T00:00:00+00:00"><meta property="article:tag" content="Harbor"><title>Harbor 双主复制解决方案实践 | 老J的博客</title>
+<link rel=icon href=/favicon.png><link rel=manifest href=/manifest.json><link rel=canonical href=https://blog.llaoj.cn/posts/2203/harbor-dual-master-replication-ha/><link rel=stylesheet href=/book.min.64c4ccf49c05f180d3f1d466fb7172e266ad24b2ae0b146863efe5ca5920ce57.css integrity="sha256-ZMTM9JwF8YDT8dRm+3Fy4matJLKuCxRoY+/lylkgzlc=" crossorigin=anonymous><script defer src=/fuse.min.js></script><script defer src=/zh.search.min.9a0c2fbbd9f49c8679c900e51efa0b3d4cd637566f42b994ae894aeb8b4c1652.js integrity="sha256-mgwvu9n0nIZ5yQDlHvoLPUzWN1ZvQrmUrolK64tMFlI=" crossorigin=anonymous></script><script defer src=/sw.min.6f6f90fcb8eb1c49ec389838e6b801d0de19430b8e516902f8d75c3c8bd98739.js integrity="sha256-b2+Q/LjrHEnsOJg45rgB0N4ZQwuOUWkC+NdcPIvZhzk=" crossorigin=anonymous></script></head><body dir=ltr><input type=checkbox class="hidden toggle" id=menu-control>
+<input type=checkbox class="hidden toggle" id=toc-control><main class="container flex"><aside class=book-menu><div class=book-menu-content><nav><h2 class=book-brand><a class="flex align-center" href=/><img src=/j.png alt=Logo class=book-icon><span>老J的博客</span></a></h2><div class="book-search hidden"><input type=text id=book-search-input placeholder=搜索 aria-label=搜索 maxlength=64 data-hotkeys=s/><div class="book-search-spinner hidden"></div><ul id=book-search-results></ul></div><script>document.querySelector(".book-search").classList.remove("hidden")</script><img src=/images/avatar.jpg width=150 style=border-radius:8px><p style=display:flex;align-items:center;margin-bottom:2px><svg width="24" height="24" viewBox="0 0 30 30"><path d="M15 3C8.373 3 3 8.373 3 15c0 5.623 3.872 10.328 9.092 11.63C12.036 26.468 12 26.28 12 26.047v-2.051c-.487.0-1.303.0-1.508.0-.821.0-1.551-.353-1.905-1.009-.393-.729-.461-1.844-1.435-2.526-.289-.227-.069-.486.264-.451.615.174 1.125.596 1.605 1.222.478.627.703.769 1.596.769.433.0 1.081-.025 1.691-.121.328-.833.895-1.6 1.588-1.962-3.996-.411-5.903-2.399-5.903-5.098.0-1.162.495-2.286 1.336-3.233C9.053 10.647 8.706 8.73 9.435 8c1.798.0 2.885 1.166 3.146 1.481C13.477 9.174 14.461 9 15.495 9c1.036.0 2.024.174 2.922.483C18.675 9.17 19.763 8 21.565 8c.732.731.381 2.656.102 3.594.836.945 1.328 2.066 1.328 3.226.0 2.697-1.904 4.684-5.894 5.097C18.199 20.49 19 22.1 19 23.313v2.734c0 .104-.023.179-.035.268C23.641 24.676 27 20.236 27 15 27 8.373 21.627 3 15 3z"/></svg>
+<a href=https://github.com/llaoj target=_blank style=padding-left:5px;padding-top:5px>github.com/llaoj</a></p><p style=display:flex;align-items:center;margin-top:2px><svg width="24" height="24" style="padding-left:4px" enable-background="new 0 0 2499.7 2024.2" viewBox="0 0 2499.7 2024.2"><path d="m2499.7 1313.8c0-347.3-335.9-630.6-749.5-630.6S1003 966.5 1003 1313.8s335.9 630.6 749.5 630.6c80 0 155.4-9.1 226.2-29.7 20.6-4.6 43.4-2.3 64 6.9l185.1 100.5c11.4 6.9 27.4-4.6 22.8-18.3l-36.6-148.5c-4.6-22.8 2.3-45.7 22.8-59.4 160.1-116.5 262.9-287.9 262.9-482.1zm-1016.8-82.2c-57.1.0-102.8-45.7-102.8-102.8s45.7-102.8 102.8-102.8 102.8 45.7 102.8 102.8-45.7 102.8-102.8 102.8zm505 0c-57.1.0-102.8-45.7-102.8-102.8s45.7-102.8 102.8-102.8 102.8 45.7 102.8 102.8-48 102.8-102.8 102.8z"/><path d="m941.4 1316.1c0-386.1 365.6-699.2 818-699.2h34.3c-73.2-349.6-443.3-616.9-888.9-616.9-500.4.0-904.8 333.6-904.8 747.2.0 228.5 125.7 434.1 322.2 571.2 13.7 9.1 18.3 25.1 16 41.1l-68.5 242.2c-4.6 16 13.7 32 29.7 22.8l267.3-159.9c18.3-11.4 38.8-13.7 59.4-6.9 89.1 22.8 182.8 36.6 278.8 36.6 20.6.0 41.1.0 64-2.3-18.4-57.1-27.5-116.5-27.5-175.9zm267.3-920.8c66.3.0 121.1 54.8 121.1 121.1s-54.8 121.1-121.1 121.1-121.1-54.8-121.1-121.1 54.9-121.1 121.1-121.1zM600.9 637.5c-66.3.0-121.1-54.8-121.1-121.1s54.8-121.1 121.1-121.1S722 450.1 722 516.4s-52.5 121.1-121.1 121.1z"/></svg>
+<span style=padding-left:5px;padding-top:5px>微信号: holdonwwy</span></p><ul><li><a href=/posts/>文章</a></li></ul><ul><li><span>我的项目</span><ul><li><a href=/docs/mywork/gcopy/>GCopy</a></li><li><a href=/docs/mywork/oauth2nsso/>OAuth2&amp;SSO</a></li><li><a href=/docs/mywork/kubefinder/>KubeFinder</a></li></ul></li><li><a href=/docs/about/>关于我</a><ul></ul></li></ul><ul><li><a href=https://www.cncf.io/ target=_blank rel=noopener>CNCF</a></li><li><a href=https://ebpf.io/ target=_blank rel=noopener>eBPF</a></li></ul><div class=book-menu-after><a href=https://www.rutron.net/ target=_blank>@如创科技</a><br>提供云计算支持</p></div></nav><script>(function(){var e=document.querySelector("aside .book-menu-content");addEventListener("beforeunload",function(){localStorage.setItem("menu.scrollTop",e.scrollTop)}),e.scrollTop=localStorage.getItem("menu.scrollTop")})()</script></div></aside><div class=book-page><header class=book-header><div class="flex align-center justify-between"><label for=menu-control><img src=/svg/menu.svg class=book-icon alt=Menu></label><h3>Harbor 双主复制解决方案实践</h3><label for=toc-control><img src=/svg/toc.svg class=book-icon alt="Table of Contents"></label></div><aside class="hidden clearfix"><nav id=TableOfContents><ul><li><a href=#方案的选择>方案的选择</a></li><li><a href=#环境>环境</a></li><li><a href=#安装-docker>安装 docker</a><ul><li><a href=#安装-yum-仓库>安装 yum 仓库</a></li><li><a href=#安装-docker-引擎>安装 docker 引擎</a></li><li><a href=#优化-docker-配置>优化 docker 配置</a></li><li><a href=#安装-docker-compose>安装 docker-compose</a></li></ul></li><li><a href=#安装-harbor-实例>安装 Harbor 实例</a><ul><li><a href=#配置文件>配置文件</a></li><li><a href=#默认安装>默认安装</a></li><li><a href=#更改配置>更改配置</a></li></ul></li><li><a href=#配置双主复制>配置双主复制</a></li><li><a href=#增加反向代理>增加反向代理</a></li><li><a href=#总结>总结</a></li></ul></nav></aside></header><article class="markdown book-post"><h2>Harbor 双主复制解决方案实践</h2><div class="flex align-center text-small book-post-date"><img src=/svg/calendar.svg class=book-icon alt>
+<span>2022-3-29</span></div><div class=text-small><a href=/categories/technology/>Technology</a></div><div class=text-small><a href=/tags/harbor/>Harbor</a></div><div class=book-post-content><blockquote><p>本文已参与「开源摘星计划」，欢迎正在阅读的你加入。活动链接：https://github.com/weopenprojects/WeOpen-Star</p></blockquote><h2 id=方案的选择>方案的选择
+<a class=anchor href=#%e6%96%b9%e6%a1%88%e7%9a%84%e9%80%89%e6%8b%a9>#</a></h2><p>分析了
+<a href=https://github.com/goharbor/harbor/issues/3582>官方 Github: Harbor 高可用方案讨论</a>, 一开始我们选择了 Solution 1 (双激活共享存储方案), 在公司内部大概运行了一年多的时间, 架构图如下:</p><p><img src=/posts/2203/harbor-dual-master-replication-ha/solution-1.png alt="Active-Active with scale out ability"></p><p>从图中可以看到, 这种方案基于外部共享存储、外部数据库和 Redis 服务, 构建其两个/以上的 harbor 实例. 既然使用了外部的服务, 那么高可用的压力自然而然的转移到了外部服务上. 我们一开始采用的外部的 NFS 共享存储服务, 由于我们团队实际情况, 我们暂时还不能保证外部存储的高可用. 同时, 鉴于我们对镜像服务高可用的迫切需求, 决定调研新的 Harbor 的高可用方案.</p><p>选择了 Solution 4 (双主复制方案), 这个解决方案, 使用复制来实现高可用, 它不需要共享存储、外部数据库服务、外部 Redis 服务. 这种方案可以有效的解决镜像服务的单点故障. 架构图如下:</p><p><img src=/posts/2203/harbor-dual-master-replication-ha/solution-4.png alt=harbor-dual-master-replication-ha-solution></p><p>从图中可以看到, 这种方案仅需要在两个 harbor 实例之间建立全量复制机制. 这种方案特别适合异地办公的团队.</p><h2 id=环境>环境
+<a class=anchor href=#%e7%8e%af%e5%a2%83>#</a></h2><p>以下是服务器和各组件的详细情况:</p><table><thead><tr><th style=text-align:left>服务器配置</th><th style=text-align:left>值</th></tr></thead><tbody><tr><td style=text-align:left>虚拟机</td><td style=text-align:left>2台</td></tr><tr><td style=text-align:left>IP/内网</td><td style=text-align:left>10.206.99.57, 10.206.99.58</td></tr><tr><td style=text-align:left>配置</td><td style=text-align:left>4核8G, 系统盘160G, 数据盘5T挂载到/data目录</td></tr><tr><td style=text-align:left>操作系统</td><td style=text-align:left>CentOS 7.9</td></tr><tr><td style=text-align:left>用户</td><td style=text-align:left>root</td></tr></tbody></table><blockquote><p>这里把数据磁盘挂到 <code>/data</code> 目录, 是因为 harbor 的数据卷配置默认就是它, 后面就不需要修改 harbor 这块的配置了.</p></blockquote><table><thead><tr><th style=text-align:left>组件</th><th style=text-align:left>配置/版本</th><th style=text-align:left>说明</th></tr></thead><tbody><tr><td style=text-align:left>docker-ce</td><td style=text-align:left>20.10.14</td><td style=text-align:left></td></tr><tr><td style=text-align:left>docker-compose</td><td style=text-align:left>1.29.2</td><td style=text-align:left>最新稳定版</td></tr><tr><td style=text-align:left>harbor</td><td style=text-align:left>v2.2.4</td><td style=text-align:left>离线版</td></tr></tbody></table><h2 id=安装-docker>安装 docker
+<a class=anchor href=#%e5%ae%89%e8%a3%85-docker>#</a></h2><p>参考
+<a href=https://docs.docker.com/engine/install/centos/>Install Docker Engine on CentOS</a> 来安装, 因为我是全新的系统, 直接安装:</p><h3 id=安装-yum-仓库>安装 yum 仓库
+<a class=anchor href=#%e5%ae%89%e8%a3%85-yum-%e4%bb%93%e5%ba%93>#</a></h3><p>安装 <code>yum-utils</code> 包, 它能提供 <code>yum-config-manager</code> 配置工具, 然后用工具来配置安装稳定的 yum 仓库.</p><div class=highlight><pre tabindex=0 style=background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-shell data-lang=shell><span style=display:flex><span>yum install -y yum-utils
+</span></span><span style=display:flex><span>yum-config-manager <span style=color:#d14>\
+</span></span></span><span style=display:flex><span><span style=color:#d14></span>    --add-repo <span style=color:#d14>\
+</span></span></span><span style=display:flex><span><span style=color:#d14></span>    http://mirrors.aliyun.com/docker-ce/linux/centos/docker-ce.repo
+</span></span></code></pre></div><blockquote><p>这里使用阿里云镜像替换
+<a href=https://download.docker.com/linux/centos/docker-ce.repo>https://download.docker.com/linux/centos/docker-ce.repo</a></p></blockquote><h3 id=安装-docker-引擎>安装 docker 引擎
+<a class=anchor href=#%e5%ae%89%e8%a3%85-docker-%e5%bc%95%e6%93%8e>#</a></h3><p>安装最新稳定版 Docker 引擎和 containerd</p><div class=highlight><pre tabindex=0 style=background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-shell data-lang=shell><span style=display:flex><span>yum install -y docker-ce docker-ce-cli containerd.io
+</span></span></code></pre></div><p>启动 docker 实例并配置开机自动启动</p><div class=highlight><pre tabindex=0 style=background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-shell data-lang=shell><span style=display:flex><span>systemctl start docker
+</span></span><span style=display:flex><span>systemctl <span style=color:#0086b3>enable</span> docker
+</span></span></code></pre></div><h3 id=优化-docker-配置>优化 docker 配置
+<a class=anchor href=#%e4%bc%98%e5%8c%96-docker-%e9%85%8d%e7%bd%ae>#</a></h3><p>做一些 docker 相关的配置优化:</p><div class=highlight><pre tabindex=0 style=background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-shell data-lang=shell><span style=display:flex><span>cat <span style=color:#d14>&lt;&lt;EOF | tee /etc/docker/daemon.json
+</span></span></span><span style=display:flex><span><span style=color:#d14>{
+</span></span></span><span style=display:flex><span><span style=color:#d14>  &#34;exec-opts&#34;: [&#34;native.cgroupdriver=systemd&#34;],
+</span></span></span><span style=display:flex><span><span style=color:#d14>  &#34;log-driver&#34;: &#34;json-file&#34;,
+</span></span></span><span style=display:flex><span><span style=color:#d14>  &#34;log-opts&#34;: {
+</span></span></span><span style=display:flex><span><span style=color:#d14>    &#34;max-size&#34;: &#34;100m&#34;
+</span></span></span><span style=display:flex><span><span style=color:#d14>  },
+</span></span></span><span style=display:flex><span><span style=color:#d14>  &#34;storage-driver&#34;: &#34;overlay2&#34;,
+</span></span></span><span style=display:flex><span><span style=color:#d14>  &#34;storage-opts&#34;: [
+</span></span></span><span style=display:flex><span><span style=color:#d14>    &#34;overlay2.override_kernel_check=true&#34;
+</span></span></span><span style=display:flex><span><span style=color:#d14>  ]
+</span></span></span><span style=display:flex><span><span style=color:#d14>}
+</span></span></span><span style=display:flex><span><span style=color:#d14>EOF</span>
+</span></span></code></pre></div><p>重启启动 docker 实例</p><div class=highlight><pre tabindex=0 style=background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-shell data-lang=shell><span style=display:flex><span>systemctl daemon-reload
+</span></span><span style=display:flex><span>systemctl restart docker
+</span></span></code></pre></div><h3 id=安装-docker-compose>安装 docker-compose
+<a class=anchor href=#%e5%ae%89%e8%a3%85-docker-compose>#</a></h3><p>harbor 使用 docker-compose 进行部署, 当前最新稳定版本是 1.29.2, 使用下面命令进行安装:</p><div class=highlight><pre tabindex=0 style=background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-shell data-lang=shell><span style=display:flex><span>curl -L <span style=color:#d14>&#34;https://github.com/docker/compose/releases/download/1.29.2/docker-compose-</span><span style=color:#000;font-weight:700>$(</span>uname -s<span style=color:#000;font-weight:700>)</span><span style=color:#d14>-</span><span style=color:#000;font-weight:700>$(</span>uname -m<span style=color:#000;font-weight:700>)</span><span style=color:#d14>&#34;</span> -o /usr/local/bin/docker-compose
+</span></span><span style=display:flex><span><span style=color:#998;font-style:italic># 如果你的服务器也是 Linux-x86_64, 可以用这个国内的地址下载</span>
+</span></span><span style=display:flex><span>curl -L <span style=color:#d14>&#34;https://rutron.oss-cn-beijing.aliyuncs.com/tools/docker-compose-Linux-x86_64&#34;</span> -o /usr/local/bin/docker-compose
+</span></span><span style=display:flex><span>chmod +x /usr/local/bin/docker-compose
+</span></span></code></pre></div><h2 id=安装-harbor-实例>安装 Harbor 实例
+<a class=anchor href=#%e5%ae%89%e8%a3%85-harbor-%e5%ae%9e%e4%be%8b>#</a></h2><p>打开
+<a href=https://github.com/goharbor/harbor/releases>Harbor 下载页面</a>, 下载离线安装器. 因为之前使用的是 <code>v2.2.0</code> 版本, 有不少应用已经对接了 harbor 的 api, 为了兼容性, 我选择了 <code>v2.2.4</code>.</p><div class=highlight><pre tabindex=0 style=background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-shell data-lang=shell><span style=display:flex><span><span style=color:#998;font-style:italic># 使用 root 用户 ~ 目录</span>
+</span></span><span style=display:flex><span><span style=color:#0086b3>cd</span> /root
+</span></span><span style=display:flex><span>curl -O https://rutron.oss-cn-beijing.aliyuncs.com/harbor/harbor-offline-installer-v2.2.4.tgz
+</span></span><span style=display:flex><span>tar xzvf harbor-offline-installer-v2.2.4.tgz
+</span></span><span style=display:flex><span><span style=color:#0086b3>cd</span> harbor
+</span></span></code></pre></div><blockquote><p>由于 github-releases 下载页面速度很慢, 我将下载好的包放在了 aliyun-oss 上</p></blockquote><h3 id=配置文件>配置文件
+<a class=anchor href=#%e9%85%8d%e7%bd%ae%e6%96%87%e4%bb%b6>#</a></h3><p>拷贝示例配置文件, 进行修改:</p><div class=highlight><pre tabindex=0 style=background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-shell data-lang=shell><span style=display:flex><span>cp harbor.yml.tmpl harbor.yml
+</span></span><span style=display:flex><span>vi harbor.yml
+</span></span></code></pre></div><p>因为我打算采用默认安装, 所以需要修改的配置项不多, 仅有几个地方需要修改:</p><ul><li><strong>hostname:</strong> 访问 harbor admin ui 和镜像服务的 hostname 或者 ip</li><li><strong>https:</strong><ul><li><strong>certificate:</strong> 线上服务基本都需要要开通 https, 为 https 配置证书路径</li><li><strong>private_key:</strong> 为 https 配置私钥路径</li></ul></li><li><strong>external_url:</strong> 如果要把 harbor 放在代理的后面, 比如请求会通过 nginx/f5 的代理转发才会到 harbor, 就需要配置该项. 如配置了该项, 上面的 <code>hostname</code> 配置就会失效.</li><li><strong>database.paasword:</strong> 数据库密码, 线上环境必须修改</li><li><strong>data_volume:</strong> 这是 harbor 的数据目录, 默认是 <code>/data</code>, 因为我服务器的数据盘就挂的 <code>/data</code> 目录, 这里就不需要修改了.</li></ul><p>下面是默认配置文件, 重点配置我都做了翻译。别看配置文件这么长，重要的都在前 50 行:</p><div class=highlight><div style=background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4><table style=border-spacing:0;padding:0;margin:0;border:0><tr><td style=vertical-align:top;padding:0;margin:0;border:0><pre tabindex=0 style=background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">  1
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">  2
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">  3
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">  4
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">  5
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">  6
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">  7
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">  8
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">  9
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f"> 10
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f"> 11
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f"> 12
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f"> 13
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f"> 14
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f"> 15
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f"> 16
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f"> 17
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f"> 18
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f"> 19
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f"> 20
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f"> 21
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f"> 22
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f"> 23
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f"> 24
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f"> 25
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f"> 26
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f"> 27
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f"> 28
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f"> 29
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f"> 30
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f"> 31
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f"> 32
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f"> 33
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f"> 34
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f"> 35
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f"> 36
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f"> 37
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f"> 38
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f"> 39
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f"> 40
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f"> 41
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f"> 42
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f"> 43
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f"> 44
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f"> 45
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f"> 46
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f"> 47
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f"> 48
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f"> 49
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f"> 50
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f"> 51
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f"> 52
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f"> 53
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f"> 54
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f"> 55
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f"> 56
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f"> 57
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f"> 58
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f"> 59
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f"> 60
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f"> 61
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f"> 62
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f"> 63
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f"> 64
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f"> 65
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f"> 66
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f"> 67
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f"> 68
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f"> 69
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f"> 70
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f"> 71
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f"> 72
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f"> 73
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f"> 74
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f"> 75
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f"> 76
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f"> 77
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f"> 78
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f"> 79
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f"> 80
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f"> 81
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f"> 82
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f"> 83
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f"> 84
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f"> 85
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f"> 86
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f"> 87
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f"> 88
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f"> 89
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f"> 90
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f"> 91
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f"> 92
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f"> 93
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f"> 94
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f"> 95
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f"> 96
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f"> 97
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f"> 98
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f"> 99
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">100
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">101
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">102
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">103
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">104
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">105
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">106
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">107
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">108
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">109
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">110
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">111
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">112
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">113
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">114
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">115
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">116
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">117
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">118
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">119
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">120
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">121
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">122
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">123
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">124
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">125
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">126
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">127
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">128
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">129
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">130
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">131
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">132
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">133
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">134
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">135
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">136
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">137
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">138
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">139
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">140
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">141
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">142
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">143
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">144
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">145
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">146
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">147
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">148
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">149
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">150
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">151
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">152
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">153
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">154
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">155
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">156
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">157
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">158
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">159
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">160
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">161
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">162
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">163
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">164
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">165
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">166
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">167
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">168
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">169
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">170
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">171
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">172
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">173
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">174
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">175
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">176
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">177
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">178
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">179
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">180
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">181
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">182
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">183
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">184
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">185
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">186
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">187
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">188
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">189
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">190
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">191
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">192
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">193
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">194
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">195
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">196
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">197
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">198
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">199
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">200
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">201
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">202
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">203
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">204
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">205
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">206
+</span></code></pre></td><td style=vertical-align:top;padding:0;margin:0;border:0;width:100%><pre tabindex=0 style=background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-yaml data-lang=yaml><span style=display:flex><span><span style=color:#998;font-style:italic># Harbor 配置文件</span><span style=color:#bbb>
+</span></span></span><span style=display:flex><span><span style=color:#bbb>
+</span></span></span><span style=display:flex><span><span style=color:#bbb></span><span style=color:#998;font-style:italic># 访问管理端 UI 和容器镜像服务使用的 IP 地址或者 hostname</span><span style=color:#bbb>
+</span></span></span><span style=display:flex><span><span style=color:#bbb></span><span style=color:#998;font-style:italic># 禁止使用 localhost 或 127.0.0.1, 因为 Harbor 需要被外部客户端访问</span><span style=color:#bbb>
+</span></span></span><span style=display:flex><span><span style=color:#bbb></span><span style=color:navy>hostname</span>:<span style=color:#bbb> </span>reg.mydomain.com<span style=color:#bbb>
+</span></span></span><span style=display:flex><span><span style=color:#bbb>
+</span></span></span><span style=display:flex><span><span style=color:#bbb></span><span style=color:#998;font-style:italic># http related config</span><span style=color:#bbb>
+</span></span></span><span style=display:flex><span><span style=color:#bbb></span><span style=color:navy>http</span>:<span style=color:#bbb>
+</span></span></span><span style=display:flex><span><span style=color:#bbb>  </span><span style=color:#998;font-style:italic># port for http, default is 80. If https enabled, this port will redirect to https port</span><span style=color:#bbb>
+</span></span></span><span style=display:flex><span><span style=color:#bbb>  </span><span style=color:navy>port</span>:<span style=color:#bbb> </span><span style=color:#099>80</span><span style=color:#bbb>
+</span></span></span><span style=display:flex><span><span style=color:#bbb>
+</span></span></span><span style=display:flex><span><span style=color:#bbb></span><span style=color:#998;font-style:italic># https 相关配置</span><span style=color:#bbb>
+</span></span></span><span style=display:flex><span><span style=color:#bbb></span><span style=color:navy>https</span>:<span style=color:#bbb>
+</span></span></span><span style=display:flex><span><span style=color:#bbb>  </span><span style=color:#998;font-style:italic># harbor https 端口, 默认 443</span><span style=color:#bbb>
+</span></span></span><span style=display:flex><span><span style=color:#bbb>  </span><span style=color:navy>port</span>:<span style=color:#bbb> </span><span style=color:#099>443</span><span style=color:#bbb>
+</span></span></span><span style=display:flex><span><span style=color:#bbb>  </span><span style=color:#998;font-style:italic># nginx 证书和私钥路径</span><span style=color:#bbb>
+</span></span></span><span style=display:flex><span><span style=color:#bbb>  </span><span style=color:navy>certificate</span>:<span style=color:#bbb> </span>/your/certificate/path<span style=color:#bbb>
+</span></span></span><span style=display:flex><span><span style=color:#bbb>  </span><span style=color:navy>private_key</span>:<span style=color:#bbb> </span>/your/private/key/path<span style=color:#bbb>
+</span></span></span><span style=display:flex><span><span style=color:#bbb>
+</span></span></span><span style=display:flex><span><span style=color:#bbb></span><span style=color:#998;font-style:italic># # Uncomment following will enable tls communication between all harbor components</span><span style=color:#bbb>
+</span></span></span><span style=display:flex><span><span style=color:#bbb></span><span style=color:#998;font-style:italic># internal_tls:</span><span style=color:#bbb>
+</span></span></span><span style=display:flex><span><span style=color:#bbb></span><span style=color:#998;font-style:italic>#   # set enabled to true means internal tls is enabled</span><span style=color:#bbb>
+</span></span></span><span style=display:flex><span><span style=color:#bbb></span><span style=color:#998;font-style:italic>#   enabled: true</span><span style=color:#bbb>
+</span></span></span><span style=display:flex><span><span style=color:#bbb></span><span style=color:#998;font-style:italic>#   # put your cert and key files on dir</span><span style=color:#bbb>
+</span></span></span><span style=display:flex><span><span style=color:#bbb></span><span style=color:#998;font-style:italic>#   dir: /etc/harbor/tls/internal</span><span style=color:#bbb>
+</span></span></span><span style=display:flex><span><span style=color:#bbb>
+</span></span></span><span style=display:flex><span><span style=color:#bbb></span><span style=color:#998;font-style:italic># 取消注释会开启外部代理</span><span style=color:#bbb>
+</span></span></span><span style=display:flex><span><span style=color:#bbb></span><span style=color:#998;font-style:italic># 如开启了该配置, 就不会使用 hostname 了</span><span style=color:#bbb>
+</span></span></span><span style=display:flex><span><span style=color:#bbb></span><span style=color:#998;font-style:italic># external_url: https://reg.mydomain.com:8433</span><span style=color:#bbb>
+</span></span></span><span style=display:flex><span><span style=color:#bbb>
+</span></span></span><span style=display:flex><span><span style=color:#bbb></span><span style=color:#998;font-style:italic># Harbor 管理后台初始密码</span><span style=color:#bbb>
+</span></span></span><span style=display:flex><span><span style=color:#bbb></span><span style=color:#998;font-style:italic># 仅第一次安装 harbor 时有用</span><span style=color:#bbb>
+</span></span></span><span style=display:flex><span><span style=color:#bbb></span><span style=color:#998;font-style:italic># 登录 harbor 管理后台之后, 记得修改 admin 密码</span><span style=color:#bbb>
+</span></span></span><span style=display:flex><span><span style=color:#bbb></span><span style=color:navy>harbor_admin_password</span>:<span style=color:#bbb> </span>Harbor12345<span style=color:#bbb>
+</span></span></span><span style=display:flex><span><span style=color:#bbb>
+</span></span></span><span style=display:flex><span><span style=color:#bbb></span><span style=color:#998;font-style:italic># Harbor 数据库配置</span><span style=color:#bbb>
+</span></span></span><span style=display:flex><span><span style=color:#bbb></span><span style=color:navy>database</span>:<span style=color:#bbb>
+</span></span></span><span style=display:flex><span><span style=color:#bbb>  </span><span style=color:#998;font-style:italic># Harbor 数据库 root 用户的密码</span><span style=color:#bbb>
+</span></span></span><span style=display:flex><span><span style=color:#bbb>  </span><span style=color:#998;font-style:italic># 上生产环境, 必须要修改</span><span style=color:#bbb>
+</span></span></span><span style=display:flex><span><span style=color:#bbb>  </span><span style=color:navy>password</span>:<span style=color:#bbb> </span>root123<span style=color:#bbb>
+</span></span></span><span style=display:flex><span><span style=color:#bbb>  </span><span style=color:#998;font-style:italic># 空闲连接池中的最大连接数量</span><span style=color:#bbb>
+</span></span></span><span style=display:flex><span><span style=color:#bbb>  </span><span style=color:#998;font-style:italic># 如果 &lt;=0 表示不保留任何空闲连接</span><span style=color:#bbb>
+</span></span></span><span style=display:flex><span><span style=color:#bbb>  </span><span style=color:navy>max_idle_conns</span>:<span style=color:#bbb> </span><span style=color:#099>50</span><span style=color:#bbb>
+</span></span></span><span style=display:flex><span><span style=color:#bbb>  </span><span style=color:#998;font-style:italic># 数据库开启的最大连接数</span><span style=color:#bbb>
+</span></span></span><span style=display:flex><span><span style=color:#bbb>  </span><span style=color:#998;font-style:italic># 如果 &lt;=0, 表示不限制打开连接数</span><span style=color:#bbb>
+</span></span></span><span style=display:flex><span><span style=color:#bbb>  </span><span style=color:#998;font-style:italic># 注意: harbor 使用的 postgres 该配置默认是 1024</span><span style=color:#bbb>
+</span></span></span><span style=display:flex><span><span style=color:#bbb>  </span><span style=color:navy>max_open_conns</span>:<span style=color:#bbb> </span><span style=color:#099>1000</span><span style=color:#bbb>
+</span></span></span><span style=display:flex><span><span style=color:#bbb>
+</span></span></span><span style=display:flex><span><span style=color:#bbb></span><span style=color:#998;font-style:italic># 默认数据卷</span><span style=color:#bbb>
+</span></span></span><span style=display:flex><span><span style=color:#bbb></span><span style=color:navy>data_volume</span>:<span style=color:#bbb> </span>/data<span style=color:#bbb>
+</span></span></span><span style=display:flex><span><span style=color:#bbb>
+</span></span></span><span style=display:flex><span><span style=color:#bbb></span><span style=color:#998;font-style:italic># Harbor Storage settings by default is using /data dir on local filesystem</span><span style=color:#bbb>
+</span></span></span><span style=display:flex><span><span style=color:#bbb></span><span style=color:#998;font-style:italic># Uncomment storage_service setting If you want to using external storage</span><span style=color:#bbb>
+</span></span></span><span style=display:flex><span><span style=color:#bbb></span><span style=color:#998;font-style:italic># storage_service:</span><span style=color:#bbb>
+</span></span></span><span style=display:flex><span><span style=color:#bbb></span><span style=color:#998;font-style:italic>#   # ca_bundle is the path to the custom root ca certificate, which will be injected into the truststore</span><span style=color:#bbb>
+</span></span></span><span style=display:flex><span><span style=color:#bbb></span><span style=color:#998;font-style:italic>#   # of registry&#39;s and chart repository&#39;s containers.  This is usually needed when the user hosts a internal storage with self signed certificate.</span><span style=color:#bbb>
+</span></span></span><span style=display:flex><span><span style=color:#bbb></span><span style=color:#998;font-style:italic>#   ca_bundle:</span><span style=color:#bbb>
+</span></span></span><span style=display:flex><span><span style=color:#bbb>
+</span></span></span><span style=display:flex><span><span style=color:#bbb></span><span style=color:#998;font-style:italic>#   # storage backend, default is filesystem, options include filesystem, azure, gcs, s3, swift and oss</span><span style=color:#bbb>
+</span></span></span><span style=display:flex><span><span style=color:#bbb></span><span style=color:#998;font-style:italic>#   # for more info about this configuration please refer https://docs.docker.com/registry/configuration/</span><span style=color:#bbb>
+</span></span></span><span style=display:flex><span><span style=color:#bbb></span><span style=color:#998;font-style:italic>#   filesystem:</span><span style=color:#bbb>
+</span></span></span><span style=display:flex><span><span style=color:#bbb></span><span style=color:#998;font-style:italic>#     maxthreads: 100</span><span style=color:#bbb>
+</span></span></span><span style=display:flex><span><span style=color:#bbb></span><span style=color:#998;font-style:italic>#   # set disable to true when you want to disable registry redirect</span><span style=color:#bbb>
+</span></span></span><span style=display:flex><span><span style=color:#bbb></span><span style=color:#998;font-style:italic>#   redirect:</span><span style=color:#bbb>
+</span></span></span><span style=display:flex><span><span style=color:#bbb></span><span style=color:#998;font-style:italic>#     disabled: false</span><span style=color:#bbb>
+</span></span></span><span style=display:flex><span><span style=color:#bbb>
+</span></span></span><span style=display:flex><span><span style=color:#bbb></span><span style=color:#998;font-style:italic># Trivy configuration</span><span style=color:#bbb>
+</span></span></span><span style=display:flex><span><span style=color:#bbb></span><span style=color:#998;font-style:italic>#</span><span style=color:#bbb>
+</span></span></span><span style=display:flex><span><span style=color:#bbb></span><span style=color:#998;font-style:italic># Trivy DB contains vulnerability information from NVD, Red Hat, and many other upstream vulnerability databases.</span><span style=color:#bbb>
+</span></span></span><span style=display:flex><span><span style=color:#bbb></span><span style=color:#998;font-style:italic># It is downloaded by Trivy from the GitHub release page https://github.com/aquasecurity/trivy-db/releases and cached</span><span style=color:#bbb>
+</span></span></span><span style=display:flex><span><span style=color:#bbb></span><span style=color:#998;font-style:italic># in the local file system. In addition, the database contains the update timestamp so Trivy can detect whether it</span><span style=color:#bbb>
+</span></span></span><span style=display:flex><span><span style=color:#bbb></span><span style=color:#998;font-style:italic># should download a newer version from the Internet or use the cached one. Currently, the database is updated every</span><span style=color:#bbb>
+</span></span></span><span style=display:flex><span><span style=color:#bbb></span><span style=color:#998;font-style:italic># 12 hours and published as a new release to GitHub.</span><span style=color:#bbb>
+</span></span></span><span style=display:flex><span><span style=color:#bbb></span><span style=color:navy>trivy</span>:<span style=color:#bbb>
+</span></span></span><span style=display:flex><span><span style=color:#bbb>  </span><span style=color:#998;font-style:italic># ignoreUnfixed The flag to display only fixed vulnerabilities</span><span style=color:#bbb>
+</span></span></span><span style=display:flex><span><span style=color:#bbb>  </span><span style=color:navy>ignore_unfixed</span>:<span style=color:#bbb> </span><span style=color:#000;font-weight:700>false</span><span style=color:#bbb>
+</span></span></span><span style=display:flex><span><span style=color:#bbb>  </span><span style=color:#998;font-style:italic># skipUpdate The flag to enable or disable Trivy DB downloads from GitHub</span><span style=color:#bbb>
+</span></span></span><span style=display:flex><span><span style=color:#bbb>  </span><span style=color:#998;font-style:italic>#</span><span style=color:#bbb>
+</span></span></span><span style=display:flex><span><span style=color:#bbb>  </span><span style=color:#998;font-style:italic># You might want to enable this flag in test or CI/CD environments to avoid GitHub rate limiting issues.</span><span style=color:#bbb>
+</span></span></span><span style=display:flex><span><span style=color:#bbb>  </span><span style=color:#998;font-style:italic># If the flag is enabled you have to download the `trivy-offline.tar.gz` archive manually, extract `trivy.db` and</span><span style=color:#bbb>
+</span></span></span><span style=display:flex><span><span style=color:#bbb>  </span><span style=color:#998;font-style:italic># `metadata.json` files and mount them in the `/home/scanner/.cache/trivy/db` path.</span><span style=color:#bbb>
+</span></span></span><span style=display:flex><span><span style=color:#bbb>  </span><span style=color:navy>skip_update</span>:<span style=color:#bbb> </span><span style=color:#000;font-weight:700>false</span><span style=color:#bbb>
+</span></span></span><span style=display:flex><span><span style=color:#bbb>  </span><span style=color:#998;font-style:italic>#</span><span style=color:#bbb>
+</span></span></span><span style=display:flex><span><span style=color:#bbb>  </span><span style=color:#998;font-style:italic># insecure The flag to skip verifying registry certificate</span><span style=color:#bbb>
+</span></span></span><span style=display:flex><span><span style=color:#bbb>  </span><span style=color:navy>insecure</span>:<span style=color:#bbb> </span><span style=color:#000;font-weight:700>false</span><span style=color:#bbb>
+</span></span></span><span style=display:flex><span><span style=color:#bbb>  </span><span style=color:#998;font-style:italic># github_token The GitHub access token to download Trivy DB</span><span style=color:#bbb>
+</span></span></span><span style=display:flex><span><span style=color:#bbb>  </span><span style=color:#998;font-style:italic>#</span><span style=color:#bbb>
+</span></span></span><span style=display:flex><span><span style=color:#bbb>  </span><span style=color:#998;font-style:italic># Anonymous downloads from GitHub are subject to the limit of 60 requests per hour. Normally such rate limit is enough</span><span style=color:#bbb>
+</span></span></span><span style=display:flex><span><span style=color:#bbb>  </span><span style=color:#998;font-style:italic># for production operations. If, for any reason, it&#39;s not enough, you could increase the rate limit to 5000</span><span style=color:#bbb>
+</span></span></span><span style=display:flex><span><span style=color:#bbb>  </span><span style=color:#998;font-style:italic># requests per hour by specifying the GitHub access token. For more details on GitHub rate limiting please consult</span><span style=color:#bbb>
+</span></span></span><span style=display:flex><span><span style=color:#bbb>  </span><span style=color:#998;font-style:italic># https://developer.github.com/v3/#rate-limiting</span><span style=color:#bbb>
+</span></span></span><span style=display:flex><span><span style=color:#bbb>  </span><span style=color:#998;font-style:italic>#</span><span style=color:#bbb>
+</span></span></span><span style=display:flex><span><span style=color:#bbb>  </span><span style=color:#998;font-style:italic># You can create a GitHub token by following the instructions in</span><span style=color:#bbb>
+</span></span></span><span style=display:flex><span><span style=color:#bbb>  </span><span style=color:#998;font-style:italic># https://help.github.com/en/github/authenticating-to-github/creating-a-personal-access-token-for-the-command-line</span><span style=color:#bbb>
+</span></span></span><span style=display:flex><span><span style=color:#bbb>  </span><span style=color:#998;font-style:italic>#</span><span style=color:#bbb>
+</span></span></span><span style=display:flex><span><span style=color:#bbb>  </span><span style=color:#998;font-style:italic># github_token: xxx</span><span style=color:#bbb>
+</span></span></span><span style=display:flex><span><span style=color:#bbb>
+</span></span></span><span style=display:flex><span><span style=color:#bbb></span><span style=color:navy>jobservice</span>:<span style=color:#bbb>
+</span></span></span><span style=display:flex><span><span style=color:#bbb>  </span><span style=color:#998;font-style:italic># Maximum number of job workers in job service</span><span style=color:#bbb>
+</span></span></span><span style=display:flex><span><span style=color:#bbb>  </span><span style=color:navy>max_job_workers</span>:<span style=color:#bbb> </span><span style=color:#099>10</span><span style=color:#bbb>
+</span></span></span><span style=display:flex><span><span style=color:#bbb>
+</span></span></span><span style=display:flex><span><span style=color:#bbb></span><span style=color:navy>notification</span>:<span style=color:#bbb>
+</span></span></span><span style=display:flex><span><span style=color:#bbb>  </span><span style=color:#998;font-style:italic># Maximum retry count for webhook job</span><span style=color:#bbb>
+</span></span></span><span style=display:flex><span><span style=color:#bbb>  </span><span style=color:navy>webhook_job_max_retry</span>:<span style=color:#bbb> </span><span style=color:#099>10</span><span style=color:#bbb>
+</span></span></span><span style=display:flex><span><span style=color:#bbb>
+</span></span></span><span style=display:flex><span><span style=color:#bbb></span><span style=color:navy>chart</span>:<span style=color:#bbb>
+</span></span></span><span style=display:flex><span><span style=color:#bbb>  </span><span style=color:#998;font-style:italic># Change the value of absolute_url to enabled can enable absolute url in chart</span><span style=color:#bbb>
+</span></span></span><span style=display:flex><span><span style=color:#bbb>  </span><span style=color:navy>absolute_url</span>:<span style=color:#bbb> </span>disabled<span style=color:#bbb>
+</span></span></span><span style=display:flex><span><span style=color:#bbb>
+</span></span></span><span style=display:flex><span><span style=color:#bbb></span><span style=color:#998;font-style:italic># 日志配置</span><span style=color:#bbb>
+</span></span></span><span style=display:flex><span><span style=color:#bbb></span><span style=color:navy>log</span>:<span style=color:#bbb>
+</span></span></span><span style=display:flex><span><span style=color:#bbb>  </span><span style=color:#998;font-style:italic># 可选项 debug, info, warning, error, fatal</span><span style=color:#bbb>
+</span></span></span><span style=display:flex><span><span style=color:#bbb>  </span><span style=color:navy>level</span>:<span style=color:#bbb> </span>info<span style=color:#bbb>
+</span></span></span><span style=display:flex><span><span style=color:#bbb>  </span><span style=color:#998;font-style:italic># 使用 local 存储的日志相关配置</span><span style=color:#bbb>
+</span></span></span><span style=display:flex><span><span style=color:#bbb>  </span><span style=color:navy>local</span>:<span style=color:#bbb>
+</span></span></span><span style=display:flex><span><span style=color:#bbb>    </span><span style=color:#998;font-style:italic># 日志轮转文件数量</span><span style=color:#bbb>
+</span></span></span><span style=display:flex><span><span style=color:#bbb>    </span><span style=color:#998;font-style:italic># 日志文件在被删除之前会轮转 rotate_count 次</span><span style=color:#bbb>
+</span></span></span><span style=display:flex><span><span style=color:#bbb>    </span><span style=color:#998;font-style:italic># 如果 0 则删除旧版本而不是轮换。</span><span style=color:#bbb>
+</span></span></span><span style=display:flex><span><span style=color:#bbb>    </span><span style=color:navy>rotate_count</span>:<span style=color:#bbb> </span><span style=color:#099>50</span><span style=color:#bbb>
+</span></span></span><span style=display:flex><span><span style=color:#bbb>    </span><span style=color:#998;font-style:italic># 当日志文件大于 rotate_size 个字节 bytes 时会轮换</span><span style=color:#bbb>
+</span></span></span><span style=display:flex><span><span style=color:#bbb>    </span><span style=color:#998;font-style:italic># 如果 size 后跟 k 则表示以 kb 为单位, 也可以跟 M/G</span><span style=color:#bbb>
+</span></span></span><span style=display:flex><span><span style=color:#bbb>    </span><span style=color:#998;font-style:italic># 所以 100/100k/100M/200G 都是合法的</span><span style=color:#bbb>
+</span></span></span><span style=display:flex><span><span style=color:#bbb>    </span><span style=color:navy>rotate_size</span>:<span style=color:#bbb> </span>200M<span style=color:#bbb>
+</span></span></span><span style=display:flex><span><span style=color:#bbb>    </span><span style=color:#998;font-style:italic># 存储日志的主机目录</span><span style=color:#bbb>
+</span></span></span><span style=display:flex><span><span style=color:#bbb>    </span><span style=color:navy>location</span>:<span style=color:#bbb> </span>/var/log/harbor<span style=color:#bbb>
+</span></span></span><span style=display:flex><span><span style=color:#bbb>
+</span></span></span><span style=display:flex><span><span style=color:#bbb>  </span><span style=color:#998;font-style:italic># Uncomment following lines to enable external syslog endpoint.</span><span style=color:#bbb>
+</span></span></span><span style=display:flex><span><span style=color:#bbb>  </span><span style=color:#998;font-style:italic># external_endpoint:</span><span style=color:#bbb>
+</span></span></span><span style=display:flex><span><span style=color:#bbb>  </span><span style=color:#998;font-style:italic>#   # protocol used to transmit log to external endpoint, options is tcp or udp</span><span style=color:#bbb>
+</span></span></span><span style=display:flex><span><span style=color:#bbb>  </span><span style=color:#998;font-style:italic>#   protocol: tcp</span><span style=color:#bbb>
+</span></span></span><span style=display:flex><span><span style=color:#bbb>  </span><span style=color:#998;font-style:italic>#   # The host of external endpoint</span><span style=color:#bbb>
+</span></span></span><span style=display:flex><span><span style=color:#bbb>  </span><span style=color:#998;font-style:italic>#   host: localhost</span><span style=color:#bbb>
+</span></span></span><span style=display:flex><span><span style=color:#bbb>  </span><span style=color:#998;font-style:italic>#   # Port of external endpoint</span><span style=color:#bbb>
+</span></span></span><span style=display:flex><span><span style=color:#bbb>  </span><span style=color:#998;font-style:italic>#   port: 5140</span><span style=color:#bbb>
+</span></span></span><span style=display:flex><span><span style=color:#bbb>
+</span></span></span><span style=display:flex><span><span style=color:#bbb></span><span style=color:#998;font-style:italic>#This attribute is for migrator to detect the version of the .cfg file, DO NOT MODIFY!</span><span style=color:#bbb>
+</span></span></span><span style=display:flex><span><span style=color:#bbb></span><span style=color:navy>_version</span>:<span style=color:#bbb> </span><span style=color:#099>2.2.0</span><span style=color:#bbb>
+</span></span></span><span style=display:flex><span><span style=color:#bbb>
+</span></span></span><span style=display:flex><span><span style=color:#bbb></span><span style=color:#998;font-style:italic># Uncomment external_database if using external database.</span><span style=color:#bbb>
+</span></span></span><span style=display:flex><span><span style=color:#bbb></span><span style=color:#998;font-style:italic># external_database:</span><span style=color:#bbb>
+</span></span></span><span style=display:flex><span><span style=color:#bbb></span><span style=color:#998;font-style:italic>#   harbor:</span><span style=color:#bbb>
+</span></span></span><span style=display:flex><span><span style=color:#bbb></span><span style=color:#998;font-style:italic>#     host: harbor_db_host</span><span style=color:#bbb>
+</span></span></span><span style=display:flex><span><span style=color:#bbb></span><span style=color:#998;font-style:italic>#     port: harbor_db_port</span><span style=color:#bbb>
+</span></span></span><span style=display:flex><span><span style=color:#bbb></span><span style=color:#998;font-style:italic>#     db_name: harbor_db_name</span><span style=color:#bbb>
+</span></span></span><span style=display:flex><span><span style=color:#bbb></span><span style=color:#998;font-style:italic>#     username: harbor_db_username</span><span style=color:#bbb>
+</span></span></span><span style=display:flex><span><span style=color:#bbb></span><span style=color:#998;font-style:italic>#     password: harbor_db_password</span><span style=color:#bbb>
+</span></span></span><span style=display:flex><span><span style=color:#bbb></span><span style=color:#998;font-style:italic>#     ssl_mode: disable</span><span style=color:#bbb>
+</span></span></span><span style=display:flex><span><span style=color:#bbb></span><span style=color:#998;font-style:italic>#     max_idle_conns: 2</span><span style=color:#bbb>
+</span></span></span><span style=display:flex><span><span style=color:#bbb></span><span style=color:#998;font-style:italic>#     max_open_conns: 0</span><span style=color:#bbb>
+</span></span></span><span style=display:flex><span><span style=color:#bbb></span><span style=color:#998;font-style:italic>#   notary_signer:</span><span style=color:#bbb>
+</span></span></span><span style=display:flex><span><span style=color:#bbb></span><span style=color:#998;font-style:italic>#     host: notary_signer_db_host</span><span style=color:#bbb>
+</span></span></span><span style=display:flex><span><span style=color:#bbb></span><span style=color:#998;font-style:italic>#     port: notary_signer_db_port</span><span style=color:#bbb>
+</span></span></span><span style=display:flex><span><span style=color:#bbb></span><span style=color:#998;font-style:italic>#     db_name: notary_signer_db_name</span><span style=color:#bbb>
+</span></span></span><span style=display:flex><span><span style=color:#bbb></span><span style=color:#998;font-style:italic>#     username: notary_signer_db_username</span><span style=color:#bbb>
+</span></span></span><span style=display:flex><span><span style=color:#bbb></span><span style=color:#998;font-style:italic>#     password: notary_signer_db_password</span><span style=color:#bbb>
+</span></span></span><span style=display:flex><span><span style=color:#bbb></span><span style=color:#998;font-style:italic>#     ssl_mode: disable</span><span style=color:#bbb>
+</span></span></span><span style=display:flex><span><span style=color:#bbb></span><span style=color:#998;font-style:italic>#   notary_server:</span><span style=color:#bbb>
+</span></span></span><span style=display:flex><span><span style=color:#bbb></span><span style=color:#998;font-style:italic>#     host: notary_server_db_host</span><span style=color:#bbb>
+</span></span></span><span style=display:flex><span><span style=color:#bbb></span><span style=color:#998;font-style:italic>#     port: notary_server_db_port</span><span style=color:#bbb>
+</span></span></span><span style=display:flex><span><span style=color:#bbb></span><span style=color:#998;font-style:italic>#     db_name: notary_server_db_name</span><span style=color:#bbb>
+</span></span></span><span style=display:flex><span><span style=color:#bbb></span><span style=color:#998;font-style:italic>#     username: notary_server_db_username</span><span style=color:#bbb>
+</span></span></span><span style=display:flex><span><span style=color:#bbb></span><span style=color:#998;font-style:italic>#     password: notary_server_db_password</span><span style=color:#bbb>
+</span></span></span><span style=display:flex><span><span style=color:#bbb></span><span style=color:#998;font-style:italic>#     ssl_mode: disable</span><span style=color:#bbb>
+</span></span></span><span style=display:flex><span><span style=color:#bbb>
+</span></span></span><span style=display:flex><span><span style=color:#bbb></span><span style=color:#998;font-style:italic># Uncomment external_redis if using external Redis server</span><span style=color:#bbb>
+</span></span></span><span style=display:flex><span><span style=color:#bbb></span><span style=color:#998;font-style:italic># external_redis:</span><span style=color:#bbb>
+</span></span></span><span style=display:flex><span><span style=color:#bbb></span><span style=color:#998;font-style:italic>#   # support redis, redis+sentinel</span><span style=color:#bbb>
+</span></span></span><span style=display:flex><span><span style=color:#bbb></span><span style=color:#998;font-style:italic>#   # host for redis: &lt;host_redis&gt;:&lt;port_redis&gt;</span><span style=color:#bbb>
+</span></span></span><span style=display:flex><span><span style=color:#bbb></span><span style=color:#998;font-style:italic>#   # host for redis+sentinel:</span><span style=color:#bbb>
+</span></span></span><span style=display:flex><span><span style=color:#bbb></span><span style=color:#998;font-style:italic>#   #  &lt;host_sentinel1&gt;:&lt;port_sentinel1&gt;,&lt;host_sentinel2&gt;:&lt;port_sentinel2&gt;,&lt;host_sentinel3&gt;:&lt;port_sentinel3&gt;</span><span style=color:#bbb>
+</span></span></span><span style=display:flex><span><span style=color:#bbb></span><span style=color:#998;font-style:italic>#   host: redis:6379</span><span style=color:#bbb>
+</span></span></span><span style=display:flex><span><span style=color:#bbb></span><span style=color:#998;font-style:italic>#   password:</span><span style=color:#bbb>
+</span></span></span><span style=display:flex><span><span style=color:#bbb></span><span style=color:#998;font-style:italic>#   # sentinel_master_set must be set to support redis+sentinel</span><span style=color:#bbb>
+</span></span></span><span style=display:flex><span><span style=color:#bbb></span><span style=color:#998;font-style:italic>#   #sentinel_master_set:</span><span style=color:#bbb>
+</span></span></span><span style=display:flex><span><span style=color:#bbb></span><span style=color:#998;font-style:italic>#   # db_index 0 is for core, it&#39;s unchangeable</span><span style=color:#bbb>
+</span></span></span><span style=display:flex><span><span style=color:#bbb></span><span style=color:#998;font-style:italic>#   registry_db_index: 1</span><span style=color:#bbb>
+</span></span></span><span style=display:flex><span><span style=color:#bbb></span><span style=color:#998;font-style:italic>#   jobservice_db_index: 2</span><span style=color:#bbb>
+</span></span></span><span style=display:flex><span><span style=color:#bbb></span><span style=color:#998;font-style:italic>#   chartmuseum_db_index: 3</span><span style=color:#bbb>
+</span></span></span><span style=display:flex><span><span style=color:#bbb></span><span style=color:#998;font-style:italic>#   trivy_db_index: 5</span><span style=color:#bbb>
+</span></span></span><span style=display:flex><span><span style=color:#bbb></span><span style=color:#998;font-style:italic>#   idle_timeout_seconds: 30</span><span style=color:#bbb>
+</span></span></span><span style=display:flex><span><span style=color:#bbb>
+</span></span></span><span style=display:flex><span><span style=color:#bbb></span><span style=color:#998;font-style:italic># Uncomment uaa for trusting the certificate of uaa instance that is hosted via self-signed cert.</span><span style=color:#bbb>
+</span></span></span><span style=display:flex><span><span style=color:#bbb></span><span style=color:#998;font-style:italic># uaa:</span><span style=color:#bbb>
+</span></span></span><span style=display:flex><span><span style=color:#bbb></span><span style=color:#998;font-style:italic>#   ca_file: /path/to/ca</span><span style=color:#bbb>
+</span></span></span><span style=display:flex><span><span style=color:#bbb>
+</span></span></span><span style=display:flex><span><span style=color:#bbb></span><span style=color:#998;font-style:italic># Global proxy</span><span style=color:#bbb>
+</span></span></span><span style=display:flex><span><span style=color:#bbb></span><span style=color:#998;font-style:italic># Config http proxy for components, e.g. http://my.proxy.com:3128</span><span style=color:#bbb>
+</span></span></span><span style=display:flex><span><span style=color:#bbb></span><span style=color:#998;font-style:italic># Components doesn&#39;t need to connect to each others via http proxy.</span><span style=color:#bbb>
+</span></span></span><span style=display:flex><span><span style=color:#bbb></span><span style=color:#998;font-style:italic># Remove component from `components` array if want disable proxy</span><span style=color:#bbb>
+</span></span></span><span style=display:flex><span><span style=color:#bbb></span><span style=color:#998;font-style:italic># for it. If you want use proxy for replication, MUST enable proxy</span><span style=color:#bbb>
+</span></span></span><span style=display:flex><span><span style=color:#bbb></span><span style=color:#998;font-style:italic># for core and jobservice, and set `http_proxy` and `https_proxy`.</span><span style=color:#bbb>
+</span></span></span><span style=display:flex><span><span style=color:#bbb></span><span style=color:#998;font-style:italic># Add domain to the `no_proxy` field, when you want disable proxy</span><span style=color:#bbb>
+</span></span></span><span style=display:flex><span><span style=color:#bbb></span><span style=color:#998;font-style:italic># for some special registry.</span><span style=color:#bbb>
+</span></span></span><span style=display:flex><span><span style=color:#bbb></span><span style=color:navy>proxy</span>:<span style=color:#bbb>
+</span></span></span><span style=display:flex><span><span style=color:#bbb>  </span><span style=color:navy>http_proxy</span>:<span style=color:#bbb>
+</span></span></span><span style=display:flex><span><span style=color:#bbb>  </span><span style=color:navy>https_proxy</span>:<span style=color:#bbb>
+</span></span></span><span style=display:flex><span><span style=color:#bbb>  </span><span style=color:navy>no_proxy</span>:<span style=color:#bbb>
+</span></span></span><span style=display:flex><span><span style=color:#bbb>  </span><span style=color:navy>components</span>:<span style=color:#bbb>
+</span></span></span><span style=display:flex><span><span style=color:#bbb>    </span>- core<span style=color:#bbb>
+</span></span></span><span style=display:flex><span><span style=color:#bbb>    </span>- jobservice<span style=color:#bbb>
+</span></span></span><span style=display:flex><span><span style=color:#bbb>    </span>- trivy<span style=color:#bbb>
+</span></span></span><span style=display:flex><span><span style=color:#bbb>
+</span></span></span><span style=display:flex><span><span style=color:#bbb></span><span style=color:#998;font-style:italic># metric:</span><span style=color:#bbb>
+</span></span></span><span style=display:flex><span><span style=color:#bbb></span><span style=color:#998;font-style:italic>#   enabled: false</span><span style=color:#bbb>
+</span></span></span><span style=display:flex><span><span style=color:#bbb></span><span style=color:#998;font-style:italic>#   port: 9090</span><span style=color:#bbb>
+</span></span></span><span style=display:flex><span><span style=color:#bbb></span><span style=color:#998;font-style:italic>#   path: /metrics</span><span style=color:#bbb>
+</span></span></span></code></pre></td></tr></table></div></div><h3 id=默认安装>默认安装
+<a class=anchor href=#%e9%bb%98%e8%ae%a4%e5%ae%89%e8%a3%85>#</a></h3><p>默认安装不含 Notary, Trivy, 或者 Chart 仓库服务, 执行下面的命令:</p><div class=highlight><pre tabindex=0 style=background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-shell data-lang=shell><span style=display:flex><span>./install.sh
+</span></span></code></pre></div><p>查看安装状态:</p><div class=highlight><pre tabindex=0 style=background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-shell data-lang=shell><span style=display:flex><span>docker ps
+</span></span></code></pre></div><p>如果所有的容器的状态 STATUS 都为 <code>Up About a minute (healthy)</code> 说明安装成功~<br>打开 harbor admin ui 验证下吧! 别忘了修改 admin 的密码. 使用同样的方式将两台虚拟机的 docker、docker-compose 和 harbor 都安装好.</p><h3 id=更改配置>更改配置
+<a class=anchor href=#%e6%9b%b4%e6%94%b9%e9%85%8d%e7%bd%ae>#</a></h3><p>如果需要更改 harbor 的配置, 请按照如下步骤操作:</p><ol><li>停止 harbor</li></ol><div class=highlight><pre tabindex=0 style=background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-shell data-lang=shell><span style=display:flex><span><span style=color:#998;font-style:italic># 首先进入工作目录</span>
+</span></span><span style=display:flex><span><span style=color:#0086b3>cd</span> ~/harbor/
+</span></span><span style=display:flex><span>docker-compose down -v
+</span></span></code></pre></div><ol start=2><li>更新配置文件</li></ol><div class=highlight><pre tabindex=0 style=background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-shell data-lang=shell><span style=display:flex><span>vim harbor.yml
+</span></span></code></pre></div><ol start=3><li>运行脚本生成最终配置</li></ol><div class=highlight><pre tabindex=0 style=background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-shell data-lang=shell><span style=display:flex><span>./prepare
+</span></span></code></pre></div><ol start=4><li>重新启动 harbor 实例</li></ol><div class=highlight><pre tabindex=0 style=background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-shell data-lang=shell><span style=display:flex><span>docker-compose up -d
+</span></span></code></pre></div><ol start=5><li>其他命令</li></ol><div class=highlight><pre tabindex=0 style=background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-shell data-lang=shell><span style=display:flex><span><span style=color:#998;font-style:italic># 重装前清理历史数据</span>
+</span></span><span style=display:flex><span>rm -rf /data/database
+</span></span><span style=display:flex><span>rm -rf /data/registry
+</span></span><span style=display:flex><span>rm -rf /data/redis
+</span></span></code></pre></div><h2 id=配置双主复制>配置双主复制
+<a class=anchor href=#%e9%85%8d%e7%bd%ae%e5%8f%8c%e4%b8%bb%e5%a4%8d%e5%88%b6>#</a></h2><p>在其中一台 harbor 实例上配置，我以 10.206.99.58 为例，另一实例同理，首先需要创建仓库，点击<code>系统管理>仓库管理>新建目标</code>，按照如下填写：</p><p><img src=/posts/2203/harbor-dual-master-replication-ha/add-harbor-instance.png alt=add-harbor-instance></p><p>然后，创建复制规则，点击<code>系统管理>复制管理>新建规则</code>，按照如下填写：</p><p><img src=/posts/2203/harbor-dual-master-replication-ha/add-replication-rule.png alt=add-replication-rule></p><p>这样，当用户往 10.206.99.58 中推送/删除镜像时，10.206.99.57 也会同步发生变化。</p><h2 id=增加反向代理>增加反向代理
+<a class=anchor href=#%e5%a2%9e%e5%8a%a0%e5%8f%8d%e5%90%91%e4%bb%a3%e7%90%86>#</a></h2><p>现在两个 harbor 实例都已经配置好了。用户看到的是两个完全独立的 harbor，他们的用户独立，访问地址不同。当然有些场景下这样已经可以满足需求了，比如异地办公的团队（可以按照地域区分使用访问地址）。如果我们想统一访问地址，可以在前面增加一个反向代理。而且可以将 ssl 证书部署在代理上。还是比较推荐的。所以我希望这个代理能实现：</p><ol><li><strong>统一的访问入口：</strong> 将两个 harbor 地址统一为一个。</li><li><strong>卸载 ssl 证书：</strong> 这将简化 harbor 实例的配置，更易于证书的管理。</li><li><strong>会话保持：</strong> 因为 harbor 之间复制是有时间差的，用户往一个实例中推送镜像之后不可能立即在另一实例中拉取到，所以要将客户端的请求固定到一个实例上。</li></ol><blockquote><p>但是很遗憾，harbor 实例之间用户和相关权限是无法同步的。这可能需要需要一些外在的机制实现了。</p></blockquote><p>我假设提供给用户的域名是：registry.example.com，我使用 nginx 作为这个反向代理，它的配置文件<code>/etc/nginx/conf.d/registry.example.com.conf</code>是这样的。</p><div class=highlight><div style=background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4><table style=border-spacing:0;padding:0;margin:0;border:0><tr><td style=vertical-align:top;padding:0;margin:0;border:0><pre tabindex=0 style=background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f"> 1
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f"> 2
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f"> 3
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f"> 4
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f"> 5
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f"> 6
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f"> 7
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f"> 8
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f"> 9
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">10
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">11
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">12
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">13
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">14
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">15
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">16
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">17
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">18
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">19
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">20
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">21
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">22
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">23
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">24
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">25
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">26
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">27
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">28
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">29
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">30
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">31
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">32
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">33
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">34
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">35
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">36
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">37
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">38
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">39
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">40
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">41
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">42
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">43
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">44
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">45
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">46
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">47
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">48
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">49
+</span><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">50
+</span></code></pre></td><td style=vertical-align:top;padding:0;margin:0;border:0;width:100%><pre tabindex=0 style=background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-nginx data-lang=nginx><span style=display:flex><span><span style=color:#000;font-weight:700>upstream</span> <span style=color:#d14>harbor</span>{
+</span></span><span style=display:flex><span>    <span style=color:#000;font-weight:700>ip_hash</span>;
+</span></span><span style=display:flex><span>    <span style=color:#000;font-weight:700>server</span> <span style=color:#099>10</span><span style=color:#d14>.206.99.57</span>;
+</span></span><span style=display:flex><span>    <span style=color:#000;font-weight:700>server</span> <span style=color:#099>10</span><span style=color:#d14>.206.99.58</span>;
+</span></span><span style=display:flex><span>}
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span><span style=color:#000;font-weight:700>server</span> {
+</span></span><span style=display:flex><span>    <span style=color:#000;font-weight:700>listen</span> <span style=color:#099>80</span>;
+</span></span><span style=display:flex><span>    <span style=color:#000;font-weight:700>server_name</span> <span style=color:#d14>registry.example.com</span>;
+</span></span><span style=display:flex><span>    <span style=color:#000;font-weight:700>rewrite</span> <span style=color:#d14>^(.*)</span>$ <span style=color:#d14>https://</span><span style=color:teal>$host$1</span>;
+</span></span><span style=display:flex><span>}
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span><span style=color:#000;font-weight:700>server</span> {
+</span></span><span style=display:flex><span>    <span style=color:#000;font-weight:700>listen</span> <span style=color:#099>443</span> <span style=color:#d14>ssl</span>;
+</span></span><span style=display:flex><span>    <span style=color:#000;font-weight:700>server_name</span> <span style=color:#d14>registry.example.com</span>;
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span>    <span style=color:#000;font-weight:700>charset</span> <span style=color:#d14>utf-8</span>;
+</span></span><span style=display:flex><span>    <span style=color:#000;font-weight:700>client_max_body_size</span> <span style=color:#099>0</span>;
+</span></span><span style=display:flex><span>    <span style=color:#000;font-weight:700>client_header_timeout</span> <span style=color:#099>180</span>;
+</span></span><span style=display:flex><span>    <span style=color:#000;font-weight:700>client_body_timeout</span> <span style=color:#099>180</span>;
+</span></span><span style=display:flex><span>    <span style=color:#000;font-weight:700>send_timeout</span> <span style=color:#099>180</span>;
+</span></span><span style=display:flex><span>    
+</span></span><span style=display:flex><span>    <span style=color:#000;font-weight:700>ssl_certificate</span> <span style=color:#d14>/etc/nginx/conf.d/cert/registry_example_com.pem</span>;
+</span></span><span style=display:flex><span>    <span style=color:#000;font-weight:700>ssl_certificate_key</span> <span style=color:#d14>/etc/nginx/conf.d/cert/registry_example_com.key</span>;
+</span></span><span style=display:flex><span>    <span style=color:#000;font-weight:700>ssl_session_timeout</span> <span style=color:#099>5m</span>;
+</span></span><span style=display:flex><span>    <span style=color:#000;font-weight:700>ssl_ciphers</span> <span style=color:#d14>ECDHE-RSA-AES128-GCM-SHA256:ECDHE:ECDH:AES:HIGH:!NULL:!aNULL:!MD5:!ADH:!RC4:!DH:!DHE</span>;
+</span></span><span style=display:flex><span>    <span style=color:#000;font-weight:700>ssl_protocols</span> <span style=color:#d14>TLSv1</span> <span style=color:#d14>TLSv1.1</span> <span style=color:#d14>TLSv1.2</span> <span style=color:#d14>TLSv1.3</span>;
+</span></span><span style=display:flex><span>    <span style=color:#000;font-weight:700>ssl_prefer_server_ciphers</span> <span style=color:teal>on</span>;
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span>    <span style=color:#000;font-weight:700>proxy_http_version</span> <span style=color:#099>1</span><span style=color:#d14>.1</span>;
+</span></span><span style=display:flex><span>    <span style=color:#000;font-weight:700>proxy_connect_timeout</span> <span style=color:#099>900</span>;
+</span></span><span style=display:flex><span>    <span style=color:#000;font-weight:700>proxy_send_timeout</span> <span style=color:#099>900</span>;
+</span></span><span style=display:flex><span>    <span style=color:#000;font-weight:700>proxy_read_timeout</span> <span style=color:#099>900</span>;
+</span></span><span style=display:flex><span>    <span style=color:#000;font-weight:700>proxy_buffering</span> <span style=color:teal>off</span>;
+</span></span><span style=display:flex><span>    <span style=color:#000;font-weight:700>proxy_request_buffering</span> <span style=color:teal>off</span>;
+</span></span><span style=display:flex><span>    <span style=color:#000;font-weight:700>proxy_set_header</span> <span style=color:#d14>X-Real-IP</span> <span style=color:teal>$remote_addr</span>;
+</span></span><span style=display:flex><span>    <span style=color:#000;font-weight:700>proxy_set_header</span> <span style=color:#d14>X-Forwarded-For</span> <span style=color:teal>$proxy_add_x_forwarded_for</span>;
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span>    <span style=color:#998;font-style:italic># 如果harbor实例仅配置了ip类型的hostname这里就不用配置了
+</span></span></span><span style=display:flex><span><span style=color:#998;font-style:italic></span>    <span style=color:#998;font-style:italic># 如果配置了可解析的hostname/external_url需要打开注释
+</span></span></span><span style=display:flex><span><span style=color:#998;font-style:italic></span>    <span style=color:#998;font-style:italic># proxy_set_header Host $host;
+</span></span></span><span style=display:flex><span><span style=color:#998;font-style:italic></span>
+</span></span><span style=display:flex><span>    <span style=color:#998;font-style:italic># 如果external_url中使用https但是代理访问harbor使用http需要打开注释
+</span></span></span><span style=display:flex><span><span style=color:#998;font-style:italic></span>    <span style=color:#998;font-style:italic># 同时去掉harbor实例内部的nginx相关的$scheme配置
+</span></span></span><span style=display:flex><span><span style=color:#998;font-style:italic></span>    <span style=color:#998;font-style:italic># proxy_set_header X-Forwarded-Proto $scheme;
+</span></span></span><span style=display:flex><span><span style=color:#998;font-style:italic></span>
+</span></span><span style=display:flex><span>    <span style=color:#000;font-weight:700>location</span> <span style=color:#d14>/</span> {
+</span></span><span style=display:flex><span>        <span style=color:#000;font-weight:700>proxy_pass</span> <span style=color:#d14>http://harbor</span>;
+</span></span><span style=display:flex><span>    }
+</span></span><span style=display:flex><span>}
+</span></span></code></pre></td></tr></table></div></div><p>运行 nginx 反向代理：</p><div class=highlight><pre tabindex=0 style=background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-shell data-lang=shell><span style=display:flex><span><span style=color:#998;font-style:italic># 将证书和配置文件都放在 /etc/nginx/conf.d 路径下</span>
+</span></span><span style=display:flex><span>docker run -d --restart<span style=color:#000;font-weight:700>=</span>always <span style=color:#d14>\
+</span></span></span><span style=display:flex><span><span style=color:#d14></span>    --name<span style=color:#000;font-weight:700>=</span>nginx <span style=color:#d14>\
+</span></span></span><span style=display:flex><span><span style=color:#d14></span>    -p 80:80 -p 443:443 <span style=color:#d14>\
+</span></span></span><span style=display:flex><span><span style=color:#d14></span>    -v /etc/nginx/conf.d:/etc/nginx/conf.d <span style=color:#d14>\
+</span></span></span><span style=display:flex><span><span style=color:#d14></span>    nginx
+</span></span></code></pre></div><p>测试对 registry.example.com 进行<code>login/push/pull</code>镜像均正常，检查两个 harbor 实例也同步正常。至此，完成～</p><h2 id=总结>总结
+<a class=anchor href=#%e6%80%bb%e7%bb%93>#</a></h2><p>至此，所有的安装/配置就结束了，通过体验测试我发现：</p><ol><li><strong>用户是独立的</strong><br>两个实例之间的项目、镜像、标签相关资源是可以同步的，但是用户不可以。如果用户要在两个实例直接切换使用的话，需要分别登录两个 harbor admin ui 为用户创建两个相同的账号。所以说该方案比较适合异地办公团队，仅做镜像数据的同步。</li><li><strong>镜像同步有一定的时间差</strong><br>我的两个实例是所在虚拟机在一个网段内的，测试了一个约 900M 的镜像，从开始同步到结束大概是10秒种。如果用户在一台实例上推送之后，立马去另一台实例上拉去是不行的。所以如果两个实例前面要增加 http 代理的话，需要使用 ip_hash 负载均衡策略，将用户请求固定到其中一台实例上。</li><li><strong>实例 url 地址不一致</strong><br>这个问题不严重，因为是两个实例，如果我们在他们前面再部署 http 代理的话，就是三个地址。所以，两个实例对应 admin ui 上的 url 地址和用户使用的（如果有代理）url 地址都不一样。 比如：
+<img src=/posts/2203/harbor-dual-master-replication-ha/harbor-url.jpg alt=harbor-url.jpg></li></ol></div></article><footer class=book-footer><div class="flex flex-wrap justify-between"></div><script>(function(){function e(e){const t=window.getSelection(),n=document.createRange();n.selectNodeContents(e),t.removeAllRanges(),t.addRange(n)}document.querySelectorAll("pre code").forEach(t=>{t.addEventListener("click",function(){if(window.getSelection().toString())return;e(t.parentElement),navigator.clipboard&&navigator.clipboard.writeText(t.parentElement.textContent)})})})()</script></footer><div class=book-comments><link rel=stylesheet href=https://unpkg.com/gitalk/dist/gitalk.css><script src=https://unpkg.com/gitalk/dist/gitalk.min.js></script><div id=gitalk-container></div><script type=text/javascript>const gitalk=new Gitalk({clientID:"53c7373e7b1554a4abc3",clientSecret:"7c9dcef80ea6bde5d8695d1ab94bcef87063fb3b",repo:"llaoj.github.io",owner:"llaoj",admin:["llaoj"],id:location.pathname,distractionFreeMode:!1});gitalk.render("gitalk-container")</script></div><label for=menu-control class="hidden book-menu-overlay"></label></div><aside class=book-toc><div class=book-toc-content><nav id=TableOfContents><ul><li><a href=#方案的选择>方案的选择</a></li><li><a href=#环境>环境</a></li><li><a href=#安装-docker>安装 docker</a><ul><li><a href=#安装-yum-仓库>安装 yum 仓库</a></li><li><a href=#安装-docker-引擎>安装 docker 引擎</a></li><li><a href=#优化-docker-配置>优化 docker 配置</a></li><li><a href=#安装-docker-compose>安装 docker-compose</a></li></ul></li><li><a href=#安装-harbor-实例>安装 Harbor 实例</a><ul><li><a href=#配置文件>配置文件</a></li><li><a href=#默认安装>默认安装</a></li><li><a href=#更改配置>更改配置</a></li></ul></li><li><a href=#配置双主复制>配置双主复制</a></li><li><a href=#增加反向代理>增加反向代理</a></li><li><a href=#总结>总结</a></li></ul></nav></div></aside></main></body></html>

@@ -1,2 +1,15 @@
-<?xml version="1.0" encoding="utf-8" standalone="yes"?><rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom"><channel><title>backup on 老J的博客</title><link>https://blog.llaoj.cn/tags/backup/</link><description>Recent content in backup on 老J的博客</description><generator>Hugo -- gohugo.io</generator><lastBuildDate>Wed, 02 Feb 2022 00:00:00 +0000</lastBuildDate><atom:link href="https://blog.llaoj.cn/tags/backup/index.xml" rel="self" type="application/rss+xml"/><item><title>使用 velero 备份 kubernetes 指引</title><link>https://blog.llaoj.cn/posts/2202/velero-backup-k8s/</link><pubDate>Wed, 02 Feb 2022 00:00:00 +0000</pubDate><guid>https://blog.llaoj.cn/posts/2202/velero-backup-k8s/</guid><description>要求 # kubernetes 版本 1.7+，velero 的每个主版本对 kuberetes 的版本要求不同，详情请参考官方文档说明。 官方文档通道 velero 所在服务器有 kubectl 命令, 且能连上集群 我们先从最简单的体验开始
-1. 安装 velero 客户端 # 下载二进制安装包, 点击 latest release, 下载 velero-v1.</description></item></channel></rss>
+<?xml version="1.0" encoding="utf-8" standalone="yes"?><rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom"><channel><title>Backup on 老J的博客</title><link>https://blog.llaoj.cn/tags/backup/</link><description>Recent content in Backup on 老J的博客</description><generator>Hugo</generator><language>zh</language><lastBuildDate>Wed, 02 Feb 2022 00:00:00 +0000</lastBuildDate><atom:link href="https://blog.llaoj.cn/tags/backup/index.xml" rel="self" type="application/rss+xml"/><item><title>使用 velero 备份 kubernetes 指引</title><link>https://blog.llaoj.cn/posts/2202/velero-backup-k8s/</link><pubDate>Wed, 02 Feb 2022 00:00:00 +0000</pubDate><guid>https://blog.llaoj.cn/posts/2202/velero-backup-k8s/</guid><description>&lt;h2 id="要求">
+ 要求
+ &lt;a class="anchor" href="#%e8%a6%81%e6%b1%82">#&lt;/a>
+&lt;/h2>
+&lt;ul>
+&lt;li>kubernetes 版本 1.7+，velero 的每个主版本对 kuberetes 的版本要求不同，详情请参考官方文档说明。
+ &lt;a href="https://velero.io/docs/v1.7/">官方文档通道&lt;/a>&lt;/li>
+&lt;li>velero 所在服务器有 kubectl 命令, 且能连上集群&lt;/li>
+&lt;/ul>
+&lt;p>&lt;strong>我们先从最简单的体验开始&lt;/strong>&lt;/p>
+&lt;h2 id="1-安装-velero-客户端">
+ 1. 安装 velero 客户端
+ &lt;a class="anchor" href="#1-%e5%ae%89%e8%a3%85-velero-%e5%ae%a2%e6%88%b7%e7%ab%af">#&lt;/a>
+&lt;/h2>
+&lt;p>下载二进制安装包, 点击 latest release, 下载 &lt;code>velero-v1.7.0-linux-amd64.tag.gz&lt;/code> (以 release 页面为准), 解压&lt;/p></description></item></channel></rss>
