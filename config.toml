@@ -1,6 +1,6 @@
 title = "老J的博客"
 baseURL = "https://blog.llaoj.cn/"
-theme = "github.com/alex-shpak/hugo-book"
+theme = "hugo-book"
 defaultContentLanguage = 'zh'
 
 # (Optional) Set this to true if you use capital letters in file names
