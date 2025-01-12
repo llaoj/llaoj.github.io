@@ -1,9 +1,13 @@
 <?xml version="1.0" encoding="utf-8" standalone="yes"?><rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom"><channel><title>Docker on 老J的博客</title><link>https://blog.llaoj.cn/tags/docker/</link><description>Recent content in Docker on 老J的博客</description><generator>Hugo</generator><language>zh</language><lastBuildDate>Tue, 18 Oct 2022 00:00:00 +0000</lastBuildDate><atom:link href="https://blog.llaoj.cn/tags/docker/index.xml" rel="self" type="application/rss+xml"/><item><title>使用docker运行orcale xe 11g</title><link>https://blog.llaoj.cn/posts/2210/docker-oracle-xe-11g/</link><pubDate>Tue, 18 Oct 2022 00:00:00 +0000</pubDate><guid>https://blog.llaoj.cn/posts/2210/docker-oracle-xe-11g/</guid><description>&lt;p>&lt;strong>注意&lt;/strong>: 根据自己实际情况, 替换下面名利中的&lt;code>&amp;lt;var&amp;gt;&lt;/code>变量.&lt;/p>
-&lt;h2 id="启动orcale-xe-11g容器">启动orcale xe 11g容器&lt;/h2>
+&lt;h2 id="启动orcale-xe-11g容器">
+ 启动orcale xe 11g容器
+ &lt;a class="anchor" href="#%e5%90%af%e5%8a%a8orcale-xe-11g%e5%ae%b9%e5%99%a8">#&lt;/a>
+&lt;/h2>
 &lt;p>Oracle Database XE是人人都可免费使用的 Oracle 数据库. Oracle Database XE 支持最高:&lt;/p>
 &lt;ul>
 &lt;li>最多 12 GB 的用户磁盘数据&lt;/li>
 &lt;li>最大 2 GB 的数据库 RAM&lt;/li>
 &lt;li>最多 2 个 CPU 线程&lt;/li>
 &lt;/ul>
-&lt;p>产品介绍地址: &lt;a href="https://www.oracle.com/cn/database/technologies/appdev/xe.html">https://www.oracle.com/cn/database/technologies/appdev/xe.html&lt;/a>&lt;/p></description></item></channel></rss>
+&lt;p>产品介绍地址: 
+ &lt;a href="https://www.oracle.com/cn/database/technologies/appdev/xe.html">https://www.oracle.com/cn/database/technologies/appdev/xe.html&lt;/a>&lt;/p></description></item></channel></rss>

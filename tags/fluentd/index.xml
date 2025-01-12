@@ -1,14 +1,21 @@
 <?xml version="1.0" encoding="utf-8" standalone="yes"?><rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom"><channel><title>Fluentd on 老J的博客</title><link>https://blog.llaoj.cn/tags/fluentd/</link><description>Recent content in Fluentd on 老J的博客</description><generator>Hugo</generator><language>zh</language><lastBuildDate>Mon, 03 Oct 2022 00:00:00 +0000</lastBuildDate><atom:link href="https://blog.llaoj.cn/tags/fluentd/index.xml" rel="self" type="application/rss+xml"/><item><title>使用fluentd收集kubernetes日志并推送给kafka</title><link>https://blog.llaoj.cn/posts/2211/fluentd-kafka/</link><pubDate>Mon, 03 Oct 2022 00:00:00 +0000</pubDate><guid>https://blog.llaoj.cn/posts/2211/fluentd-kafka/</guid><description>&lt;p>这篇文章使用fluentd官方提供的kubernetes部署方案daemonset来部署日志收集, 参考项目地址:&lt;/p>
 &lt;ul>
-&lt;li>&lt;a href="https://github.com/fluent/fluentd-kubernetes-daemonset">https://github.com/fluent/fluentd-kubernetes-daemonset&lt;/a>&lt;/li>
+&lt;li>
+ &lt;a href="https://github.com/fluent/fluentd-kubernetes-daemonset">https://github.com/fluent/fluentd-kubernetes-daemonset&lt;/a>&lt;/li>
 &lt;/ul>
 &lt;p>本文使用的kubernetes版本为: &lt;code>1.22.8&lt;/code>&lt;/p>
 &lt;p>使用fluentd镜像为: &lt;code>fluent/fluentd-kubernetes-daemonset:v1.15.2-debian-kafka2-1.0&lt;/code>&lt;/p>
 &lt;p>请注意下文配置中&lt;code>&amp;lt;var&amp;gt;&lt;/code>标记, 需要根据需求自行替换.&lt;/p>
-&lt;h2 id="创建命名空间">创建命名空间&lt;/h2>
+&lt;h2 id="创建命名空间">
+ 创建命名空间
+ &lt;a class="anchor" href="#%e5%88%9b%e5%bb%ba%e5%91%bd%e5%90%8d%e7%a9%ba%e9%97%b4">#&lt;/a>
+&lt;/h2>
 &lt;p>本项目所有的资源创建在logging下, 先创建它:&lt;/p>
 &lt;div class="highlight">&lt;pre tabindex="0" style="background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4;">&lt;code class="language-sh" data-lang="sh">&lt;span style="display:flex;">&lt;span>kubectl create ns fluentd-kafka
-&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;h2 id="先创建服务账号">先创建服务账号&lt;/h2>
+&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;h2 id="先创建服务账号">
+ 先创建服务账号
+ &lt;a class="anchor" href="#%e5%85%88%e5%88%9b%e5%bb%ba%e6%9c%8d%e5%8a%a1%e8%b4%a6%e5%8f%b7">#&lt;/a>
+&lt;/h2>
 &lt;p>创建服务账号并赋予集群查看的权限, 使用下面的命令:&lt;/p>
 &lt;div class="highlight">&lt;pre tabindex="0" style="background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4;">&lt;code class="language-sh" data-lang="sh">&lt;span style="display:flex;">&lt;span>kubectl -n fluentd-kafka create -f - &lt;span style="color:#d14">&amp;lt;&amp;lt;EOF
 &lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#d14">apiVersion: v1
@@ -18,16 +25,23 @@
 &lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#d14">EOF&lt;/span>
 &lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;p>创建绑定关系:&lt;/p></description></item><item><title>使用fluentd收集kubernetes日志并推送到ES</title><link>https://blog.llaoj.cn/posts/2209/fluentd-kubernetes-daemonset/</link><pubDate>Tue, 20 Sep 2022 00:00:00 +0000</pubDate><guid>https://blog.llaoj.cn/posts/2209/fluentd-kubernetes-daemonset/</guid><description>&lt;p>这篇文章使用fluentd官方提供的kubernetes部署方案daemonset来部署日志收集, 参考项目地址:&lt;/p>
 &lt;ul>
-&lt;li>&lt;a href="https://github.com/fluent/fluentd-kubernetes-daemonset">https://github.com/fluent/fluentd-kubernetes-daemonset&lt;/a>&lt;/li>
+&lt;li>
+ &lt;a href="https://github.com/fluent/fluentd-kubernetes-daemonset">https://github.com/fluent/fluentd-kubernetes-daemonset&lt;/a>&lt;/li>
 &lt;/ul>
 &lt;p>本文使用的kubernetes版本为: &lt;code>1.22.8&lt;/code>&lt;/p>
 &lt;p>使用fluentd镜像为: &lt;code>fluent/fluentd-kubernetes-daemonset:v1.15.2-debian-elasticsearch7-1.0&lt;/code>&lt;/p>
 &lt;p>请注意下文配置中&lt;code>&amp;lt;var&amp;gt;&lt;/code>标记, 需要根据需求自行替换.&lt;/p>
-&lt;h2 id="创建命名空间">创建命名空间&lt;/h2>
+&lt;h2 id="创建命名空间">
+ 创建命名空间
+ &lt;a class="anchor" href="#%e5%88%9b%e5%bb%ba%e5%91%bd%e5%90%8d%e7%a9%ba%e9%97%b4">#&lt;/a>
+&lt;/h2>
 &lt;p>本项目所有的资源创建在logging下, 先创建它:&lt;/p>
 &lt;div class="highlight">&lt;pre tabindex="0" style="background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4;">&lt;code class="language-sh" data-lang="sh">&lt;span style="display:flex;">&lt;span>&lt;span style="color:#008080">NAMESPACE&lt;/span>&lt;span style="color:#000;font-weight:bold">=&lt;/span>logging
 &lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>kubectl create ns &lt;span style="color:#008080">$NAMESPACE&lt;/span>
-&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;h2 id="先创建服务账号">先创建服务账号&lt;/h2>
+&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;h2 id="先创建服务账号">
+ 先创建服务账号
+ &lt;a class="anchor" href="#%e5%85%88%e5%88%9b%e5%bb%ba%e6%9c%8d%e5%8a%a1%e8%b4%a6%e5%8f%b7">#&lt;/a>
+&lt;/h2>
 &lt;p>创建服务账号并赋予集群查看的权限, 使用下面的命令:&lt;/p>
 &lt;div class="highlight">&lt;pre tabindex="0" style="background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4;">&lt;code class="language-sh" data-lang="sh">&lt;span style="display:flex;">&lt;span>kubectl -n &lt;span style="color:#008080">$NAMESPACE&lt;/span> create -f - &lt;span style="color:#d14">&amp;lt;&amp;lt;EOF
 &lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#d14">apiVersion: v1
