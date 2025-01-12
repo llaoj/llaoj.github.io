@@ -1,32 +1,20 @@
-<?xml version="1.0" encoding="utf-8" standalone="yes"?><rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom"><channel><title>Metallb on 老J的博客</title><link>https://blog.llaoj.cn/tags/metallb/</link><description>Recent content in Metallb on 老J的博客</description><generator>Hugo</generator><language>zh</language><lastBuildDate>Mon, 08 Aug 2022 00:00:00 +0000</lastBuildDate><atom:link href="https://blog.llaoj.cn/tags/metallb/index.xml" rel="self" type="application/rss+xml"/><item><title>MetalLB二层模式使用指南</title><link>https://blog.llaoj.cn/posts/2208/metallb-l2-usage/</link><pubDate>Mon, 08 Aug 2022 00:00:00 +0000</pubDate><guid>https://blog.llaoj.cn/posts/2208/metallb-l2-usage/</guid><description>&lt;p>
- &lt;a href="https://blog.llaoj.cn/posts/2205/metalb/">MetalLB概念安装配置和使用请查看&lt;/a>&lt;/p>
-&lt;h2 id="测试组件的版本情况">
- 测试组件的版本情况
- &lt;a class="anchor" href="#%e6%b5%8b%e8%af%95%e7%bb%84%e4%bb%b6%e7%9a%84%e7%89%88%e6%9c%ac%e6%83%85%e5%86%b5">#&lt;/a>
-&lt;/h2>
+<?xml version="1.0" encoding="utf-8" standalone="yes"?><rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom"><channel><title>Metallb on 老J的博客</title><link>https://blog.llaoj.cn/tags/metallb/</link><description>Recent content in Metallb on 老J的博客</description><generator>Hugo</generator><language>zh</language><lastBuildDate>Mon, 08 Aug 2022 00:00:00 +0000</lastBuildDate><atom:link href="https://blog.llaoj.cn/tags/metallb/index.xml" rel="self" type="application/rss+xml"/><item><title>MetalLB二层模式使用指南</title><link>https://blog.llaoj.cn/posts/2208/metallb-l2-usage/</link><pubDate>Mon, 08 Aug 2022 00:00:00 +0000</pubDate><guid>https://blog.llaoj.cn/posts/2208/metallb-l2-usage/</guid><description>&lt;p>&lt;a href="https://blog.llaoj.cn/posts/2205/metalb">MetalLB概念安装配置和使用请查看&lt;/a>&lt;/p>
+&lt;h2 id="测试组件的版本情况">测试组件的版本情况&lt;/h2>
 &lt;ul>
 &lt;li>kubernetes: v1.22.8&lt;/li>
 &lt;li>metellb: v0.10.3&lt;/li>
 &lt;li>nginx: latest&lt;/li>
 &lt;/ul>
-&lt;h2 id="创建测试应用">
- 创建测试应用
- &lt;a class="anchor" href="#%e5%88%9b%e5%bb%ba%e6%b5%8b%e8%af%95%e5%ba%94%e7%94%a8">#&lt;/a>
-&lt;/h2>
+&lt;h2 id="创建测试应用">创建测试应用&lt;/h2>
 &lt;p>创建一个nginx服务和service资源:&lt;/p>
 &lt;div class="highlight">&lt;pre tabindex="0" style="background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4;">&lt;code class="language-shell" data-lang="shell">&lt;span style="display:flex;">&lt;span>kubectl -n without-istio create deploy nginx --image&lt;span style="color:#000;font-weight:bold">=&lt;/span>nginx
-&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;h2 id="测试分配ip">
- 测试分配IP
- &lt;a class="anchor" href="#%e6%b5%8b%e8%af%95%e5%88%86%e9%85%8dip">#&lt;/a>
-&lt;/h2>
+&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;h2 id="测试分配ip">测试分配IP&lt;/h2>
 &lt;p>创建loadbalancer类型的service:&lt;/p>
 &lt;div class="highlight">&lt;pre tabindex="0" style="background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4;">&lt;code class="language-shell" data-lang="shell">&lt;span style="display:flex;">&lt;span>kubectl -n without-istio create service loadbalancer nginx --tcp&lt;span style="color:#000;font-weight:bold">=&lt;/span>80:80
-&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;p>查看该service详细配置:&lt;/p></description></item><item><title>MetalLB概念安装配置和使用</title><link>https://blog.llaoj.cn/posts/2205/metalb/</link><pubDate>Mon, 30 May 2022 00:00:00 +0000</pubDate><guid>https://blog.llaoj.cn/posts/2205/metalb/</guid><description>&lt;p>
- &lt;a href="https://metallb.universe.tf/">官方文档&lt;/a>&lt;/p>
-&lt;h2 id="为什么使用">
- 为什么使用?
- &lt;a class="anchor" href="#%e4%b8%ba%e4%bb%80%e4%b9%88%e4%bd%bf%e7%94%a8">#&lt;/a>
-&lt;/h2>
+&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;p>查看该service详细配置:&lt;/p></description></item><item><title>MetalLB概念安装配置和使用</title><link>https://blog.llaoj.cn/posts/2205/metalb/</link><pubDate>Mon, 30 May 2022 00:00:00 +0000</pubDate><guid>https://blog.llaoj.cn/posts/2205/metalb/</guid><description>&lt;p>&lt;a href="https://metallb.universe.tf/">官方文档&lt;/a>&lt;/p>
+&lt;h2 id="为什么使用">为什么使用?&lt;/h2>
 &lt;p>Kubernetes没有提供适用于裸金属集群的网络负载均衡器实现, 也就是&lt;code>LoadBalancer&lt;/code>类型的Service. Kubernetes 附带的网络负载均衡器的实现都是调用各种 IaaS 平台（GCP、AWS、Azure ……）的胶水代码。 如果您没有在受支持的 IaaS 平台（GCP、AWS、Azure&amp;hellip;）上运行，LoadBalancers 在创建时将一直保持在&lt;code>pending&lt;/code>状态。&lt;/p>
 &lt;p>裸金属集群的运维人员只剩下两个方式来将用户流量引入集群内: &lt;code>NodePort&lt;/code>和&lt;code>externalIPs&lt;/code>. 这两种在生产环境使用有很大的缺点, 这样, 裸金属集群也就成了 Kubernetes 生态中的第二类选择, 并不是首选.&lt;/p>
-&lt;p>MetalLB 的目的是实现一个网络负载均衡器来与标准的网络设备集成, 这样这些外部服务就能尽可能的正常工作了.&lt;/p></description></item></channel></rss>
+&lt;p>MetalLB 的目的是实现一个网络负载均衡器来与标准的网络设备集成, 这样这些外部服务就能尽可能的正常工作了.&lt;/p>
+&lt;h2 id="要求">要求&lt;/h2>
+&lt;p>MetalLB 要求如下:&lt;/p></description></item></channel></rss>

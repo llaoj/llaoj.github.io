@@ -1,7 +1,4 @@
-<?xml version="1.0" encoding="utf-8" standalone="yes"?><rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom"><channel><title>Rsync on 老J的博客</title><link>https://blog.llaoj.cn/tags/rsync/</link><description>Recent content in Rsync on 老J的博客</description><generator>Hugo</generator><language>zh</language><lastBuildDate>Tue, 30 Aug 2022 00:00:00 +0000</lastBuildDate><atom:link href="https://blog.llaoj.cn/tags/rsync/index.xml" rel="self" type="application/rss+xml"/><item><title>使用rsync在主机之间同步目录</title><link>https://blog.llaoj.cn/posts/2208/rsync-usage/</link><pubDate>Tue, 30 Aug 2022 00:00:00 +0000</pubDate><guid>https://blog.llaoj.cn/posts/2208/rsync-usage/</guid><description>&lt;h2 id="rsync安装">
- rsync安装
- &lt;a class="anchor" href="#rsync%e5%ae%89%e8%a3%85">#&lt;/a>
-&lt;/h2>
+<?xml version="1.0" encoding="utf-8" standalone="yes"?><rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom"><channel><title>Rsync on 老J的博客</title><link>https://blog.llaoj.cn/tags/rsync/</link><description>Recent content in Rsync on 老J的博客</description><generator>Hugo</generator><language>zh</language><lastBuildDate>Tue, 30 Aug 2022 00:00:00 +0000</lastBuildDate><atom:link href="https://blog.llaoj.cn/tags/rsync/index.xml" rel="self" type="application/rss+xml"/><item><title>使用rsync在主机之间同步目录</title><link>https://blog.llaoj.cn/posts/2208/rsync-usage/</link><pubDate>Tue, 30 Aug 2022 00:00:00 +0000</pubDate><guid>https://blog.llaoj.cn/posts/2208/rsync-usage/</guid><description>&lt;h2 id="rsync安装">rsync安装&lt;/h2>
 &lt;p>在传输双方的服务器上都安装rsync软件. 如果服务器上有rsync可以跳过.&lt;/p>
 &lt;p>先检查有没有安装rsync:&lt;/p>
 &lt;div class="highlight">&lt;pre tabindex="0" style="background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4;">&lt;code class="language-shell" data-lang="shell">&lt;span style="display:flex;">&lt;span>rsync -h
@@ -14,8 +11,5 @@
 &lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>
 &lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#998;font-style:italic"># Arch Linux&lt;/span>
 &lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>sudo pacman -S rsync
-&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;h2 id="启动rsync守护进程">
- 启动rsync守护进程
- &lt;a class="anchor" href="#%e5%90%af%e5%8a%a8rsync%e5%ae%88%e6%8a%a4%e8%bf%9b%e7%a8%8b">#&lt;/a>
-&lt;/h2>
+&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;h2 id="启动rsync守护进程">启动rsync守护进程&lt;/h2>
 &lt;p>rsync使用最多的是ssh模式. 在现代的公司中, 出于安全的原因, 很多ssh是被禁止使用的. 所以, 我们可以使用rsync的守护进程模式. 一起看看怎么用吧.&lt;/p></description></item></channel></rss>

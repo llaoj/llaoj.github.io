@@ -1,11 +1,5 @@
-<?xml version="1.0" encoding="utf-8" standalone="yes"?><rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom"><channel><title>Envoy on 老J的博客</title><link>https://blog.llaoj.cn/tags/envoy/</link><description>Recent content in Envoy on 老J的博客</description><generator>Hugo</generator><language>zh</language><lastBuildDate>Thu, 15 Sep 2022 00:00:00 +0000</lastBuildDate><atom:link href="https://blog.llaoj.cn/tags/envoy/index.xml" rel="self" type="application/rss+xml"/><item><title>Envoy的静态配置使用方法</title><link>https://blog.llaoj.cn/posts/2209/envoy-usage/</link><pubDate>Thu, 15 Sep 2022 00:00:00 +0000</pubDate><guid>https://blog.llaoj.cn/posts/2209/envoy-usage/</guid><description>&lt;h2 id="envoy静态配置">
- Envoy静态配置
- &lt;a class="anchor" href="#envoy%e9%9d%99%e6%80%81%e9%85%8d%e7%bd%ae">#&lt;/a>
-&lt;/h2>
-&lt;h3 id="l4转发">
- L4转发
- &lt;a class="anchor" href="#l4%e8%bd%ac%e5%8f%91">#&lt;/a>
-&lt;/h3>
+<?xml version="1.0" encoding="utf-8" standalone="yes"?><rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom"><channel><title>Envoy on 老J的博客</title><link>https://blog.llaoj.cn/tags/envoy/</link><description>Recent content in Envoy on 老J的博客</description><generator>Hugo</generator><language>zh</language><lastBuildDate>Thu, 15 Sep 2022 00:00:00 +0000</lastBuildDate><atom:link href="https://blog.llaoj.cn/tags/envoy/index.xml" rel="self" type="application/rss+xml"/><item><title>Envoy的静态配置使用方法</title><link>https://blog.llaoj.cn/posts/2209/envoy-usage/</link><pubDate>Thu, 15 Sep 2022 00:00:00 +0000</pubDate><guid>https://blog.llaoj.cn/posts/2209/envoy-usage/</guid><description>&lt;h2 id="envoy静态配置">Envoy静态配置&lt;/h2>
+&lt;h3 id="l4转发">L4转发&lt;/h3>
 &lt;p>下面的例子是配置4层转发, 将443端口的流量都代理到&lt;code>www.example.com&lt;/code>对应的后端的443端口上, 如下:&lt;/p>
 &lt;div class="highlight">&lt;pre tabindex="0" style="background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4;">&lt;code class="language-yaml" data-lang="yaml">&lt;span style="display:flex;">&lt;span>&lt;span style="color:#000080">static_resources&lt;/span>:&lt;span style="color:#bbb">
 &lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#bbb">
@@ -37,8 +31,5 @@
 &lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#bbb"> &lt;/span>&lt;span style="color:#000080">socket_address&lt;/span>:&lt;span style="color:#bbb">
 &lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#bbb"> &lt;/span>&lt;span style="color:#000080">address&lt;/span>:&lt;span style="color:#bbb"> &lt;/span>www.example.com&lt;span style="color:#bbb">
 &lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#bbb"> &lt;/span>&lt;span style="color:#000080">port_value&lt;/span>:&lt;span style="color:#bbb"> &lt;/span>&lt;span style="color:#099">443&lt;/span>&lt;span style="color:#bbb">
-&lt;/span>&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;h2 id="启动envoy">
- 启动Envoy
- &lt;a class="anchor" href="#%e5%90%af%e5%8a%a8envoy">#&lt;/a>
-&lt;/h2>
+&lt;/span>&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;h2 id="启动envoy">启动Envoy&lt;/h2>
 &lt;p>将创建的静态配置文件&lt;code>envoy-custom.yaml&lt;/code>映射到容器内部, 启动:&lt;/p></description></item></channel></rss>

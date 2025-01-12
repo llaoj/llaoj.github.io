@@ -1,11 +1,4 @@
-<?xml version="1.0" encoding="utf-8" standalone="yes"?><rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom"><channel><title>Pod on 老J的博客</title><link>https://blog.llaoj.cn/tags/pod/</link><description>Recent content in Pod on 老J的博客</description><generator>Hugo</generator><language>zh</language><lastBuildDate>Tue, 08 Feb 2022 00:00:00 +0000</lastBuildDate><atom:link href="https://blog.llaoj.cn/tags/pod/index.xml" rel="self" type="application/rss+xml"/><item><title>kubernetes 中的 pod 究竟是什么</title><link>https://blog.llaoj.cn/posts/2202/what-are-kubernetes-pods-anyway/</link><pubDate>Tue, 08 Feb 2022 00:00:00 +0000</pubDate><guid>https://blog.llaoj.cn/posts/2202/what-are-kubernetes-pods-anyway/</guid><description>&lt;h2 id="前言">
- 前言
- &lt;a class="anchor" href="#%e5%89%8d%e8%a8%80">#&lt;/a>
-&lt;/h2>
-&lt;p>kubernetes 中 pod 的设计是一个伟大的发明, 今天我很有必要去聊一下 pod 和 container, 探究一下它们究竟是什么? kubernetes 官方文档中关于
- &lt;a href="https://kubernetes.io/zh/docs/concepts/workloads/pods/#pod-storage">pod 概念介绍&lt;/a>提供了一个完整的解释, 但写的不够详细, 表达过于专业, 但还是很推荐大家阅读一下. 当然这篇文档应该更接地气.&lt;/p>
-&lt;h2 id="容器真的存在吗">
- 容器真的存在吗?
- &lt;a class="anchor" href="#%e5%ae%b9%e5%99%a8%e7%9c%9f%e7%9a%84%e5%ad%98%e5%9c%a8%e5%90%97">#&lt;/a>
-&lt;/h2>
+<?xml version="1.0" encoding="utf-8" standalone="yes"?><rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom"><channel><title>Pod on 老J的博客</title><link>https://blog.llaoj.cn/tags/pod/</link><description>Recent content in Pod on 老J的博客</description><generator>Hugo</generator><language>zh</language><lastBuildDate>Tue, 08 Feb 2022 00:00:00 +0000</lastBuildDate><atom:link href="https://blog.llaoj.cn/tags/pod/index.xml" rel="self" type="application/rss+xml"/><item><title>kubernetes 中的 pod 究竟是什么</title><link>https://blog.llaoj.cn/posts/2202/what-are-kubernetes-pods-anyway/</link><pubDate>Tue, 08 Feb 2022 00:00:00 +0000</pubDate><guid>https://blog.llaoj.cn/posts/2202/what-are-kubernetes-pods-anyway/</guid><description>&lt;h2 id="前言">前言&lt;/h2>
+&lt;p>kubernetes 中 pod 的设计是一个伟大的发明, 今天我很有必要去聊一下 pod 和 container, 探究一下它们究竟是什么? kubernetes 官方文档中关于&lt;a href="https://kubernetes.io/zh/docs/concepts/workloads/pods/#pod-storage">pod 概念介绍&lt;/a>提供了一个完整的解释, 但写的不够详细, 表达过于专业, 但还是很推荐大家阅读一下. 当然这篇文档应该更接地气.&lt;/p>
+&lt;h2 id="容器真的存在吗">容器真的存在吗?&lt;/h2>
 &lt;p>linux 中是没有容器这个概念的, 容器就是 linux 中的普通进程, 它使用了 linux 内核提供的两个重要的特性: namespace &amp;amp; cgroups.&lt;/p></description></item></channel></rss>
