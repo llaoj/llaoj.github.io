@@ -1,6 +1,7 @@
 ---
 title: "解决Harbor漏洞扫描trivy失败"
 description: "看日志中的错误堆栈, 我发现在读取trivy数据库文件的时候报错了, 所以我的解决办法是, 删掉原来的数据库文件, 让trivy重建一个. 解决办法: 我把Harbor的数据目录放在了`/data/harbor_data`, 你可根据自己的实际情况替换. rm -f /data/harbor_data/trivy-adapter/trivy/fanal/fanal.db"
+summary: "点击查看日志, 错误日志如下：[/pkg/scan/job.go:294]: check scan report with mime type application/vnd.security.vulnerability.report; version=1.1: running trivy wrapper: running trivy: exit status 2: 2025-01-08T01:53:26.342Z	[INFO]	Vulnerability scanning is enabled panic: invalid page type: 39: 10 go.etcd.io/bbolt.(*Cursor).search 看日志中的错误堆栈, 我发现在读取trivy数据库文件的时候报错了, 所以我的解决办法是, 删掉原来的数据库文件, 让trivy重建一个. 我把Harbor的数据目录放在了`/data/harbor_data`, 你可根据自己的实际情况替换."
 date: "2025-01-08"
 menu: "main"
 tags:
