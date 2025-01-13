@@ -15,7 +15,7 @@ enableGitInfo = false
 # disableKinds = ['taxonomy', 'taxonomyTerm']
 
 summaryLength = 25
-googleAnalytics = "G-JLBT2C8JBW"
+googleAnalytics = "G-29SQ9BQ220"
 
 [menu]
 # [[menu.before]]
