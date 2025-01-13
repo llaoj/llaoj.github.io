@@ -14,7 +14,8 @@ enableGitInfo = false
 # You can remove related files with config below
 # disableKinds = ['taxonomy', 'taxonomyTerm']
 
-summaryLength=25
+summaryLength = 25
+googleAnalytics = "G-JLBT2C8JBW"
 
 [menu]
 # [[menu.before]]
