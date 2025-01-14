@@ -3,9 +3,20 @@
  &lt;a class="anchor" href="#%e9%97%ae%e9%a2%98%e6%8f%8f%e8%bf%b0">#&lt;/a>
 &lt;/h2>
 &lt;p>查看 pod 相关 events 如下：&lt;/p>
-&lt;div class="highlight">&lt;pre tabindex="0" style="background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4;">&lt;code class="language-sh" data-lang="sh">&lt;span style="display:flex;">&lt;span>Events:
+&lt;div class="highlight">&lt;div style="background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4;">
+&lt;table style="border-spacing:0;padding:0;margin:0;border:0;">&lt;tr>&lt;td style="vertical-align:top;padding:0;margin:0;border:0;">
+&lt;pre tabindex="0" style="background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4;">&lt;code>&lt;span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">1
+&lt;/span>&lt;span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">2
+&lt;/span>&lt;span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">3
+&lt;/span>&lt;span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">4
+&lt;/span>&lt;span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">5
+&lt;/span>&lt;/code>&lt;/pre>&lt;/td>
+&lt;td style="vertical-align:top;padding:0;margin:0;border:0;;width:100%">
+&lt;pre tabindex="0" style="background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4;">&lt;code class="language-sh" data-lang="sh">&lt;span style="display:flex;">&lt;span>Events:
 &lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> Type Reason Age From Message
 &lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> ---- ------ ---- ---- -------
 &lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> Normal Scheduled 18m default-scheduler Successfully assigned container-186002196200947712/itms-5f6d7798-wrpjj to 10.206.65.144
 &lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> Warning FailedCreatePodContainer 3m31s &lt;span style="color:#000;font-weight:bold">(&lt;/span>x71 over 18m&lt;span style="color:#000;font-weight:bold">)&lt;/span> kubelet unable to ensure pod container exists: failed to create container &lt;span style="color:#000;font-weight:bold">for&lt;/span> &lt;span style="color:#000;font-weight:bold">[&lt;/span>kubepods burstable pod31f4c93c-c3a1-49ad-b091-0802c5f1d396&lt;span style="color:#000;font-weight:bold">]&lt;/span> : mkdir /sys/fs/cgroup/memory/kubepods/burstable/pod31f4c93c-c3a1-49ad-b091-0802c5f1d396: cannot allocate memory
-&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;p>这是内核bug，建议升级内核&lt;/p></description></item></channel></rss>
+&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/td>&lt;/tr>&lt;/table>
+&lt;/div>
+&lt;/div>&lt;p>这是内核bug，建议升级内核&lt;/p></description></item></channel></rss>

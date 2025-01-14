@@ -1,6 +1,23 @@
 <?xml version="1.0" encoding="utf-8" standalone="yes"?><rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom"><channel><title>Ldap on 老J的博客</title><link>https://blog.llaoj.cn/tags/ldap/</link><description>Recent content in Ldap on 老J的博客</description><generator>Hugo</generator><language>zh</language><lastBuildDate>Thu, 03 Mar 2022 00:00:00 +0000</lastBuildDate><atom:link href="https://blog.llaoj.cn/tags/ldap/index.xml" rel="self" type="application/rss+xml"/><item><title>容器化部署 openldap</title><link>https://blog.llaoj.cn/posts/2203/openldap-docker/</link><pubDate>Thu, 03 Mar 2022 00:00:00 +0000</pubDate><guid>https://blog.llaoj.cn/posts/2203/openldap-docker/</guid><description>&lt;p>使用容器化安装非常便捷, 参考
  &lt;a href="https://github.com/osixia/docker-openldap">osixia/openldap&lt;/a>仓库使用说明安装即可, 如下:&lt;/p>
-&lt;div class="highlight">&lt;pre tabindex="0" style="background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4;">&lt;code class="language-sh" data-lang="sh">&lt;span style="display:flex;">&lt;span>docker stop openldap &lt;span style="color:#000;font-weight:bold">&amp;amp;&amp;amp;&lt;/span> docker rm openldap &lt;span style="color:#000;font-weight:bold">&amp;amp;&amp;amp;&lt;/span> &lt;span style="color:#d14">\
+&lt;div class="highlight">&lt;div style="background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4;">
+&lt;table style="border-spacing:0;padding:0;margin:0;border:0;">&lt;tr>&lt;td style="vertical-align:top;padding:0;margin:0;border:0;">
+&lt;pre tabindex="0" style="background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4;">&lt;code>&lt;span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 1
+&lt;/span>&lt;span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 2
+&lt;/span>&lt;span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 3
+&lt;/span>&lt;span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 4
+&lt;/span>&lt;span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 5
+&lt;/span>&lt;span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 6
+&lt;/span>&lt;span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 7
+&lt;/span>&lt;span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 8
+&lt;/span>&lt;span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 9
+&lt;/span>&lt;span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">10
+&lt;/span>&lt;span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">11
+&lt;/span>&lt;span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">12
+&lt;/span>&lt;span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">13
+&lt;/span>&lt;/code>&lt;/pre>&lt;/td>
+&lt;td style="vertical-align:top;padding:0;margin:0;border:0;;width:100%">
+&lt;pre tabindex="0" style="background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4;">&lt;code class="language-sh" data-lang="sh">&lt;span style="display:flex;">&lt;span>docker stop openldap &lt;span style="color:#000;font-weight:bold">&amp;amp;&amp;amp;&lt;/span> docker rm openldap &lt;span style="color:#000;font-weight:bold">&amp;amp;&amp;amp;&lt;/span> &lt;span style="color:#d14">\
 &lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#d14">&lt;/span>docker run --name openldap --detach &lt;span style="color:#d14">\
 &lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#d14">&lt;/span> -p 389:389 &lt;span style="color:#d14">\
 &lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#d14">&lt;/span> -p 636:636 &lt;span style="color:#d14">\
@@ -13,4 +30,6 @@
 &lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#d14">&lt;/span> --volume /data/openldap/slapd.d:/etc/ldap/slapd.d &lt;span style="color:#d14">\
 &lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#d14">&lt;/span> --hostname ldap.rutron.net &lt;span style="color:#d14">\
 &lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#d14">&lt;/span> osixia/openldap:1.5.0
-&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;p>好了, 现在该服务同时支持 ldap 和 ldaps 协议, 有一个初始化的账号 &lt;code>readonly/readonly&lt;/code>, 可以使用了~&lt;/p></description></item></channel></rss>
+&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/td>&lt;/tr>&lt;/table>
+&lt;/div>
+&lt;/div>&lt;p>好了, 现在该服务同时支持 ldap 和 ldaps 协议, 有一个初始化的账号 &lt;code>readonly/readonly&lt;/code>, 可以使用了~&lt;/p></description></item></channel></rss>

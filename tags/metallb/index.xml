@@ -14,14 +14,19 @@
  &lt;a class="anchor" href="#%e5%88%9b%e5%bb%ba%e6%b5%8b%e8%af%95%e5%ba%94%e7%94%a8">#&lt;/a>
 &lt;/h2>
 &lt;p>创建一个nginx服务和service资源:&lt;/p>
-&lt;div class="highlight">&lt;pre tabindex="0" style="background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4;">&lt;code class="language-shell" data-lang="shell">&lt;span style="display:flex;">&lt;span>kubectl -n without-istio create deploy nginx --image&lt;span style="color:#000;font-weight:bold">=&lt;/span>nginx
-&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;h2 id="测试分配ip">
+&lt;div class="highlight">&lt;div style="background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4;">
+&lt;table style="border-spacing:0;padding:0;margin:0;border:0;">&lt;tr>&lt;td style="vertical-align:top;padding:0;margin:0;border:0;">
+&lt;pre tabindex="0" style="background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4;">&lt;code>&lt;span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">1
+&lt;/span>&lt;/code>&lt;/pre>&lt;/td>
+&lt;td style="vertical-align:top;padding:0;margin:0;border:0;;width:100%">
+&lt;pre tabindex="0" style="background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4;">&lt;code class="language-shell" data-lang="shell">&lt;span style="display:flex;">&lt;span>kubectl -n without-istio create deploy nginx --image&lt;span style="color:#000;font-weight:bold">=&lt;/span>nginx
+&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/td>&lt;/tr>&lt;/table>
+&lt;/div>
+&lt;/div>&lt;h2 id="测试分配ip">
  测试分配IP
  &lt;a class="anchor" href="#%e6%b5%8b%e8%af%95%e5%88%86%e9%85%8dip">#&lt;/a>
 &lt;/h2>
-&lt;p>创建loadbalancer类型的service:&lt;/p>
-&lt;div class="highlight">&lt;pre tabindex="0" style="background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4;">&lt;code class="language-shell" data-lang="shell">&lt;span style="display:flex;">&lt;span>kubectl -n without-istio create service loadbalancer nginx --tcp&lt;span style="color:#000;font-weight:bold">=&lt;/span>80:80
-&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;p>查看该service详细配置:&lt;/p></description></item><item><title>MetalLB概念安装配置和使用</title><link>https://blog.llaoj.cn/posts/2205/metalb/</link><pubDate>Mon, 30 May 2022 00:00:00 +0000</pubDate><guid>https://blog.llaoj.cn/posts/2205/metalb/</guid><description>&lt;p>
+&lt;p>创建loadbalancer类型的service:&lt;/p></description></item><item><title>MetalLB概念安装配置和使用</title><link>https://blog.llaoj.cn/posts/2205/metalb/</link><pubDate>Mon, 30 May 2022 00:00:00 +0000</pubDate><guid>https://blog.llaoj.cn/posts/2205/metalb/</guid><description>&lt;p>
  &lt;a href="https://metallb.universe.tf/">官方文档&lt;/a>&lt;/p>
 &lt;h2 id="为什么使用">
  为什么使用?
