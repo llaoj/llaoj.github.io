@@ -33,6 +33,7 @@ googleAnalytics = "G-29SQ9BQ220"
     codeFences = true
     guessSyntax = true
     style = "github"
+    linenos = true
   [markup.goldmark]
     [markup.goldmark.renderer]
       unsafe = true
