@@ -1,4 +1,25 @@
-<?xml version="1.0" encoding="utf-8" standalone="yes"?><rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom"><channel><title>Etcd on 老J的博客</title><link>https://blog.llaoj.cn/tags/etcd/</link><description>Recent content in Etcd on 老J的博客</description><generator>Hugo</generator><language>zh</language><lastBuildDate>Mon, 29 Aug 2022 00:00:00 +0000</lastBuildDate><atom:link href="https://blog.llaoj.cn/tags/etcd/index.xml" rel="self" type="application/rss+xml"/><item><title>使用etcdctl查看kubernetes存储的内容</title><link>https://blog.llaoj.cn/posts/2208/kubernetes-etcdctl-usage/</link><pubDate>Mon, 29 Aug 2022 00:00:00 +0000</pubDate><guid>https://blog.llaoj.cn/posts/2208/kubernetes-etcdctl-usage/</guid><description>&lt;p>因为etcd中的内容都是加密的, 使用下面的命令安装解密工具:&lt;/p>
+<?xml version="1.0" encoding="utf-8" standalone="yes"?><rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom"><channel><title>Etcd on 老J的博客</title><link>https://blog.llaoj.cn/tags/etcd/</link><description>Recent content in Etcd on 老J的博客</description><generator>Hugo</generator><language>zh</language><lastBuildDate>Tue, 14 Jan 2025 00:00:00 +0000</lastBuildDate><atom:link href="https://blog.llaoj.cn/tags/etcd/index.xml" rel="self" type="application/rss+xml"/><item><title>安装高可用ETCD集群(非https)</title><link>https://blog.llaoj.cn/posts/2025/install-etcd-cluster/</link><pubDate>Tue, 14 Jan 2025 00:00:00 +0000</pubDate><guid>https://blog.llaoj.cn/posts/2025/install-etcd-cluster/</guid><description>&lt;p>安装1个etcd集群要求:&lt;/p>
+&lt;ul>
+&lt;li>三台服务器&lt;/li>
+&lt;li>开启auth认证&lt;/li>
+&lt;li>使用http, 不使用https加密&lt;/li>
+&lt;li>开启用户名/密码认证&lt;/li>
+&lt;/ul>
+&lt;p>因为我们部署的是内部的可信的服务, 而且只局限在三台服务器中使用, 给apisix做存储使用. 为了简化部署, 减少管理证书的复杂性. 我没有开启https.&lt;/p>
+&lt;h2 id="服务器情况">
+ 服务器情况
+ &lt;a class="anchor" href="#%e6%9c%8d%e5%8a%a1%e5%99%a8%e6%83%85%e5%86%b5">#&lt;/a>
+&lt;/h2>
+&lt;p>服务器三台, IP地址分别为: 10.61.129.19-21. centos7.9的操作系统.&lt;/p>
+&lt;h2 id="本节需要在每一台服务器上执行">
+ 本节需要在每一台服务器上执行
+ &lt;a class="anchor" href="#%e6%9c%ac%e8%8a%82%e9%9c%80%e8%a6%81%e5%9c%a8%e6%af%8f%e4%b8%80%e5%8f%b0%e6%9c%8d%e5%8a%a1%e5%99%a8%e4%b8%8a%e6%89%a7%e8%a1%8c">#&lt;/a>
+&lt;/h2>
+&lt;h3 id="部署可执行文件">
+ 部署可执行文件
+ &lt;a class="anchor" href="#%e9%83%a8%e7%bd%b2%e5%8f%af%e6%89%a7%e8%a1%8c%e6%96%87%e4%bb%b6">#&lt;/a>
+&lt;/h3>
+&lt;p>将etcd安装在&lt;code>/data/etcd/&lt;/code>目录中.&lt;/p></description></item><item><title>使用etcdctl查看kubernetes存储的内容</title><link>https://blog.llaoj.cn/posts/2208/kubernetes-etcdctl-usage/</link><pubDate>Mon, 29 Aug 2022 00:00:00 +0000</pubDate><guid>https://blog.llaoj.cn/posts/2208/kubernetes-etcdctl-usage/</guid><description>&lt;p>因为etcd中的内容都是加密的, 使用下面的命令安装解密工具:&lt;/p>
 &lt;div class="highlight">&lt;pre tabindex="0" style="background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4;">&lt;code class="language-sh" data-lang="sh">&lt;span style="display:flex;">&lt;span>mkdir auger
 &lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>curl -o ./auger/auger_1.0.2_linux_amd64.tar.gz &lt;span style="color:#d14">\
 &lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#d14">&lt;/span> https://llaoj.oss-cn-beijing.aliyuncs.com/files/github.com/etcd-io/auger/releases/download/v1.0.2/auger_1.0.2_linux_amd64.tar.gz
