@@ -20,7 +20,7 @@
 &lt;p>也可以是这样的：&lt;/p>
 &lt;p>
  &lt;img src="https://github.com/llaoj/kube-finder/raw/main/docs/fileserver2.png" alt="fileserver2" />&lt;/p>
-&lt;p>项目名取自MacOS Finder, 希望它像Finder一样好用.&lt;/p></description></item><item><title>解决kubernetes中pod无法连接外部Redis的问题</title><link>https://blog.llaoj.cn/posts/2025/fix-tcp-retran/</link><pubDate>Wed, 15 Jan 2025 00:00:00 +0000</pubDate><guid>https://blog.llaoj.cn/posts/2025/fix-tcp-retran/</guid><description>&lt;h2 id="问题描述">
+&lt;p>项目名取自MacOS Finder, 希望它像Finder一样好用.&lt;/p></description></item><item><title>解决kubernetes中pod连接外部Redis速度慢的问题</title><link>https://blog.llaoj.cn/posts/2025/fix-tcp-retran/</link><pubDate>Wed, 15 Jan 2025 00:00:00 +0000</pubDate><guid>https://blog.llaoj.cn/posts/2025/fix-tcp-retran/</guid><description>&lt;h2 id="问题描述">
  问题描述
  &lt;a class="anchor" href="#%e9%97%ae%e9%a2%98%e6%8f%8f%e8%bf%b0">#&lt;/a>
 &lt;/h2>
