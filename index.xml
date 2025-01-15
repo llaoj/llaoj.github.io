@@ -20,7 +20,29 @@
 &lt;p>也可以是这样的：&lt;/p>
 &lt;p>
  &lt;img src="https://github.com/llaoj/kube-finder/raw/main/docs/fileserver2.png" alt="fileserver2" />&lt;/p>
-&lt;p>项目名取自MacOS Finder, 希望它像Finder一样好用.&lt;/p></description></item><item><title>解决kubernetes中pod连接外部Redis速度慢的问题</title><link>https://blog.llaoj.cn/posts/2025/fix-tcp-retran/</link><pubDate>Wed, 15 Jan 2025 00:00:00 +0000</pubDate><guid>https://blog.llaoj.cn/posts/2025/fix-tcp-retran/</guid><description>&lt;h2 id="问题描述">
+&lt;p>项目名取自MacOS Finder, 希望它像Finder一样好用.&lt;/p></description></item><item><title>国内网络环境安装Istio Ambient</title><link>https://blog.llaoj.cn/posts/2025/install-istio-ambient/</link><pubDate>Wed, 15 Jan 2025 00:00:00 +0000</pubDate><guid>https://blog.llaoj.cn/posts/2025/install-istio-ambient/</guid><description>&lt;p>这篇文章的主要目的是解决国内安装istio ambient速度比较慢、甚至是失败的问题. 因为国内防火墙的原因, 有些资源是拉不到或者速度很慢的.&lt;/p>
+&lt;p>安装之前需要有一套kubernetes集群, 集群的版本为&lt;code>1.28, 1.29, 1.30, 1.31&lt;/code>&lt;/p>
+&lt;h2 id="下载istio-cli">
+ 下载Istio CLI
+ &lt;a class="anchor" href="#%e4%b8%8b%e8%bd%bdistio-cli">#&lt;/a>
+&lt;/h2>
+&lt;p>截止目前最新的Istio稳定版本为: &lt;code>1.24.2&lt;/code>, 我们今天就安装它.
+Istio通过istioctl来配置/安装的. 现在我们需要下载它, 以及一些样例应用:&lt;/p>
+&lt;div class="highlight">&lt;div style="background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4;">
+&lt;table style="border-spacing:0;padding:0;margin:0;border:0;">&lt;tr>&lt;td style="vertical-align:top;padding:0;margin:0;border:0;">
+&lt;pre tabindex="0" style="background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4;">&lt;code>&lt;span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">1
+&lt;/span>&lt;span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">2
+&lt;/span>&lt;span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">3
+&lt;/span>&lt;span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">4
+&lt;/span>&lt;/code>&lt;/pre>&lt;/td>
+&lt;td style="vertical-align:top;padding:0;margin:0;border:0;;width:100%">
+&lt;pre tabindex="0" style="background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4;">&lt;code class="language-sh" data-lang="sh">&lt;span style="display:flex;">&lt;span>&lt;span style="color:#998;font-style:italic"># 目前只支持1.24.2版本&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>curl -s https://blog.llaoj.cn/posts/2025/install-istio-ambient/download-istio.sh | bash -s -- 1.24.2
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#0086b3">cd&lt;/span> istio-1.24.2
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#0086b3">export&lt;/span> &lt;span style="color:#008080">PATH&lt;/span>&lt;span style="color:#000;font-weight:bold">=&lt;/span>&lt;span style="color:#008080">$PWD&lt;/span>/bin:&lt;span style="color:#008080">$PATH&lt;/span>
+&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/td>&lt;/tr>&lt;/table>
+&lt;/div>
+&lt;/div>&lt;p>使用下面的命令检查一下版本, 现在Istio还没有安装:&lt;/p></description></item><item><title>解决kubernetes中pod连接外部Redis速度慢的问题</title><link>https://blog.llaoj.cn/posts/2025/fix-tcp-retran/</link><pubDate>Wed, 15 Jan 2025 00:00:00 +0000</pubDate><guid>https://blog.llaoj.cn/posts/2025/fix-tcp-retran/</guid><description>&lt;h2 id="问题描述">
  问题描述
  &lt;a class="anchor" href="#%e9%97%ae%e9%a2%98%e6%8f%8f%e8%bf%b0">#&lt;/a>
 &lt;/h2>
