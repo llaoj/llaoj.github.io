@@ -72,17 +72,59 @@ Error from server (Forbidden): pods is forbidden: User "system:serviceaccount:te
 
 下面我们使用rbac创建一个角色, 并给default这个服务账号赋予这个角色. 执行下面的命令:
 
-```sh
-kubectl apply -f - <<EOF
+```yaml
 apiVersion: rbac.authorization.k8s.io/v1
 kind: Role
 metadata:
   namespace: test-namespace
   name: ns-admin
 rules:
-- apiGroups: ["*"]
-  resources: ["*"]
-  verbs: ["*"]
+  - apiGroups:
+      - ""
+    resources:
+      - pods
+      - services
+      - configmaps
+      - secrets
+      - persistentvolumeclaims
+      - events
+      - endpoints
+    verbs:
+      - get
+      - list
+      - watch
+      - create
+      - update
+      - patch
+      - delete
+  - apiGroups: 
+      - apps
+    resources:
+      - deployments
+      - statefulsets
+      - daemonsets
+      - replicasets
+    verbs:
+      - get
+      - list
+      - watch
+      - create
+      - update
+      - patch
+      - delete
+  - apiGroups:
+      - batch
+    resources:
+      - jobs
+      - cronjobs
+    verbs:
+      - get
+      - list
+      - watch
+      - create
+      - update
+      - patch
+      - delete
 ---
 apiVersion: rbac.authorization.k8s.io/v1
 kind: RoleBinding
@@ -97,7 +139,6 @@ roleRef:
   kind: Role
   name: ns-admin
   apiGroup: rbac.authorization.k8s.io
-EOF
 ```
 
 权限赋予完毕, 我们进行测试:
