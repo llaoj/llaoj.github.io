@@ -1,5 +1,5 @@
 ---
-title: "给默认服务账号service account: default赋予namespace最高权限"
+title: "RBAC给默认服务账号default赋予namespace级别权限"
 description: "给默认的服务账号service account: default赋予当前namespace的最高权限, 但是仅有这些权限.创建namespace之后, 里面会自带一个默认的service account, 名字是default.  它是没有任何权限的.Error from server (Forbidden): pods is forbidden: User system:serviceaccount:test-namespace:default cannot list resource pods in API group  in the namespace default Error from server (Forbidden): storageclasses.storage.k8s.io is forbidden: User system:serviceaccount:test-namespace:default cannot list resource storageclasses in API group storage.k8s.io at the cluster scope"
 summary: "给默认的服务账号service account: default赋予当前namespace的最高权限, 但是仅有这些权限.创建namespace之后, 里面会自带一个默认的service account, 名字是default.  它是没有任何权限的.Error from server (Forbidden): pods is forbidden: User system:serviceaccount:test-namespace:default cannot list resource pods in API group  in the namespace default Error from server (Forbidden): storageclasses.storage.k8s.io is forbidden: User system:serviceaccount:test-namespace:default cannot list resource storageclasses in API group storage.k8s.io at the cluster scope"
 date: "2025-01-15"
@@ -83,6 +83,12 @@ rules:
       - ""
     resources:
       - pods
+      - pods/status
+      - pods/log
+      - pods/attach
+      - pods/exec
+      - pods/portforward
+      - pods/proxy
       - services
       - configmaps
       - secrets
@@ -97,6 +103,7 @@ rules:
       - update
       - patch
       - delete
+      - deletecollection
   - apiGroups: 
       - apps
     resources:
@@ -112,6 +119,7 @@ rules:
       - update
       - patch
       - delete
+      - deletecollection
   - apiGroups:
       - batch
     resources:
@@ -125,6 +133,7 @@ rules:
       - update
       - patch
       - delete
+      - deletecollection
   - apiGroups:
       - networking.k8s.io
     resources:
@@ -137,6 +146,7 @@ rules:
       - update
       - patch
       - delete
+      - deletecollection
 ---
 apiVersion: rbac.authorization.k8s.io/v1
 kind: RoleBinding
@@ -175,4 +185,4 @@ Error from server (Forbidden): storageclasses.storage.k8s.io is forbidden: User 
 
 ## 总结
 
-测试完毕, 这个kubeconfig就可以使用了, 他有test-namespace下的最高权限, 但没有其他namesapce权限, 也没有集群资源权限.
+测试完毕, 这个kubeconfig就可以使用了, 他有test-namespace下的大部分权限, 但没有其他namesapce权限, 也没有集群资源权限. 还有, 因为这个kubeconfig是要分配给非集群管理员使用的, 他们仅能操作自己的namespace. 所以, 我们没有给role、rolebinding、resourcequota这些资源, 以防止其越权, 或者过度使用资源.
