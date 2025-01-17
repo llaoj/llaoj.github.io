@@ -37,7 +37,7 @@ Istio通过istioctl来配置/安装的. 现在我们需要下载它, 以及一�
 &lt;/span>&lt;/code>&lt;/pre>&lt;/td>
 &lt;td style="vertical-align:top;padding:0;margin:0;border:0;;width:100%">
 &lt;pre tabindex="0" style="background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4;">&lt;code class="language-sh" data-lang="sh">&lt;span style="display:flex;">&lt;span>&lt;span style="color:#998;font-style:italic"># 目前只支持1.24.2版本&lt;/span>
-&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>curl -s https://blog.llaoj.cn/posts/2025/install-istio-ambient/download-istio.sh | bash -s -- 1.24.2
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>curl -L https://blog.llaoj.cn/posts/2025/install-istio-ambient/download-istio.sh | bash -s -- 1.24.2
 &lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#0086b3">cd&lt;/span> istio-1.24.2
 &lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#0086b3">export&lt;/span> &lt;span style="color:#008080">PATH&lt;/span>&lt;span style="color:#000;font-weight:bold">=&lt;/span>&lt;span style="color:#008080">$PWD&lt;/span>/bin:&lt;span style="color:#008080">$PATH&lt;/span>
 &lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/td>&lt;/tr>&lt;/table>
