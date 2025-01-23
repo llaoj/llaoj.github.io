@@ -75,7 +75,7 @@ Wants=network-online.target
 [Service]
 Type=notify
 EnvironmentFile=/data/etcd/conf/etcd.conf
-ExecStart=/data/etcd/bin/etcd --log-outputs=/data/etcd/log/etcd.log --log-level=info
+ExecStart=/data/etcd/bin/etcd --log-outputs=/data/etcd/log/etcd.log --log-level=info --auto-compaction-retention=1 --quota-backend-bytes=8388608000
 Restart=on-failure
 RestartSec=5
 LimitNOFILE=65536
