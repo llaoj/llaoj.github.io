@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="utf-8" standalone="yes"?><rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom"><channel><title>首页 on 老J的博客</title><link>https://blog.llaoj.cn/</link><description>Recent content in 首页 on 老J的博客</description><generator>Hugo</generator><language>zh</language><lastBuildDate>Wed, 15 Jan 2025 00:00:00 +0000</lastBuildDate><atom:link href="https://blog.llaoj.cn/index.xml" rel="self" type="application/rss+xml"/><item><title>GCopy</title><link>https://blog.llaoj.cn/docs/mywork/gcopy/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>https://blog.llaoj.cn/docs/mywork/gcopy/</guid><description>&lt;p>
+<?xml version="1.0" encoding="utf-8" standalone="yes"?><rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom"><channel><title>首页 on 老J的博客</title><link>https://blog.llaoj.cn/</link><description>Recent content in 首页 on 老J的博客</description><generator>Hugo</generator><language>zh</language><lastBuildDate>Fri, 07 Feb 2025 00:00:00 +0000</lastBuildDate><atom:link href="https://blog.llaoj.cn/index.xml" rel="self" type="application/rss+xml"/><item><title>GCopy</title><link>https://blog.llaoj.cn/docs/mywork/gcopy/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>https://blog.llaoj.cn/docs/mywork/gcopy/</guid><description>&lt;p>
  &lt;img src="https://github.com/llaoj/gcopy/blob/main/docs/gcopy.png?raw=true" alt="GCopy" />&lt;/p>
 &lt;p>项目地址: 
  &lt;a href="https://github.com/llaoj/gcopy">https://github.com/llaoj/gcopy&lt;/a>&lt;/p>
@@ -20,7 +20,26 @@
 &lt;p>也可以是这样的：&lt;/p>
 &lt;p>
  &lt;img src="https://github.com/llaoj/kube-finder/raw/main/docs/fileserver2.png" alt="fileserver2" />&lt;/p>
-&lt;p>项目名取自MacOS Finder, 希望它像Finder一样好用.&lt;/p></description></item><item><title>RBAC给默认服务账号default赋予namespace级别权限</title><link>https://blog.llaoj.cn/posts/2025/default-sa-rbac/</link><pubDate>Wed, 15 Jan 2025 00:00:00 +0000</pubDate><guid>https://blog.llaoj.cn/posts/2025/default-sa-rbac/</guid><description>给默认的服务账号service account: default赋予当前namespace的最高权限, 但是仅有这些权限.创建namespace之后, 里面会自带一个默认的service account, 名字是default. 它是没有任何权限的.Error from server (Forbidden): pods is forbidden: User system:serviceaccount:test-namespace:default cannot list resource pods in API group in the namespace default Error from server (Forbidden): storageclasses.storage.k8s.io is forbidden: User system:serviceaccount:test-namespace:default cannot list resource storageclasses in API group storage.k8s.io at the cluster scope</description></item><item><title>国内网络环境安装Istio Ambient</title><link>https://blog.llaoj.cn/posts/2025/install-istio-ambient/</link><pubDate>Wed, 15 Jan 2025 00:00:00 +0000</pubDate><guid>https://blog.llaoj.cn/posts/2025/install-istio-ambient/</guid><description>&lt;p>这篇文章的主要目的是解决国内安装istio ambient速度比较慢、甚至是失败的问题. 因为国内防火墙的原因, 有些资源是拉不到或者速度很慢的.&lt;/p>
+&lt;p>项目名取自MacOS Finder, 希望它像Finder一样好用.&lt;/p></description></item><item><title>借助阿里云智能DNS旗舰版+Bind9实现精细化的就近解析</title><link>https://blog.llaoj.cn/posts/2025/proxy-aliyun-dns/localdns-alidns/</link><pubDate>Fri, 07 Feb 2025 00:00:00 +0000</pubDate><guid>https://blog.llaoj.cn/posts/2025/proxy-aliyun-dns/localdns-alidns/</guid><description>&lt;p>我们都知道公有云提供的智能DNS解析, 仅能精确到大区域, 比如华北区域, 省份. 或者精确到线路, 比如联通或者移动. 并无法精确到城市、地区、或者是某一个大楼. 这种精确的就近智能解析是我要解决的问题.&lt;/p>
+&lt;p>大部分情况, 我们的域名和解析在阿里云管理.&lt;/p>
+&lt;p>这篇文章的方法需要升级该云解析至企业旗舰版, 就可以获得自定义线路的功能.&lt;/p>
+&lt;p>
+ &lt;img src="image-19.png" alt="alt text" />&lt;/p>
+&lt;p>每年的费用不到500元.&lt;/p>
+&lt;p>在本地数据中心通过部署Bind9访问该解析服务。&lt;/p>
+&lt;p>特点：&lt;/p>
+&lt;ul>
+&lt;li>就近解析, 可以精细化到网段&lt;/li>
+&lt;li>有友好的用户界面&lt;/li>
+&lt;li>有阿里云运维保障&lt;/li>
+&lt;li>成本较低, 约500元/年。&lt;/li>
+&lt;/ul>
+&lt;h2 id="整体架构">
+ 整体架构
+ &lt;a class="anchor" href="#%e6%95%b4%e4%bd%93%e6%9e%b6%e6%9e%84">#&lt;/a>
+&lt;/h2>
+&lt;p>
+ &lt;img src="image-18.png" alt="alt text" />&lt;/p></description></item><item><title>RBAC给默认服务账号default赋予namespace级别权限</title><link>https://blog.llaoj.cn/posts/2025/default-sa-rbac/</link><pubDate>Wed, 15 Jan 2025 00:00:00 +0000</pubDate><guid>https://blog.llaoj.cn/posts/2025/default-sa-rbac/</guid><description>给默认的服务账号service account: default赋予当前namespace的最高权限, 但是仅有这些权限.创建namespace之后, 里面会自带一个默认的service account, 名字是default. 它是没有任何权限的.Error from server (Forbidden): pods is forbidden: User system:serviceaccount:test-namespace:default cannot list resource pods in API group in the namespace default Error from server (Forbidden): storageclasses.storage.k8s.io is forbidden: User system:serviceaccount:test-namespace:default cannot list resource storageclasses in API group storage.k8s.io at the cluster scope</description></item><item><title>国内网络环境安装Istio Ambient</title><link>https://blog.llaoj.cn/posts/2025/install-istio-ambient/</link><pubDate>Wed, 15 Jan 2025 00:00:00 +0000</pubDate><guid>https://blog.llaoj.cn/posts/2025/install-istio-ambient/</guid><description>&lt;p>这篇文章的主要目的是解决国内安装istio ambient速度比较慢、甚至是失败的问题. 因为国内防火墙的原因, 有些资源是拉不到或者速度很慢的.&lt;/p>
 &lt;p>安装之前需要有一套kubernetes集群, 集群的版本为&lt;code>1.28, 1.29, 1.30, 1.31&lt;/code>&lt;/p>
 &lt;h2 id="下载istio-cli">
  下载Istio CLI
