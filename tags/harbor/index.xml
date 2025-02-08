@@ -1,1 +1,23 @@
-<?xml version="1.0" encoding="utf-8" standalone="yes"?><rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom"><channel><title>Harbor on 老J的博客</title><link>https://blog.llaoj.cn/tags/harbor/</link><description>Recent content in Harbor on 老J的博客</description><generator>Hugo</generator><language>zh</language><lastBuildDate>Wed, 08 Jan 2025 00:00:00 +0000</lastBuildDate><atom:link href="https://blog.llaoj.cn/tags/harbor/index.xml" rel="self" type="application/rss+xml"/><item><title>解决Harbor漏洞扫描trivy失败</title><link>https://blog.llaoj.cn/posts/2025/fix-harbor-trivy-failure/</link><pubDate>Wed, 08 Jan 2025 00:00:00 +0000</pubDate><guid>https://blog.llaoj.cn/posts/2025/fix-harbor-trivy-failure/</guid><description>点击查看日志, 错误日志如下：[/pkg/scan/job.go:294]: check scan report with mime type application/vnd.security.vulnerability.report; version=1.1: running trivy wrapper: running trivy: exit status 2: 2025-01-08T01:53:26.342Z	[INFO]	Vulnerability scanning is enabled panic: invalid page type: 39: 10 go.etcd.io/bbolt.(*Cursor).search 看日志中的错误堆栈, 我发现在读取trivy数据库文件的时候报错了, 所以我的解决办法是, 删掉原来的数据库文件, 让trivy重建一个. 我把Harbor的数据目录放在了&lt;code>/data/harbor_data&lt;/code>, 你可根据自己的实际情况替换.</description></item><item><title>Harbor 双主复制解决方案实践</title><link>https://blog.llaoj.cn/posts/2203/harbor-dual-master-replication-ha/</link><pubDate>Tue, 29 Mar 2022 00:00:00 +0000</pubDate><guid>https://blog.llaoj.cn/posts/2203/harbor-dual-master-replication-ha/</guid><description>既然使用了外部的服务, 那么高可用的压力自然而然的转移到了外部服务上. 我们一开始采用的外部的 NFS 共享存储服务, 由于我们团队实际情况, 我们暂时还不能保证外部存储的高可用. 同时, 鉴于我们对镜像服务高可用的迫切需求, 决定调研新的 Harbor 的高可用方案.</description></item></channel></rss>
+<?xml version="1.0" encoding="utf-8" standalone="yes"?><rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom"><channel><title>Harbor on 老J的博客</title><link>https://blog.llaoj.cn/tags/harbor/</link><description>Recent content in Harbor on 老J的博客</description><generator>Hugo</generator><language>zh</language><lastBuildDate>Sat, 08 Feb 2025 00:00:00 +0000</lastBuildDate><atom:link href="https://blog.llaoj.cn/tags/harbor/index.xml" rel="self" type="application/rss+xml"/><item><title>使用nginx代理harbor并开启ipv4&amp;ipv6双栈</title><link>https://blog.llaoj.cn/posts/2025/proxy-harbor/</link><pubDate>Sat, 08 Feb 2025 00:00:00 +0000</pubDate><guid>https://blog.llaoj.cn/posts/2025/proxy-harbor/</guid><description>&lt;h2 id="需求">
+ 需求
+ &lt;a class="anchor" href="#%e9%9c%80%e6%b1%82">#&lt;/a>
+&lt;/h2>
+&lt;p>使用代理服务器部署nginx服务, 代理到harbor所在到服务器上. 用nginx代理harbor. 用户通过nginx服务器的地址访问harbor.
+同时, 开通ipv4和ipv6双栈.&lt;/p>
+&lt;h2 id="思路">
+ 思路
+ &lt;a class="anchor" href="#%e6%80%9d%e8%b7%af">#&lt;/a>
+&lt;/h2>
+&lt;ol>
+&lt;li>服务器支持双栈: 首先确保涉及的服务器都支持双栈&lt;/li>
+&lt;li>应用层支持双栈之docker, 因为我们的服务都是跑在docker上的. 所以要配置docker支持双栈. 具体方法参考: 
+ &lt;a href="https://docs.docker.com/engine/daemon/ipv6/">https://docs.docker.com/engine/daemon/ipv6/&lt;/a>&lt;/li>
+&lt;li>应用层支持双栈之harbor, 配置harbor支持双栈.&lt;/li>
+&lt;li>应用层支持双栈之nginx, 这篇文章会详细说.&lt;/li>
+&lt;/ol>
+&lt;p>这篇文章会详细说明第4部的操作方法.&lt;/p>
+&lt;h2 id="实现方法">
+ 实现方法
+ &lt;a class="anchor" href="#%e5%ae%9e%e7%8e%b0%e6%96%b9%e6%b3%95">#&lt;/a>
+&lt;/h2>
+&lt;p>我们使用docker启动nginx实例:&lt;/p></description></item><item><title>解决Harbor漏洞扫描trivy失败</title><link>https://blog.llaoj.cn/posts/2025/fix-harbor-trivy-failure/</link><pubDate>Wed, 08 Jan 2025 00:00:00 +0000</pubDate><guid>https://blog.llaoj.cn/posts/2025/fix-harbor-trivy-failure/</guid><description>点击查看日志, 错误日志如下：[/pkg/scan/job.go:294]: check scan report with mime type application/vnd.security.vulnerability.report; version=1.1: running trivy wrapper: running trivy: exit status 2: 2025-01-08T01:53:26.342Z	[INFO]	Vulnerability scanning is enabled panic: invalid page type: 39: 10 go.etcd.io/bbolt.(*Cursor).search 看日志中的错误堆栈, 我发现在读取trivy数据库文件的时候报错了, 所以我的解决办法是, 删掉原来的数据库文件, 让trivy重建一个. 我把Harbor的数据目录放在了&lt;code>/data/harbor_data&lt;/code>, 你可根据自己的实际情况替换.</description></item><item><title>Harbor 双主复制解决方案实践</title><link>https://blog.llaoj.cn/posts/2203/harbor-dual-master-replication-ha/</link><pubDate>Tue, 29 Mar 2022 00:00:00 +0000</pubDate><guid>https://blog.llaoj.cn/posts/2203/harbor-dual-master-replication-ha/</guid><description>既然使用了外部的服务, 那么高可用的压力自然而然的转移到了外部服务上. 我们一开始采用的外部的 NFS 共享存储服务, 由于我们团队实际情况, 我们暂时还不能保证外部存储的高可用. 同时, 鉴于我们对镜像服务高可用的迫切需求, 决定调研新的 Harbor 的高可用方案.</description></item></channel></rss>

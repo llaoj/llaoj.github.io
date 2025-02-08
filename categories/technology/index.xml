@@ -1,4 +1,26 @@
-<?xml version="1.0" encoding="utf-8" standalone="yes"?><rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom"><channel><title>Technology on 老J的博客</title><link>https://blog.llaoj.cn/categories/technology/</link><description>Recent content in Technology on 老J的博客</description><generator>Hugo</generator><language>zh</language><lastBuildDate>Fri, 07 Feb 2025 00:00:00 +0000</lastBuildDate><atom:link href="https://blog.llaoj.cn/categories/technology/index.xml" rel="self" type="application/rss+xml"/><item><title>借助阿里云智能DNS旗舰版+Bind9实现精细化的就近解析</title><link>https://blog.llaoj.cn/posts/2025/proxy-aliyun-dns/</link><pubDate>Fri, 07 Feb 2025 00:00:00 +0000</pubDate><guid>https://blog.llaoj.cn/posts/2025/proxy-aliyun-dns/</guid><description>借助云解析的自定义线路的能力实现根据给定网段/IP地址来判断解析的线路，返回特定记录值。每个数据中心部署2台Bind9服务器，仅作为本地的DNS缓存使用，设计2台服务器是为了实现高可用。在云解析服务处通过配置自定义线路的方式，同一个域名(例如oa.example.com)就可以根据不同数据中心的代理服务器的出口IP地址来判断解析的线路返回该区域/数据中心的地址。</description></item><item><title>RBAC给默认服务账号default赋予namespace级别权限</title><link>https://blog.llaoj.cn/posts/2025/default-sa-rbac/</link><pubDate>Wed, 15 Jan 2025 00:00:00 +0000</pubDate><guid>https://blog.llaoj.cn/posts/2025/default-sa-rbac/</guid><description>给默认的服务账号service account: default赋予当前namespace的最高权限, 但是仅有这些权限.创建namespace之后, 里面会自带一个默认的service account, 名字是default. 它是没有任何权限的.Error from server (Forbidden): pods is forbidden: User system:serviceaccount:test-namespace:default cannot list resource pods in API group in the namespace default Error from server (Forbidden): storageclasses.storage.k8s.io is forbidden: User system:serviceaccount:test-namespace:default cannot list resource storageclasses in API group storage.k8s.io at the cluster scope</description></item><item><title>国内网络环境安装Istio Ambient</title><link>https://blog.llaoj.cn/posts/2025/install-istio-ambient/</link><pubDate>Wed, 15 Jan 2025 00:00:00 +0000</pubDate><guid>https://blog.llaoj.cn/posts/2025/install-istio-ambient/</guid><description>&lt;p>这篇文章的主要目的是解决国内安装istio ambient速度比较慢、甚至是失败的问题. 因为国内防火墙的原因, 有些资源是拉不到或者速度很慢的.&lt;/p>
+<?xml version="1.0" encoding="utf-8" standalone="yes"?><rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom"><channel><title>Technology on 老J的博客</title><link>https://blog.llaoj.cn/categories/technology/</link><description>Recent content in Technology on 老J的博客</description><generator>Hugo</generator><language>zh</language><lastBuildDate>Sat, 08 Feb 2025 00:00:00 +0000</lastBuildDate><atom:link href="https://blog.llaoj.cn/categories/technology/index.xml" rel="self" type="application/rss+xml"/><item><title>使用nginx代理harbor并开启ipv4&amp;ipv6双栈</title><link>https://blog.llaoj.cn/posts/2025/proxy-harbor/</link><pubDate>Sat, 08 Feb 2025 00:00:00 +0000</pubDate><guid>https://blog.llaoj.cn/posts/2025/proxy-harbor/</guid><description>&lt;h2 id="需求">
+ 需求
+ &lt;a class="anchor" href="#%e9%9c%80%e6%b1%82">#&lt;/a>
+&lt;/h2>
+&lt;p>使用代理服务器部署nginx服务, 代理到harbor所在到服务器上. 用nginx代理harbor. 用户通过nginx服务器的地址访问harbor.
+同时, 开通ipv4和ipv6双栈.&lt;/p>
+&lt;h2 id="思路">
+ 思路
+ &lt;a class="anchor" href="#%e6%80%9d%e8%b7%af">#&lt;/a>
+&lt;/h2>
+&lt;ol>
+&lt;li>服务器支持双栈: 首先确保涉及的服务器都支持双栈&lt;/li>
+&lt;li>应用层支持双栈之docker, 因为我们的服务都是跑在docker上的. 所以要配置docker支持双栈. 具体方法参考: 
+ &lt;a href="https://docs.docker.com/engine/daemon/ipv6/">https://docs.docker.com/engine/daemon/ipv6/&lt;/a>&lt;/li>
+&lt;li>应用层支持双栈之harbor, 配置harbor支持双栈.&lt;/li>
+&lt;li>应用层支持双栈之nginx, 这篇文章会详细说.&lt;/li>
+&lt;/ol>
+&lt;p>这篇文章会详细说明第4部的操作方法.&lt;/p>
+&lt;h2 id="实现方法">
+ 实现方法
+ &lt;a class="anchor" href="#%e5%ae%9e%e7%8e%b0%e6%96%b9%e6%b3%95">#&lt;/a>
+&lt;/h2>
+&lt;p>我们使用docker启动nginx实例:&lt;/p></description></item><item><title>借助阿里云智能DNS旗舰版+Bind9实现精细化的就近解析</title><link>https://blog.llaoj.cn/posts/2025/proxy-aliyun-dns/</link><pubDate>Fri, 07 Feb 2025 00:00:00 +0000</pubDate><guid>https://blog.llaoj.cn/posts/2025/proxy-aliyun-dns/</guid><description>借助云解析的自定义线路的能力实现根据给定网段/IP地址来判断解析的线路，返回特定记录值。每个数据中心部署2台Bind9服务器，仅作为本地的DNS缓存使用，设计2台服务器是为了实现高可用。在云解析服务处通过配置自定义线路的方式，同一个域名(例如oa.example.com)就可以根据不同数据中心的代理服务器的出口IP地址来判断解析的线路返回该区域/数据中心的地址。</description></item><item><title>RBAC给默认服务账号default赋予namespace级别权限</title><link>https://blog.llaoj.cn/posts/2025/default-sa-rbac/</link><pubDate>Wed, 15 Jan 2025 00:00:00 +0000</pubDate><guid>https://blog.llaoj.cn/posts/2025/default-sa-rbac/</guid><description>给默认的服务账号service account: default赋予当前namespace的最高权限, 但是仅有这些权限.创建namespace之后, 里面会自带一个默认的service account, 名字是default. 它是没有任何权限的.Error from server (Forbidden): pods is forbidden: User system:serviceaccount:test-namespace:default cannot list resource pods in API group in the namespace default Error from server (Forbidden): storageclasses.storage.k8s.io is forbidden: User system:serviceaccount:test-namespace:default cannot list resource storageclasses in API group storage.k8s.io at the cluster scope</description></item><item><title>国内网络环境安装Istio Ambient</title><link>https://blog.llaoj.cn/posts/2025/install-istio-ambient/</link><pubDate>Wed, 15 Jan 2025 00:00:00 +0000</pubDate><guid>https://blog.llaoj.cn/posts/2025/install-istio-ambient/</guid><description>&lt;p>这篇文章的主要目的是解决国内安装istio ambient速度比较慢、甚至是失败的问题. 因为国内防火墙的原因, 有些资源是拉不到或者速度很慢的.&lt;/p>
 &lt;p>安装之前需要有一套kubernetes集群, 集群的版本为&lt;code>1.28, 1.29, 1.30, 1.31&lt;/code>&lt;/p>
 &lt;h2 id="下载istio-cli">
  下载Istio CLI
