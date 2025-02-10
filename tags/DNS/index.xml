@@ -1,1 +1,28 @@
-<?xml version="1.0" encoding="utf-8" standalone="yes"?><rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom"><channel><title>DNS on 老J的博客</title><link>https://blog.llaoj.cn/tags/DNS/</link><description>Recent content in DNS on 老J的博客</description><generator>Hugo</generator><language>zh</language><lastBuildDate>Fri, 07 Feb 2025 00:00:00 +0000</lastBuildDate><atom:link href="https://blog.llaoj.cn/tags/DNS/index.xml" rel="self" type="application/rss+xml"/><item><title>借助阿里云智能DNS旗舰版+Bind9实现精细化的就近解析</title><link>https://blog.llaoj.cn/posts/2025/proxy-aliyun-dns/</link><pubDate>Fri, 07 Feb 2025 00:00:00 +0000</pubDate><guid>https://blog.llaoj.cn/posts/2025/proxy-aliyun-dns/</guid><description>借助云解析的自定义线路的能力实现根据给定网段/IP地址来判断解析的线路，返回特定记录值。每个数据中心部署2台Bind9服务器，仅作为本地的DNS缓存使用，设计2台服务器是为了实现高可用。在云解析服务处通过配置自定义线路的方式，同一个域名(例如oa.example.com)就可以根据不同数据中心的代理服务器的出口IP地址来判断解析的线路返回该区域/数据中心的地址。</description></item></channel></rss>
+<?xml version="1.0" encoding="utf-8" standalone="yes"?><rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom"><channel><title>DNS on 老J的博客</title><link>https://blog.llaoj.cn/tags/DNS/</link><description>Recent content in DNS on 老J的博客</description><generator>Hugo</generator><language>zh</language><lastBuildDate>Mon, 10 Feb 2025 00:00:00 +0000</lastBuildDate><atom:link href="https://blog.llaoj.cn/tags/DNS/index.xml" rel="self" type="application/rss+xml"/><item><title>仅缓存的Bind的安装和使用</title><link>https://blog.llaoj.cn/posts/2025/bind-manual/</link><pubDate>Mon, 10 Feb 2025 00:00:00 +0000</pubDate><guid>https://blog.llaoj.cn/posts/2025/bind-manual/</guid><description>&lt;h2 id="安装配置">
+ 安装配置
+ &lt;a class="anchor" href="#%e5%ae%89%e8%a3%85%e9%85%8d%e7%bd%ae">#&lt;/a>
+&lt;/h2>
+&lt;p>在CentOS上安装：&lt;/p>
+&lt;div class="highlight">&lt;div style="background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4;">
+&lt;table style="border-spacing:0;padding:0;margin:0;border:0;">&lt;tr>&lt;td style="vertical-align:top;padding:0;margin:0;border:0;">
+&lt;pre tabindex="0" style="background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4;">&lt;code>&lt;span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">1
+&lt;/span>&lt;span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">2
+&lt;/span>&lt;span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">3
+&lt;/span>&lt;span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">4
+&lt;/span>&lt;span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">5
+&lt;/span>&lt;span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">6
+&lt;/span>&lt;span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">7
+&lt;/span>&lt;/code>&lt;/pre>&lt;/td>
+&lt;td style="vertical-align:top;padding:0;margin:0;border:0;;width:100%">
+&lt;pre tabindex="0" style="background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4;">&lt;code class="language-sh" data-lang="sh">&lt;span style="display:flex;">&lt;span>$ yum install &lt;span style="color:#0086b3">bind&lt;/span> bind-utils -y
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#998;font-style:italic"># 查看安装的版本&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>$ named -v
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>BIND 9.11.4-P2-RedHat-9.11.4-26.P2.el7_9.16 &lt;span style="color:#000;font-weight:bold">(&lt;/span>Extended Support Version&lt;span style="color:#000;font-weight:bold">)&lt;/span> &amp;lt;id:7107deb&amp;gt;
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#998;font-style:italic"># 开机自启动&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>$ systemctl &lt;span style="color:#0086b3">enable&lt;/span> named
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>$ systemctl start named
+&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/td>&lt;/tr>&lt;/table>
+&lt;/div>
+&lt;/div>&lt;p>Bind安装完之后, 默认就是一个&lt;code>仅缓存的&lt;/code>nameserver. 可以作为一个本地的DNS解析器来使用.&lt;br>
+Bind在我们的架构中也正是扮演这样的角色.&lt;br>
+在CentOS上安装完成之后, 默认的配置文件需要修改的不多:&lt;/p></description></item><item><title>借助阿里云智能DNS旗舰版+Bind9实现精细化的就近解析</title><link>https://blog.llaoj.cn/posts/2025/proxy-aliyun-dns/</link><pubDate>Fri, 07 Feb 2025 00:00:00 +0000</pubDate><guid>https://blog.llaoj.cn/posts/2025/proxy-aliyun-dns/</guid><description>借助云解析的自定义线路的能力实现根据给定网段/IP地址来判断解析的线路，返回特定记录值。每个数据中心部署2台Bind9服务器，仅作为本地的DNS缓存使用，设计2台服务器是为了实现高可用。在云解析服务处通过配置自定义线路的方式，同一个域名(例如oa.example.com)就可以根据不同数据中心的代理服务器的出口IP地址来判断解析的线路返回该区域/数据中心的地址。</description></item></channel></rss>
