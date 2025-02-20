@@ -4,7 +4,7 @@ description: ""
 date: "2025-01-14"
 menu: "main"
 tags:
-- "etcd"
+- "apisix"
 categories:
 - "technology"
 ---
@@ -51,7 +51,7 @@ deployment:
     config_provider: etcd
   etcd:
     user: root
-    password: etcNq@YfPd21de
+    password: password
     host:
       - "http://10.61.129.19:2379"
       - "http://10.61.129.20:2379"
@@ -59,7 +59,7 @@ deployment:
   admin:
     admin_key:
       - name: admin
-        key: dahdd9f034335f136f87ad84b625c8f1
+        key: admin-key-change-me
         role: admin
     allow_admin:
       - 0.0.0.0/0
@@ -122,7 +122,7 @@ conf:
     # 因为我们部署的etcd是有账号密码的
     # 配置etcd访问的用户名和密码
     username: "root"
-    password: "etcNq@YfPd21de"
+    password: "password"
 ```
 
 Dashboard默认提供了两个用户(账号/密码): `admin/admin` 和 `user/user`. 你可以在conf.yaml中修改.
