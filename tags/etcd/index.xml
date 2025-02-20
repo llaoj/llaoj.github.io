@@ -19,35 +19,7 @@
  部署可执行文件
  &lt;a class="anchor" href="#%e9%83%a8%e7%bd%b2%e5%8f%af%e6%89%a7%e8%a1%8c%e6%96%87%e4%bb%b6">#&lt;/a>
 &lt;/h3>
-&lt;p>将etcd安装在&lt;code>/data/etcd/&lt;/code>目录中.&lt;/p></description></item><item><title>在虚拟机上安装APISIX集群</title><link>https://blog.llaoj.cn/posts/2025/install-apisix-cluster/</link><pubDate>Tue, 14 Jan 2025 00:00:00 +0000</pubDate><guid>https://blog.llaoj.cn/posts/2025/install-apisix-cluster/</guid><description>&lt;p>我们会在下面三台服务器上部署, 服务器列表:&lt;/p>
-&lt;ul>
-&lt;li>10.61.129.19&lt;/li>
-&lt;li>10.61.129.20&lt;/li>
-&lt;li>10.61.129.21&lt;/li>
-&lt;/ul>
-&lt;p>下面的所有操作需要在上述三台服务器上操作.&lt;/p>
-&lt;h2 id="前置条件-etcd集群">
- 前置条件-ETCD集群
- &lt;a class="anchor" href="#%e5%89%8d%e7%bd%ae%e6%9d%a1%e4%bb%b6-etcd%e9%9b%86%e7%be%a4">#&lt;/a>
-&lt;/h2>
-&lt;p>参考
- &lt;a href="https://blog.llaoj.cn/posts/2025/install-etcd-cluster/">安装高可用ETCD集群(非https)&lt;/a>完成etcd集群的安装.&lt;/p>
-&lt;h2 id="安装apisix可执行文件">
- 安装apisix可执行文件
- &lt;a class="anchor" href="#%e5%ae%89%e8%a3%85apisix%e5%8f%af%e6%89%a7%e8%a1%8c%e6%96%87%e4%bb%b6">#&lt;/a>
-&lt;/h2>
-&lt;p>我们使用官方提供的rpm包安装.&lt;/p>
-&lt;div class="highlight">&lt;div style="background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4;">
-&lt;table style="border-spacing:0;padding:0;margin:0;border:0;">&lt;tr>&lt;td style="vertical-align:top;padding:0;margin:0;border:0;">
-&lt;pre tabindex="0" style="background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4;">&lt;code>&lt;span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">1
-&lt;/span>&lt;span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">2
-&lt;/span>&lt;/code>&lt;/pre>&lt;/td>
-&lt;td style="vertical-align:top;padding:0;margin:0;border:0;;width:100%">
-&lt;pre tabindex="0" style="background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4;">&lt;code class="language-sh" data-lang="sh">&lt;span style="display:flex;">&lt;span>yum install -y https://repos.apiseven.com/packages/centos/apache-apisix-repo-1.0-1.noarch.rpm
-&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>yum install apisix-3.2.0 -y
-&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/td>&lt;/tr>&lt;/table>
-&lt;/div>
-&lt;/div>&lt;p>安装完成之后, 我们要知道安装的位置, 一些常用的文件夹地址.&lt;/p></description></item><item><title>使用etcdctl查看kubernetes存储的内容</title><link>https://blog.llaoj.cn/posts/2208/kubernetes-etcdctl-usage/</link><pubDate>Mon, 29 Aug 2022 00:00:00 +0000</pubDate><guid>https://blog.llaoj.cn/posts/2208/kubernetes-etcdctl-usage/</guid><description>&lt;p>因为etcd中的内容都是加密的, 使用下面的命令安装解密工具:&lt;/p>
+&lt;p>将etcd安装在&lt;code>/data/etcd/&lt;/code>目录中.&lt;/p></description></item><item><title>使用etcdctl查看kubernetes存储的内容</title><link>https://blog.llaoj.cn/posts/2208/kubernetes-etcdctl-usage/</link><pubDate>Mon, 29 Aug 2022 00:00:00 +0000</pubDate><guid>https://blog.llaoj.cn/posts/2208/kubernetes-etcdctl-usage/</guid><description>&lt;p>因为etcd中的内容都是加密的, 使用下面的命令安装解密工具:&lt;/p>
 &lt;div class="highlight">&lt;div style="background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4;">
 &lt;table style="border-spacing:0;padding:0;margin:0;border:0;">&lt;tr>&lt;td style="vertical-align:top;padding:0;margin:0;border:0;">
 &lt;pre tabindex="0" style="background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4;">&lt;code>&lt;span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">1
